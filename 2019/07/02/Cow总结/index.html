@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="这两个都是Java提供的原生写时复制的容器(也就是java.util.concurrent包下的)。CopyOnWrite的基本思路是在修改(包括增加和修改)之前，拷贝出一份快照，对快照进行修改，然后替换原引用。读取操作则没有进行加锁，所以适用于读多写少的场景。另外由于使用了快照模式(迭代器，修改等操作)，因此不能保证强一致性，只能保证最终一致性。 CopyOnWriteArraySet是对Cop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CopyOnWriteArrayList &amp;&amp; CopyOnWriteArraySet 总结">
+<meta property="og:url" content="https://eviltuzki.top/2019/07/02/Cow%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="这两个都是Java提供的原生写时复制的容器(也就是java.util.concurrent包下的)。CopyOnWrite的基本思路是在修改(包括增加和修改)之前，拷贝出一份快照，对快照进行修改，然后替换原引用。读取操作则没有进行加锁，所以适用于读多写少的场景。另外由于使用了快照模式(迭代器，修改等操作)，因此不能保证强一致性，只能保证最终一致性。 CopyOnWriteArraySet是对Cop">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.628Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发容器">
+<meta property="article:tag" content="CopyOnWrite">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2019/07/02/Cow%E6%80%BB%E7%BB%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CopyOnWriteArrayList && CopyOnWriteArraySet 总结 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/07/02/Cow%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CopyOnWriteArrayList && CopyOnWriteArraySet 总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-02 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-02T00:00:00+08:00">2019-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这两个都是Java提供的原生写时复制的容器(也就是java.util.concurrent包下的)。CopyOnWrite的基本思路是在修改(包括增加和修改)之前，拷贝出一份快照，对快照进行修改，然后替换原引用。读取操作则没有进行加锁，所以适用于读多写少的场景。另外由于使用了快照模式(迭代器，修改等操作)，因此不能保证强一致性，只能保证最终一致性。</p>
+<p>CopyOnWriteArraySet是对CopyOnWriteArrayList的包装，所以重点关注一下CopyOnWriteArrayList。</p>
+<h1 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h1><p>从增删改查4个方面总结下这个容器（相对ConcurrentHashMap，CopyOnWrite的实现实在是简单太多了。。。）</p>
+<h2 id="增"><a href="#增" class="headerlink" title="增"></a>增</h2><p>增加方法就2个：</p>
+<ul>
+<li>public boolean add(E e)<ul>
+<li>整体思路比较简单，先获取排他锁（同一时刻只能有一个线程进行修改操作），然后拷贝一份新的数组并插入新的元素（此时读取操作读的还是旧的数组），最后替换引用并释放锁。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();//获取排他锁</span><br><span class="line">    try &#123;</span><br><span class="line">        Object[] elements = getArray();//获取当前引用（可以理解为快照）</span><br><span class="line">        int len = elements.length;//当前的长度</span><br><span class="line">        Object[] newElements = Arrays.copyOf(elements, len + 1);//拷贝到一个新的数组中</span><br><span class="line">        newElements[len] = e;//末尾增加新的元素</span><br><span class="line">        setArray(newElements);//替换引用</span><br><span class="line">        return true;//返回结果</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();//释放排他锁</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>public void add(int index, E element)<ul>
+<li>整体流程和上一个方法基本一致，区别在于进行索引的有效判断，同时检测是不是在数组的最后插入，拷贝的过程是调用System.arraycopy进行分区间拷贝。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element) &#123;</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();//一样获取独占锁</span><br><span class="line">    try &#123;</span><br><span class="line">        Object[] elements = getArray();//获取当前引用</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        if (index &gt; len || index &lt; 0)//越界检查</span><br><span class="line">            throw new IndexOutOfBoundsException(&quot;Index: &quot;+index+</span><br><span class="line">                                                &quot;, Size: &quot;+len);</span><br><span class="line">        Object[] newElements;</span><br><span class="line">        int numMoved = len - index;</span><br><span class="line">        if (numMoved == 0)//判断是不是最后一个元素</span><br><span class="line">            newElements = Arrays.copyOf(elements, len + 1);//直接同上一个方法，生成len+1长度的数组</span><br><span class="line">        else &#123;</span><br><span class="line">            newElements = new Object[len + 1];//生成新的空数组</span><br><span class="line">            System.arraycopy(elements, 0, newElements, 0, index);//拷贝0~index</span><br><span class="line">            System.arraycopy(elements, index, newElements, index + 1,</span><br><span class="line">                            numMoved);//拷贝index+1 ~ 最后</span><br><span class="line">        &#125;</span><br><span class="line">        newElements[index] = element;//index位置填充</span><br><span class="line">        setArray(newElements);//替换引用</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();//释放锁</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="删"><a href="#删" class="headerlink" title="删"></a>删</h2><p>删除操作对外暴露了2个方法，一个是通过索引下标进行删除，一个是找到指定的Object进行删除。</p>
+<ul>
+<li>public E remove(int index)<ul>
+<li>这个方法实现和 add(int index, E element) 基本类似，不做过多解释了。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public E remove(int index) &#123;</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        E oldValue = get(elements, index);//获取指定下标元素</span><br><span class="line">        int numMoved = len - index - 1;</span><br><span class="line">        if (numMoved == 0)//判断是否为最后一个元素</span><br><span class="line">            setArray(Arrays.copyOf(elements, len - 1));//形成新的0~len-1数组</span><br><span class="line">        else &#123;</span><br><span class="line">            Object[] newElements = new Object[len - 1];</span><br><span class="line">            //跳过要删除的元素                                 </span><br><span class="line">            System.arraycopy(elements, 0, newElements, 0, index);</span><br><span class="line">            System.arraycopy(elements, index + 1, newElements, index,</span><br><span class="line">                             numMoved);</span><br><span class="line">            setArray(newElements);//替换引用</span><br><span class="line">        &#125;</span><br><span class="line">        return oldValue;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>public boolean remove(Object o)<ul>
+<li>首先获取数组引用，然后尝试寻找元素，找到了则进入删除操作，找不到则直接返回false  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;</span><br><span class="line">    Object[] snapshot = getArray();//获取引用快照</span><br><span class="line">    int index = indexOf(o, snapshot, 0, snapshot.length);//尝试寻找（注意，此时并未加锁，如果此时插入了数据或者其他线程插入了数据，是看不到的,需要在删除的时候重新进行查找）</span><br><span class="line">    return (index &lt; 0) ? false : remove(o, snapshot, index);//找到了则进行删除(index&gt;=0的情况)，找不到则返回false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>看一下具体的删除操作  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">private boolean remove(Object o, Object[] snapshot, int index) &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();//加锁</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] current = getArray();//重新获取一次快照引用</span><br><span class="line">            int len = current.length;</span><br><span class="line">            if (snapshot != current) findIndex: &#123;//判断在上一步中获取到的快照是否发生了改变，如果没有改变，则直接进行删除，如果发生了改变，则需要进一步处理，也就是下面的逻辑。</span><br><span class="line">                int prefix = Math.min(index, len);//判断一下以防数组越界</span><br><span class="line">                for (int i = 0; i &lt; prefix; i++) &#123;</span><br><span class="line">                    if (current[i] != snapshot[i] &amp;&amp; eq(o, current[i])) &#123;//依次遍历查找，找到则结束if语句块，并更新index</span><br><span class="line">                        index = i;</span><br><span class="line">                        break findIndex;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                if (index &gt;= len)//上述条件并未找到，则判断是否已经超过索引长度(其他线程已经删除元素了，可能会执行到这里)</span><br><span class="line">                    return false;</span><br><span class="line">                if (current[index] == o)//这块没想明白什么情况会执行到这里</span><br><span class="line">                    break findIndex;</span><br><span class="line">                index = indexOf(o, current, index, len);//重新查找，因为已经加锁了，所以不会有其他线程进行修改</span><br><span class="line">                if (index &lt; 0)</span><br><span class="line">                    return false;//没有找到</span><br><span class="line">            &#125;</span><br><span class="line">            //后面就简单了，还是重新拷贝，更新引用</span><br><span class="line">            Object[] newElements = new Object[len - 1];</span><br><span class="line">            System.arraycopy(current, 0, newElements, 0, index);</span><br><span class="line">            System.arraycopy(current, index + 1,</span><br><span class="line">                            newElements, index,</span><br><span class="line">                            len - index - 1);</span><br><span class="line">            setArray(newElements);</span><br><span class="line">            return true;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="改"><a href="#改" class="headerlink" title="改"></a>改</h2><p>修改操作相对比较简单，通过索引下标直接更新即可，方法如下：</p>
+<ul>
+<li>public E set(int index, E element)<ul>
+<li>操作也不复杂，加锁后重新拷贝并替换，唯独注意就是元素没有变化，也要重新更新一下引用（注释说是为了确保volatile写语义）  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] elements = getArray();</span><br><span class="line">            E oldValue = get(elements, index);</span><br><span class="line"></span><br><span class="line">            if (oldValue != element) &#123;</span><br><span class="line">                int len = elements.length;</span><br><span class="line">                Object[] newElements = Arrays.copyOf(elements, len);</span><br><span class="line">                newElements[index] = element;</span><br><span class="line">                setArray(newElements);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // Not quite a no-op; ensures volatile write semantics</span><br><span class="line">                setArray(elements);</span><br><span class="line">            &#125;</span><br><span class="line">            return oldValue;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="查"><a href="#查" class="headerlink" title="查"></a>查</h2><p>查询操作外部暴露了4个方法,其实内部都是委托给对应的私有方法，只是没有index参数的方法委托的时候传值是0。</p>
+<ul>
+<li>public int indexOf(Object o)</li>
+<li>public int indexOf(E e, int index)</li>
+<li>public int lastIndexOf(Object o)</li>
+<li>public int lastIndexOf(E e, int index)<br>前两个方法委托给 private static int indexOf(Object o, Object[] elements, int index, int fence) 执行<br>后两个方法委托给 private static int lastIndexOf(Object o, Object[] elements, int index) 执行<br>下面整理一下这两个查找方法：</li>
+<li>indexOf 只是看一下元素是否为空，为空则找null，不为空则直接进行遍历查找  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private static int indexOf(Object o, Object[] elements,</span><br><span class="line">                        int index, int fence) &#123;</span><br><span class="line">    if (o == null) &#123;</span><br><span class="line">        for (int i = index; i &lt; fence; i++)</span><br><span class="line">            if (elements[i] == null)</span><br><span class="line">                return i;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        for (int i = index; i &lt; fence; i++)</span><br><span class="line">            if (o.equals(elements[i]))</span><br><span class="line">                return i;</span><br><span class="line">    &#125;</span><br><span class="line">    return -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>lastIndexOf 和 indexOf 几乎相同，只是倒着查找而已。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">private static int lastIndexOf(Object o, Object[] elements, int index) &#123;</span><br><span class="line">        if (o == null) &#123;</span><br><span class="line">            for (int i = index; i &gt;= 0; i--)</span><br><span class="line">                if (elements[i] == null)</span><br><span class="line">                    return i;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            for (int i = index; i &gt;= 0; i--)</span><br><span class="line">                if (o.equals(elements[i]))</span><br><span class="line">                    return i;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h2><ul>
+<li><p>contains方法，也是直接调用indexOf方法，判断一下索引位置是不是&gt;&#x3D;0,就不多说了</p>
+</li>
+<li><p>get方法，直接获取一下数组引用(获取引用之后，其他线程修改，这里也看不到了。。。)，然后取对应下标。</p>
+</li>
+<li><p>addIfAbsent方法，CopyOnWriteArraySet就是基于这个方法实现的。先通过indexOf方法查找，找到直接返回false，找不到则加锁进行添加，添加之前会判断一下引用是否改变，和remove比较相似。代码如下：</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private boolean addIfAbsent(E e, Object[] snapshot) &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] current = getArray();</span><br><span class="line">            int len = current.length;</span><br><span class="line">            if (snapshot != current) &#123;//引用发生改变，则需要重新查找，如果还是没找到，则继续添加</span><br><span class="line">                // Optimize for lost race to another addXXX operation</span><br><span class="line">                int common = Math.min(snapshot.length, len);</span><br><span class="line">                for (int i = 0; i &lt; common; i++)//遍历查找，并且找到了，则返回false</span><br><span class="line">                    if (current[i] != snapshot[i] &amp;&amp; eq(e, current[i]))</span><br><span class="line">                        return false;</span><br><span class="line">                if (indexOf(e, current, common, len) &gt;= 0)//没太明白为什么又要再次查找。。</span><br><span class="line">                        return false;</span><br><span class="line">            &#125;</span><br><span class="line">            Object[] newElements = Arrays.copyOf(current, len + 1);</span><br><span class="line">            newElements[len] = e;</span><br><span class="line">            setArray(newElements);</span><br><span class="line">            return true;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>containsAll方法, 实现也比较简单暴力，获取快照后，直接for循环对每一个元素进行判断，就不附代码了。</p>
+</li>
+<li><p>removeAll方法，也不算复杂，加锁之后遍历元素，不在待删除集合中，则加入新数组中，然后重新拷贝一份即可</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public boolean removeAll(Collection&lt;?&gt; c) &#123;</span><br><span class="line">        if (c == null) throw new NullPointerException();</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] elements = getArray();</span><br><span class="line">            int len = elements.length;</span><br><span class="line">            if (len != 0) &#123;</span><br><span class="line">                // temp array holds those elements we know we want to keep</span><br><span class="line">                int newlen = 0;</span><br><span class="line">                Object[] temp = new Object[len];</span><br><span class="line">                for (int i = 0; i &lt; len; ++i) &#123;</span><br><span class="line">                    Object element = elements[i];</span><br><span class="line">                    if (!c.contains(element))</span><br><span class="line">                        temp[newlen++] = element;</span><br><span class="line">                &#125;</span><br><span class="line">                if (newlen != len) &#123;</span><br><span class="line">                    setArray(Arrays.copyOf(temp, newlen));</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            return false;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>retainAll方法，和removeAll方法类似，对应的是两个集合都包含的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public boolean retainAll(Collection&lt;?&gt; c) &#123;</span><br><span class="line">        if (c == null) throw new NullPointerException();</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] elements = getArray();</span><br><span class="line">            int len = elements.length;</span><br><span class="line">            if (len != 0) &#123;</span><br><span class="line">                // temp array holds those elements we know we want to keep</span><br><span class="line">                int newlen = 0;</span><br><span class="line">                Object[] temp = new Object[len];</span><br><span class="line">                for (int i = 0; i &lt; len; ++i) &#123;</span><br><span class="line">                    Object element = elements[i];</span><br><span class="line">                    if (c.contains(element))</span><br><span class="line">                        temp[newlen++] = element;</span><br><span class="line">                &#125;</span><br><span class="line">                if (newlen != len) &#123;</span><br><span class="line">                    setArray(Arrays.copyOf(temp, newlen));</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            return false;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>addAllAbsent方法, indexOf(e, cs, 0, added) 采用将遍历过的待添加元素数组进行替换，节省了新开辟数组的空间，这是一个用的很巧的方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public int addAllAbsent(Collection&lt;? extends E&gt; c) &#123;</span><br><span class="line">    Object[] cs = c.toArray();</span><br><span class="line">    if (cs.length == 0)</span><br><span class="line">        return 0;</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        int added = 0;</span><br><span class="line">        // uniquify and compact elements in cs</span><br><span class="line">        for (int i = 0; i &lt; cs.length; ++i) &#123;</span><br><span class="line">            Object e = cs[i];</span><br><span class="line">            if (indexOf(e, elements, 0, len) &lt; 0 &amp;&amp;</span><br><span class="line">                indexOf(e, cs, 0, added) &lt; 0)</span><br><span class="line">                cs[added++] = e;</span><br><span class="line">        &#125;</span><br><span class="line">        if (added &gt; 0) &#123;</span><br><span class="line">            Object[] newElements = Arrays.copyOf(elements, len + added);</span><br><span class="line">            System.arraycopy(cs, 0, newElements, len, added);</span><br><span class="line">            setArray(newElements);</span><br><span class="line">        &#125;</span><br><span class="line">        return added;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>clear方法，就是设置一个空数组，就不附代码了</p>
+</li>
+<li><p>addAll方法，也比较简单，转成数组之后直接合并，带索引位置的，就是跳过一部分后，在插入，最后补充剩余的</p>
+</li>
+<li><p>sort方法，也比较简单，拷贝一份快照后，对快照进行排序，然后替换引用。</p>
+</li>
+<li><p>equals 和 hashCode ，这两个方法都进行了重写，注意一下，都是使用快照进行比较，所以都是弱一致性的。</p>
+</li>
+<li><p>iterator 迭代器是创建一个COWIterator迭代器，不支持删除和修改操作，只能进行读取操作。</p>
+</li>
+<li><p>其他就不进行分析了</p>
+</li>
+</ul>
+<h1 id="CopyOnWriteArraySet"><a href="#CopyOnWriteArraySet" class="headerlink" title="CopyOnWriteArraySet"></a>CopyOnWriteArraySet</h1><p>其实没啥可分析的，内部就一个CopyOnWriteArrayList，所有方法都是调用 CopyOnWriteArrayList的方法，去重用的是addIfAbsent和addAllAbsent方法，&#x3D; &#x3D;感觉这个Set性能有点差。。。远不及HashSet和TreeSet。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>平时项目中时不时还是会用到CopyOnWriteArrayList，CopyOnWriteArraySet至少我还没用到过，而且看了实现，也不太敢用。。。。<br>回归主题：</p>
+<ul>
+<li>CopyOnWrite相关读取操作都是不加锁的，拷贝一份内部数组的引用，就开始读取了，不用加锁的原因就是所有的数组实际上都不会发生改变，因为所有的修改操作都是生成一份新的数组。</li>
+<li>因为读取或者迭代器，乃至hashcode，equals方法都是基于快照进行相关操作，所以可能读到的数据并不是最新的，也就是无法保证实时的一致性(就是所谓的弱一致性)，但是最终数据还是一致的。</li>
+<li>因为几乎每次修改，都会生成新的数组，如果写入比较频繁，可能产生大量垃圾，加重GC负担，所以CopyOnWrite最适合的场景就是读多写少。</li>
+<li>CopyOnWriteArrayList源码上有很多值得学习的小技巧，比如addAllAbsent方法中用替换数组中读过的位置存储待合并字符，省去了开辟新数组的开销。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" rel="tag"># 并发容器</a>
+              <a href="/tags/CopyOnWrite/" rel="tag"># CopyOnWrite</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/30/Java%E9%9B%86%E5%90%88%E7%B1%BB/" rel="prev" title="Java 集合类整理">
+      <i class="fa fa-chevron-left"></i> Java 集合类整理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/06/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-ThreadPoolExecutor/" rel="next" title="Java线程池分析-ThreadPoolExecutor">
+      Java线程池分析-ThreadPoolExecutor <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">1.</span> <span class="nav-text">CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E"><span class="nav-number">1.1.</span> <span class="nav-text">增</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0"><span class="nav-number">1.2.</span> <span class="nav-text">删</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9"><span class="nav-number">1.3.</span> <span class="nav-text">改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5"><span class="nav-number">1.4.</span> <span class="nav-text">查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">其他方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CopyOnWriteArraySet"><span class="nav-number">2.</span> <span class="nav-text">CopyOnWriteArraySet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

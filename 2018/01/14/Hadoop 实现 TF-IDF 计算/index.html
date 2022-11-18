@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="学习Hadoop 实现TF-IDF 算法，使用的是CDH5.13.1 VM版本，Hadoop用的是2.6.0的jar包，Maven中增加如下即可 123456&lt;dependency&gt;  &lt;groupId&gt;org.apache.hadoop&lt;&#x2F;groupId&gt;  &lt;artifactId&gt;hadoop-client&lt;&#x2F;artifactId&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop 实现 TF-IDF 计算">
+<meta property="og:url" content="https://eviltuzki.top/2018/01/14/Hadoop%20%E5%AE%9E%E7%8E%B0%20TF-IDF%20%E8%AE%A1%E7%AE%97/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="学习Hadoop 实现TF-IDF 算法，使用的是CDH5.13.1 VM版本，Hadoop用的是2.6.0的jar包，Maven中增加如下即可 123456&lt;dependency&gt;  &lt;groupId&gt;org.apache.hadoop&lt;&#x2F;groupId&gt;  &lt;artifactId&gt;hadoop-client&lt;&#x2F;artifactId&gt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.629Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Hadoop">
+<meta property="article:tag" content="TF-IDF">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2018/01/14/Hadoop%20%E5%AE%9E%E7%8E%B0%20TF-IDF%20%E8%AE%A1%E7%AE%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hadoop 实现 TF-IDF 计算 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/01/14/Hadoop%20%E5%AE%9E%E7%8E%B0%20TF-IDF%20%E8%AE%A1%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hadoop 实现 TF-IDF 计算
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-01-14 00:00:00" itemprop="dateCreated datePublished" datetime="2018-01-14T00:00:00+08:00">2018-01-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>学习Hadoop 实现TF-IDF 算法，使用的是CDH5.13.1 VM版本，Hadoop用的是2.6.0的jar包，Maven中增加如下即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;hadoop-client&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;2.6.0&lt;/version&gt;</span><br><span class="line">  &lt;scope&gt;provided&lt;/scope&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>代码如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br></pre></td><td class="code"><pre><span class="line">package top.eviltuzki.tfidf;</span><br><span class="line"> </span><br><span class="line">import org.apache.hadoop.conf.Configured;</span><br><span class="line">import org.apache.hadoop.fs.FileSystem;</span><br><span class="line">import org.apache.hadoop.fs.Path;</span><br><span class="line">import org.apache.hadoop.io.*;</span><br><span class="line">import org.apache.hadoop.mapreduce.Job;</span><br><span class="line">import org.apache.hadoop.mapreduce.Mapper;</span><br><span class="line">import org.apache.hadoop.mapreduce.Reducer;</span><br><span class="line">import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</span><br><span class="line">import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;</span><br><span class="line">import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</span><br><span class="line">import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;</span><br><span class="line">import org.apache.hadoop.util.GenericOptionsParser;</span><br><span class="line">import org.apache.hadoop.util.Tool;</span><br><span class="line">import org.apache.hadoop.util.ToolRunner;</span><br><span class="line"> </span><br><span class="line">import java.io.*;</span><br><span class="line">import java.util.*;</span><br><span class="line"> </span><br><span class="line">public class App extends Configured implements Tool &#123;</span><br><span class="line"> </span><br><span class="line">    public int run(String[] strings) throws Exception &#123;</span><br><span class="line">        //第一个MR，计算IDF</span><br><span class="line">        Job job = Job.getInstance(getConf());</span><br><span class="line">        job.setJarByClass(App.class);</span><br><span class="line">        job.setInputFormatClass(TextInputFormat.class);</span><br><span class="line">        job.setOutputFormatClass(TextOutputFormat.class);</span><br><span class="line"> </span><br><span class="line">        job.setMapOutputKeyClass(Text.class);</span><br><span class="line">        job.setMapOutputValueClass(IntWritable.class);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        job.setReducerClass(IdfReducer.class);</span><br><span class="line">        job.setMapperClass(IdfMap.class);</span><br><span class="line">        job.setNumReduceTasks(1);</span><br><span class="line"> </span><br><span class="line">        String[] args = new GenericOptionsParser(getConf(), strings).getRemainingArgs();</span><br><span class="line">        FileInputFormat.setInputPaths(job,new Path(args[0]));</span><br><span class="line">        FileOutputFormat.setOutputPath(job,new Path(args[1]));</span><br><span class="line"> </span><br><span class="line">        job.waitForCompletion(true);</span><br><span class="line"> </span><br><span class="line">        //第二个Map，计算TF以及TF-IDF</span><br><span class="line">        Job job2 = Job.getInstance(getConf());</span><br><span class="line">        job2.setJarByClass(App.class);</span><br><span class="line">        job2.setInputFormatClass(TextInputFormat.class);</span><br><span class="line">        job2.setOutputFormatClass(TextOutputFormat.class);</span><br><span class="line"> </span><br><span class="line">        job2.setMapOutputKeyClass(Text.class);</span><br><span class="line">        job2.setMapOutputValueClass(DoubleWritable.class);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        job2.setMapperClass(TfMap.class);</span><br><span class="line">        job2.setNumReduceTasks(0);</span><br><span class="line"> </span><br><span class="line">        args = new GenericOptionsParser(getConf(), strings).getRemainingArgs();</span><br><span class="line">        FileInputFormat.setInputPaths(job2,new Path(args[0]));</span><br><span class="line">        FileOutputFormat.setOutputPath(job2,new Path(args[2]));</span><br><span class="line"> </span><br><span class="line">        job2.waitForCompletion(true);</span><br><span class="line"> </span><br><span class="line">        return 0;</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public static class IdfMap extends Mapper&lt;LongWritable,Text,Text,IntWritable&gt;&#123;</span><br><span class="line"> </span><br><span class="line">        /**</span><br><span class="line">         * 比较简单，就是进行WordCount的操作</span><br><span class="line">         * @param key</span><br><span class="line">         * @param value</span><br><span class="line">         * @param context</span><br><span class="line">         * @throws IOException</span><br><span class="line">         * @throws InterruptedException</span><br><span class="line">         */</span><br><span class="line">        @Override</span><br><span class="line">        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">            String[] words = value.toString().split(&quot; &quot;);</span><br><span class="line">            Set&lt;String&gt; set = new HashSet&lt;String&gt;();</span><br><span class="line">            for (String word : words) &#123;</span><br><span class="line">                if (word.length() &gt; 1)</span><br><span class="line">                    set.add(word);</span><br><span class="line">            &#125;</span><br><span class="line">            for (String s : set) &#123;</span><br><span class="line">                context.write(new Text(s),new IntWritable(1));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public static class IdfReducer extends Reducer&lt;Text,IntWritable,Text,FloatWritable&gt;&#123;</span><br><span class="line">        @Override</span><br><span class="line">        protected void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">            int sum =0 ;</span><br><span class="line">            for (IntWritable value : values) &#123;</span><br><span class="line">                sum+=value.get();</span><br><span class="line">            &#125;</span><br><span class="line">            float x =(float) ( 500.0 / sum+1);//比较笨了。。直接写死。。我这有500个样本，没想出来怎么读取数量。。。</span><br><span class="line">            float log = (float) Math.log(x);</span><br><span class="line">            context.write(key,new FloatWritable(log));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public static class TfMap extends Mapper&lt;LongWritable,Text,Text,DoubleWritable&gt;&#123;</span><br><span class="line">        private Map&lt;String,Double&gt; map = new HashMap&lt;&gt;();</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        @Override</span><br><span class="line">        protected void setup(Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">            FileSystem fs = FileSystem.get(context.getConfiguration());</span><br><span class="line">            // 读取文件列表,不知道怎么加载路径了。。。就直接写死了。。。</span><br><span class="line">            Path filePath =new Path(&quot;/user/zj/tfidf/jaroutput/part-r-00000&quot;);</span><br><span class="line">            try (InputStream stream = fs.open(filePath)) &#123;</span><br><span class="line">                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) &#123;</span><br><span class="line">                    String line = &quot;&quot;;</span><br><span class="line">                    while ((line=reader.readLine())!=null)&#123;</span><br><span class="line">                        String[] split = line.split(&quot;\t&quot;);</span><br><span class="line">                        if(split.length == 2)</span><br><span class="line">                            map.put(split[0],Double.parseDouble(split[1]));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException &#123;</span><br><span class="line">            String[] wordArray = value.toString().split(&quot; &quot;);</span><br><span class="line">            List&lt;String&gt; words = new ArrayList&lt;&gt;();</span><br><span class="line">            for (String s : wordArray) &#123;</span><br><span class="line">                if (s.length()&gt;1)</span><br><span class="line">                    words.add(s);</span><br><span class="line">            &#125;</span><br><span class="line">            Map&lt;String,Integer&gt; res = new HashMap&lt;&gt;();</span><br><span class="line">            for (String word : words) &#123;</span><br><span class="line">                if(res.containsKey(word))</span><br><span class="line">                    res.put(word,res.get(word)+1);//计算本文的词频</span><br><span class="line">                else</span><br><span class="line">                    res.put(word,1);</span><br><span class="line">            &#125;</span><br><span class="line">            for (Map.Entry&lt;String, Integer&gt; entry : res.entrySet()) &#123;</span><br><span class="line">                String key1 = entry.getKey();</span><br><span class="line">                Integer value1 = entry.getValue();</span><br><span class="line">                double tf = value1*1.0 /words.size();//这里计算的就是tf，tf = 本文中这个词的次数/总词数</span><br><span class="line">                context.write(new Text(key1),new DoubleWritable(tf * map.get(key1)));//tf直接和idf相乘</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        Configured conf = new Configured();</span><br><span class="line">        ToolRunner.run(new App(),args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整体实现算是比较简单，第一个MR计算idf，map是统计每个文档出现过的词，都记成1次，然后reducer统计所有的，这样就得到了每一个词的idf了</p>
+<p>公式是idf&#x3D;log(总文章数&#x2F;(词出现的文章数+1))</p>
+<p>第二个Map就计算tf ，既然得到了TF就直接将Tf-IDF一起计算了。。可是读idf的结果。。没找到好办法，直接写死了。。计算idf的总文章数也是笨的直接写死了 &#x3D; &#x3D;！</p>
+<p>以后学会了怎么处理再改吧。。</p>
+<p>读取文件的样本比较简单，经过简单处理，一行是一个新闻，进行了简单的分词处理，标点符号还有单个汉字之类的就直接过滤掉了（程序中有）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">隐瞒 外星人 存在 受 质疑 ？ 或 掌握 地外文明 搜狐 据 国外 媒体 报道 ， 美国 国家 航空 航天局 （ ） 在 公众 眼中 是 一个 神秘 存在 ， 该 机构 负责 太空 计划 并 拥有 最 先进 的 航空 航天 技术 ， 不过 随着 太空 探索 的 不断 加深 ， 公众 对 它 的 疑虑 也 日 益 俱 深 ， 并 认为 他们 早已 与 外星人 有 了 联系 但 并 未 公开 。 公众 质疑 隐瞒 了 外星人 消息 世界 上 有 一些 机构 或者 组织 ， 因 其 承担 的 工作 之 重要 ， 以及 需要 的 专业 知识 之 精深 ， 在 公众 眼中 总是 蒙 着 一 层 神秘 的 面纱 。 而 它们 对 公众 的 世界观 影响力 之 强 也 超乎 想象 。 美国 国家 航空 航天局 （ 简称 ） 就是 其中 一个 典型 的 例子 。 是 美国 负责 太空 计划 的 政府 机构 ， 总部 位于 华盛顿 哥伦比亚特区 ， 拥有 最 先进 的 航空 航天 技术 ， 参与 了 美国 阿波罗 计划 、 航天飞机 发射 、 太阳系 探测 等 航天 工程 ， 为 人类 探索 太空 做出 了 巨大 贡献 。 然而 伴随 着 太空 探索 深度 的 扩大 ， 公众 对 它 的 疑虑 也 与 日 俱 深 。 公众 质疑 ： 他们 早已 与 外星人 取得 了 联系 ， 但 一直 没有 公开 美国 气象学家 斯考特 ・ 斯蒂文斯 日前 指责 美国 国家 航空 航天局 向 公众 隐瞒 了 许多 由 太阳 轨道 望远镜 传回 地球 的 资料 ， 其中 包括 有 可能 是 “ 外星 生命 ” 的 信息 。 这 成为 不曾 间断 的 对 质疑 的 又 一个 新鲜 声音 。 太阳 轨道 望远镜 是 一 项 由 美国 国家 航空 航天局 和 欧洲 空间 局 实施 的 联合 研究 计划 。 目前 ， 其 所 处 位置 距离 地球 约 万 公里 ， 主要 对 太阳 的 爆发 情况 、 太阳 表面 喷 出 物质 和 太阳 附近 的 彗星 进行 拍照 。 到 现在 为止 ， 该 望远镜 拍摄 的 照片 数量 已 高达 数 万 张 。 其中 一些 据称 出现 了 “ 不明飞行物 ” 的 身影 。 但 要么 对 其 避而不谈 ， 要么 就 解释 说是 数字 图像 在 传回 地球 的 过程 中 出现 了 差错 ， 才 导致 照片 中 出现 奇特 的 物体 。 但 斯考特 ・ 斯蒂文斯 指出 ， 通过 分析 望远镜 传回 地球 的 所有 照片 资料 ， 他 发现 在 不同 年份 拍摄 的 照片 上 都会 出现 完全 相同 的 不明 物体 。 斯考特 ・ 斯蒂文斯 由此 断言 ， 如果 这些 不明 物体 仅仅 是 偶然 的 干扰 因素 （ 如 宇宙 尘埃 或 残留 的 太阳 粒子 等 ） 造成 的 ， 那么 它们 的 形状 和 尺寸 就 不 可能 总是 完全 一样 。 他 表示 这 有 可能 表明 在 太阳 的 周围 经常 有 不明飞行物 光顾 ， 并且 不只 一 艘 ， 而是 一个 完整 的 编队 。 “ 外星人 ” 正在 以 太阳 为 客体 开展 试验 ， 并 试图 影响 太阳 的 活动 情况 。 其实 ， 的 使命 和 愿景 当中 就 蕴含 了 “ 寻找 地 外 生命 ” 和 “ 星际 移民 ” 的 内容 。 而 长期 以来 ， 都 有 科学家 和 普通 公众 质疑 对 公众 隐瞒 了 有关 地外文明 的 真相 ， 更 有 人 指出 ， 早已 与 “ 外星人 ” 取得 了 联系 ， 但 出于 种种 原因 一直 没有 公开 。 年 发生 在 美国 的 阿诺德 空中 遭遇 飞碟 案 和 罗斯威尔 飞碟 坠毁 案 以及 此后 由 美国 军方 领导 的 专门 调查 现象 的 “ 蓝皮书 计划 ” 、 “ 号志 计划 ” 、 “ 新墨西哥州 怀特 沙漠 试验场 计划 ” 等 研究 活动 ， 开创 了 现代 研究 的 新纪元 。 多年 来 全球 各地 收到 的 目击 案例 已 超过 万 起 ， 其中 有数 十万 起 是 无法 用 自然 和 物理 现象 做出 合理 解释 的 ， 人们 怀疑 它 是 一 种 超越 人类 文明 的 外星 智慧 生命 所为 。 美国 国家 射电 天文台 和 国家 航空 航天局 从 年 开始 进行 微波 监听 宇宙 文明 的 “ 奥兹 玛 计划 ” 和 “ 赛克 洛普 计划 ” 。 年月 和 年月 ， 美国 先后 发射 了 先驱者 号 、 号 [| 宇宙 飞船 |] ， 携带 地球人 给 外星人 的 一 封 自荐信 ， 当中 镌刻 着 地球 和 太阳系 在 银河系 的 位置 ， 地球人 男人 和 女人 的 形象 ， 以及 表示 宇宙 间 最 丰富 的 物质 氢 的 分子 结构图 ， 寄望 外星人 截获 此 信 。 到 深 空 去 探测 “ 地外文明 ” 的 存在 ？ 时至 今日 ， 已经 发展 成为 雇员 人数 约 万 的 大型 机构 ， 年度 经费 超过 亿 美元 。 在 其 推进 的 众多 高 精 尖 项目 中 ， “ 深 空 网络 ” 是 近期 的 一 大 热点 。 那么 ， “ 深 空 网络 ” 到底 为 何物 ？ 深 空 网络 （ ， ） 是 一个 支持 星际 任务 、 无线电 通信 以及 利用 射电天文学 观察 探测 太阳系 和 宇宙 的 国际 天线 网络 ， 它 是 地球 上 最大 也 是 最 敏感 的 科学 研究 用途 的 通信 系统 。 目前 深 空 网络 由 三 处 呈 度 分布 的 深 空 通信 设施 构成 ， 一 处在 美国 加州 的 戈尔德斯通 ， 处于 巴斯托 市 附近 的 莫哈维沙漠 之 中 ； 一 处 位于 西班牙 马德里 附近 ； 另 一 处 位于 澳大利亚 的 堪培拉 附近 。 这种 安排 使得 可以 连续 观察 地球 的 自转 的 过程 。 深 空 探测 的 一个 重要 用途 ， 便 是 探索 地外文明 的 存在 。 分享</span><br><span class="line">库克 ： 最大压力 的 搜狐 事件 ： 上周 三 ， 苹果 股价 单 日 大跌 创 近 个 月 最低 ， 按 当天 收盘价 计算 ， 距离 月 创下 的 历史 高点 跌 去 了 逾 ， 被 认为 已经 踏 上 了 熊 途 。 点评 ： 我 想 库克 最近 一定 心情 不好 ， 压力 很 大 。 因为 近 一 段 时间 来 ， 糟糕 的 事情 一 件 接着 一 件 降临 到 苹果 头上 。 令 人 失望 的 开启 了 苹果 的 厄运 ， 地图 门 、 高 管 下课 、 销售 不及 预期 ， 重重 利空 叠加 之 下 ， 郭台铭 的 一 句 “ 太 难 生产 了 ， 我们 难以 满足 巨大 的 需求 ” ， 就 成为 压垮 苹果 股价 的 最后 一 根 稻草 。 昔日 的 光环 已经 褪 尽 ， 苹果 的 竞争力 和 创新力 正 遭受 前所未有 的 质疑 。 面临 掌舵 苹果 以来 的 最大 挑战 ， 库克 能否 化 危 为 机 ， 扭转 颓势 ， 尚 不得而知 。 分享</span><br><span class="line">单身贵族 也 有 品 热门 [| 数码 相机 |] 大 盘点 搜狐 数码 佳能 作为 升级 机型 ， 在 诸多 细节 方面 做 了 改变 ， 大幅 提升 了 对 焦 及 连 拍 性能 ， 为 普及型 [| 数码 单反 相机 |] 定义 到 了 新 高度 。 新型 图像 感应器 有效像素 为 万 ， 与 能 高效 处理 图像 并 控制 相机 功能 的 数字 影像 处理器 组合 ， 实现 了 高画质 、 高感光度 低 噪 点 。 目前 ， 佳能 报价 参数 图片 论坛 热门 软件 单机 的 最新 报价 为 元 。 重庆 掀 开 触控 新 篇章 佳能 仅 ▲ 佳能 从 外观 上 看 ， 佳能 与 尺寸 重量 相差 不大 ， 整体 外形尺寸 为 × × ， 重 约 仅 机身 。 除了 按键 布局 基本 上 没有 变化 外 ， 最大 的 改进 在于 它 采用 英寸 万 像素 可 [| 旋转 触摸屏 |] ， 这 也 是 佳能 首次 将 触摸屏 设计 在 单反 上 ， 配合 带来 高速 合 焦 ， 可 实现 触摸 对 焦 、 触摸 快门 、 触摸 回放 功能 。 重庆 掀 开 触控 新 篇章 佳能 仅 ▲ 佳能 从 性能 上 看 ， 佳能 搭载 规格 传感器 ， 有效像素 达 万 。 配合 最新 型 处理器 ， 实现 了 高画质 、 高感光度 低 噪 点 它 的 快门速度 为 秒 ， 连 拍 速度 达 每 秒 张 ， 感光度 范围 ， 扩展 可 达 。 其 采用 中央 八 向 双十字 全 点 十字型 自动 对 焦 ， 使 所有 自动 对 焦 区域 都 能 高精度 合 焦 。 追踪 动态 被 摄 体 持续 对 焦 的 人工智能 伺服 自动 对 焦 算法 得到 进化 ， 性能 大幅 提高 。 重庆 掀 开 触控 新 篇章 佳能 仅 ▲ 佳能 编辑 点评 ： 佳能 还 在 内置 相片 处理 方面 提供 给 用户 最大 的 选择 余地 ， 不但 提供 了 拍摄 模式 ， 还 增加 了 快速 连 拍 张 照片 合成 的 手持 夜景 模式 ， 另外 相机 又 内置 了 一 系列 特效 滤镜 ， 配合 屏 的 轻 触 设计 ， 用户 可 更 方便 加入 不同 效果 ， 输出 独 具 风格 的 照片 。 参考价格 元 我 也 要 打分 ： 喜欢 一般 很 差 更 多 条 论坛 热贴 条 人 关注 分 上 一 页 下 一 页 文本 导航 第 页 尼康 第 页 佳能 套机 第 页 宾得 套机 第 页 徕卡 第 页 卡西欧 第 页 佳能 第 页 索尼 分享</span><br><span class="line">索尼 美 上市 三防 设计 美元 起 搜狐 【 搜狐 数码 消息 】 月 日 消息 ， 在 登录 欧洲 市场 个 月 之后 ， 索尼 日前 已经 正式 于 美国 开 售 。 这 款 [| 三防 手机 |] 共有 黄 、 白 、 黑 三 种 颜色 选择 ， 售价 也 因 机身 颜色 而 不同 ， 分别 是 美元 、 美元 、 美元 （ 无 锁 机 ） 。 配置 方面 ， 配备 了 英寸 （ ） 抗 划伤 无机 玻璃 显示屏 ， 即使 屏幕 或 手指 沾 有 液体 ， 仍 可 准确 跟踪 。 另外 ， 机身 内部 采用 了 双核 芯片 ， 内存 ， 存储 空间 （ 支持 卡 拓展 ） ， 万 [| 像素 摄像头 |] ， [| 毫安 电池 |] 。 （ ） 分享</span><br><span class="line">最新 研究 称 近 距 双子星 是 星云 奇特 喷射 流 来源 搜狐 【 搜狐 科学 消息 】 据 美国 太空 网站 报道 ， 目前 ， 科学家 最新 研究 表示 ， 行星状星云 中 一对 彼此 环绕 的 恒星 作为 “ 宇宙 发电站 ” ， 为 该 星云 壮观 喷射 流 提供 后方 能量 。 这 项 发现 揭晓 了 科学家 长期 置疑 “ 弗莱明 号 ” 行星状星云 的 喷射 流 形状 之 谜 ， 这些 喷射 流 呈现 为 奇特 的 节 状 和 弯曲 结构 ， 最新 研究 显示 这种 奇特 喷射 流 是 由 “ 发电站 ” 双子星 的 轨道 交互 作用 提供 动力 。 研究 报告 作者 、 智利 天文学家 亨利博芬 说 ： “ 这 是 一 项 大型 天文 观测 研究 项目 ， 用于 理解 奇特 、 非 对称 形状 的 行星状星云 。 ” 据 科学家 称 ， 的 行星状星云 具有 不 平衡 结构 。 事实上 行星状星云 与 行星 没有 关系 ， 它们 是 垂死 白矮星 生命 末期 阶段 。 博芬 研究 小组 使用 甚 大 望远镜 观测 “ 弗莱明 号 ” 行星状星云 ， 据称 ， 这 个 行星状星云 是 以 天文学家 威廉米娜 弗莱明 命名 ， 她 于 年 在 哈佛大学 天文台 观测 发现 这 个 行星状星云 。 数 十年 以来 ， 天文学家 一直 对 环绕 该 星云 周围 的 奇特 气体 迷惑不解 ， 博芬 和 他 的 研究 同事 在 计算机 模拟 系统 上 结合 最新 观测 数据 ， 证实 了 一对 白矮星 充当 着 “ 宇宙 发电站 ” 。 多数 双子星 轨道 周期 为数 百年 或者 数 千年 ， 但是 “ 弗莱明 号 ” 行星状星云 的 光谱 数据 显示 其中 的 双子 恒星 运行 速度 更 快 ， 快速 变化 的 光谱线 表明 这 对 恒星 轨道 周期 仅 为 天 。 博芬 说 ： “ 这 是 一对 非常 接近 的 双子星 系统 。 ” 他 还 指出 ， 其它 双子星 系统 中 也 发现 类似 的 轨道 周期 。 这 个 行星状星云 中 的 恒星 曾 共享 环绕 星云 的 气体 层 ， 在 其它 双子星 系统 中 也 非常 普遍 。 然而 ， 环绕 星云 的 气体 喷射 流 并 不是 当前 存在 。 这 项 研究 报告 现 发表 在 月 日 出版 的 《 科学 》 杂志 上 。 起初 ， “ 弗莱明 号 ” 行星状星云 中 这 两 颗 恒星 相距甚远 ， 较 大 的 恒星 逐渐 从 一 颗 红巨星 演变 为 体积 庞大 的 渐近 巨 支 星 ， 此时 它 将 形成 数 百倍 太阳 直径 。 这 颗 超大 质量 恒星 释放 的 气体 流 之后 流向 体积 较 小 的 邻近 恒星 ― ― 一 颗 寒冷 的 白矮星 ， 此时 气体 流 像 从 水龙头 中 释放 出来 一样 ， 从 这 两 颗 恒星 向 外 喷射 。 博芬 称 ， 这 只是 恒星 生命 历程 中 非常 短暂 的 一个 时期 ， 仅 持续 年 。 随着 时间 的 流逝 ， 巨大 的 恒星 失去 了 它们 的 气体 ， 变成 了 一 颗 白矮星 。 气体 将 恒星 包裹 起来 ， 推动 它们 逐渐 靠拢 在 一起 。 当 恒星 逐渐 接近 ， 包裹 它们 的 气体 将 被 驱逐 ， 该 气体 喷射 流 的 “ 水龙头 ” 也 将 关闭 。 博芬 研究 小组 认为 ， 这种 现象 普遍 存在 于 行星状星云 中 的 双子星 系统 ， 但 同时 强调 需要 更 多 的 观测 来 证实 这 一 理论 。 （ 卡麦拉 ） 分享</span><br></pre></td></tr></table></figure>
+
+<p>Maven 打包之后运行</p>
+<p>命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar learn-1.0-SNAPSHOT.jar top.eviltuzki.tfidf.App /user/zj/tfidf/allcontent /user/zj/tfidf/jaroutput /user/zj/tfidf/finaloutput</span><br></pre></td></tr></table></figure>
+
+<p>输出结果就简单看一下吧 &#x3D; &#x3D;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[cloudera@quickstart tfidf]$ hadoop fs -cat /user/zj/tfidf/finaloutput/part-m-00000 |grep -v E| sort -k2 -rn |head -n 20</span><br><span class="line">宋体    2.2809544503092782</span><br><span class="line">宋体    1.3156868388809182</span><br><span class="line">东北虎    0.7394429830508474</span><br><span class="line">网盘    0.571717673015873</span><br><span class="line">网盘    0.571717673015873</span><br><span class="line">电视广告    0.5665861818181818</span><br><span class="line">出货量    0.5347087089347079</span><br><span class="line">黑色星期五    0.5342098285714285</span><br><span class="line">雪豹    0.5053336216216217</span><br><span class="line">红茶    0.4936592475247525</span><br><span class="line">携程    0.47571826851851845</span><br><span class="line">野生    0.47535620338983053</span><br><span class="line">音乐    0.4412029517241379</span><br><span class="line">角膜    0.43890478873239436</span><br><span class="line">美食    0.4262510461538462</span><br><span class="line">摇椅    0.42329096944444444</span><br><span class="line">摇椅    0.42329096944444444</span><br><span class="line">美景    0.4227268664556961</span><br><span class="line">酷派    0.42054887452054796</span><br><span class="line">朝鲜    0.4166495891891892</span><br></pre></td></tr></table></figure>
+
+<p>也不知道为啥会出现重复的，个人想法应该是多篇文章中统计出来的吧。。。但是分值都一样- -有点。。。额。。也许是重复的新闻也说不好。。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+              <a href="/tags/TF-IDF/" rel="tag"># TF-IDF</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/01/10/SpringBoot%20jar%E5%8C%85%E4%B8%AD%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E9%97%AE%E9%A2%98/" rel="prev" title="SpringBoot jar包中资源加载问题">
+      <i class="fa fa-chevron-left"></i> SpringBoot jar包中资源加载问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/02/04/hadoop%20is%20running%20beyond%20virtual%20memory%20limits%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" rel="next" title="hadoop is running beyond virtual memory limits问题解决">
+      hadoop is running beyond virtual memory limits问题解决 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

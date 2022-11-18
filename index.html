@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Eviltuzki">
+<meta property="og:url" content="https://eviltuzki.top/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java,ElasticSearch,Go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2022/11/18/%E4%B8%89%E5%B9%B4%E6%B2%A1%E5%86%99%E4%B8%9C%E8%A5%BF%E4%BA%86%EF%BC%8C%E9%9A%8F%E4%BE%BF%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/18/%E4%B8%89%E5%B9%B4%E6%B2%A1%E5%86%99%E4%B8%9C%E8%A5%BF%E4%BA%86%EF%BC%8C%E9%9A%8F%E4%BE%BF%E5%86%99%E7%82%B9%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">三年没写东西了，随便写点什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-18 00:00:00 / 修改时间：21:11:20" itemprop="dateCreated datePublished" datetime="2022-11-18T00:00:00+08:00">2022-11-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p>不知不觉三年过去了，也是这疫情闹了三年，也是高德呆着的三年。<br>三年前，还在写Blog的时候，应该还是我再京东那边各种准备面试的时候，工作说忙吧，也能划水，天天比较多的事情就是开会，当时的领导一言不合拉我们到会议室一开会就是1-2小时，也确实挺磨人的。不过在京东的那一年，也算是初次接触了互联网行业吧，毕竟以前做的还是tob项目，也算是从这里进行了入门，Es也是这一年用的最多的时候了，Java的知识，jvm什么的，也是这个时候逐渐开始尝试在项目中使用吧，然后就是在这里真真正正的体会到数据结构的作用。我们的一个搜索项目，调整数据结构之后搜索的rt从800+ms降低到50ms，真真正正的就是靠数据结构的优化。<br>离开了京东，来到了高德，也可以说是阿里吧，算是真真正正的在互联网呆了3年，也真的是成长最快的3年了。在这边很幸运，开始遇到了好老大，对我也比较认可，项目什么的，我也一点点逐步自己扛起来，在经历了一次晋升失败之后，今年成功晋升到技术专家。但是自己的身体状况也是每况愈下，明显感觉到自己的身体一天不如一天，加上老婆也怀孕了，自己也就选择了离开，为了照顾老婆以及即将出生的孩子，我选择了去国企，主要是为了稳定。经历京东的毕业，阿里的滚动式裁员，虽然都没有轮到自己，但是还是很后怕，互联网就是青春饭，熬上个几年能扯出来就撤出来吧。<br>当过技术负责人，当过业务组组长，觉得自己还是不喜欢做管理，后来找工作的时候，还是找偏向技术一点的国企，就是为了不放下技术，而且这次也是去了一个全新的领域，基本上全都是从0开始学习，刚开始的时候确实有压力，尤其是最近弄容器适配这块，屡屡没有成效，让自己的信心收到了打击，自己都感觉有点抑郁了，不过还好，后面各种尝试后，问题算是解决了。<br>技术栈这块想想自己每次换工作也是换一个领域，从做数据ETL到做搜索项目，到做业务项目，到做Iaas层应用，每次换完工作基本都是从0开始，不过也觉得这一路走来收获颇丰，后面还是继续保持学习。</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>说到学习，回想一下最近3年，好像看过的书，都不到10本吧，还多是什么半小时漫画之类的，想想自己在京东那一年下去，自己看过的书都有几十本了，后面还是继续保持看书的习惯吧，毕竟自己现在工作不像在互联网那会了，多少有点自己的时间了。</p>
+<h2 id="以后"><a href="#以后" class="headerlink" title="以后"></a>以后</h2><p>稀里糊涂写了一堆，大概就是自己这几年互联网到逃离互联网的感想吧，也没什么思路什么的，就想到什么写什么，后面还是继续更新一些自己学习总结什么的。<br>现在业务上自己主方向换了，java基本上逐渐用不上了，后面语言主要应该是go+rust吧，自己瞎捣鼓可能还会用python之类的，其他的可能主要研究虚拟化或者容器相关内容了，唉，随着工作业务方向走吧，就先写这么多。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/18/JavaThread%E7%9A%84%E7%8A%B6%E6%80%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/18/JavaThread%E7%9A%84%E7%8A%B6%E6%80%81/" class="post-title-link" itemprop="url">Java Thread 的状态</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-18 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-18T00:00:00+08:00">2019-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Java中线程的状态(也可以理解为生命周期)，主要有以下几种：NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED 。<br>这些状态存在于Thread类中的一个枚举中如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public enum State &#123;</span><br><span class="line">        NEW,</span><br><span class="line">        RUNNABLE,</span><br><span class="line">        BLOCKED,</span><br><span class="line">        WAITING,</span><br><span class="line">        TIMED_WAITING,</span><br><span class="line">        TERMINATED;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="具体状态"><a href="#具体状态" class="headerlink" title="具体状态"></a>具体状态</h1><h2 id="NEW"><a href="#NEW" class="headerlink" title="NEW"></a>NEW</h2><ul>
+<li>JDK原生的注释说的是一个还没有开始(started)的线程, 也就是说当new了一个线程之后，并没有调用start方法的时候，线程的状态就是NEW。</li>
+</ul>
+<h2 id="RUNNABLE"><a href="#RUNNABLE" class="headerlink" title="RUNNABLE"></a>RUNNABLE</h2><ul>
+<li>这个状态代表线程处于一个可运行的状态，但是不一定会执行，因为要考虑cpu核心数等影响，直到CPU时间分片给到当前线程，才会真正的执行。</li>
+</ul>
+<h2 id="BLOCKED"><a href="#BLOCKED" class="headerlink" title="BLOCKED"></a>BLOCKED</h2><ul>
+<li>阻塞状态，通常都是在等待获取某个监视器的锁的时候会处于当前状态。</li>
+<li>已知：<ul>
+<li>等待synchronized获取监视器对象锁的时候，线程的状态为：BLOCKED (on object monitor)</li>
+<li>线程从WAITING&#x2F;TIMED_WAITING(object.wait()方法)状态唤醒后，因为需要重新获取synchronized监视器对象，会先进入BLOCKED状态，待获取了监视器对象锁后，变为RUNNABLE状态。</li>
+</ul>
+</li>
+</ul>
+<h2 id="WAITING"><a href="#WAITING" class="headerlink" title="WAITING"></a>WAITING</h2><ul>
+<li>等待状态，一般是由于调用了如下方法而进入等待状态：<ul>
+<li>Object#wait()</li>
+<li>Thread#join()</li>
+<li>LockSupport#park()</li>
+</ul>
+</li>
+<li>线程进入WAITING状态后，等待其他线程调用对应的通知对象才会唤醒。比如：<ul>
+<li>Object.notify()</li>
+<li>Object.notifyAll()</li>
+</ul>
+</li>
+</ul>
+<h2 id="TIMED-WAITING"><a href="#TIMED-WAITING" class="headerlink" title="TIMED_WAITING"></a>TIMED_WAITING</h2><ul>
+<li>一样是等待状态，但是区别是带有一个超时时间，超过这个时间后，线程会被自动唤醒。以下几个方法会进入该状态：<ul>
+<li>Thread.sleep(long)</li>
+<li>Object#wait(long)</li>
+<li>Thread#join(long)</li>
+<li>LockSupport#parkNanos(long)</li>
+<li>LockSupport#parkUntil(long)</li>
+</ul>
+</li>
+</ul>
+<h2 id="TERMINATED"><a href="#TERMINATED" class="headerlink" title="TERMINATED"></a>TERMINATED</h2><ul>
+<li>线程的终止状态，也就是当前线程已经执行完成。</li>
+</ul>
+<h1 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h1><ul>
+<li>这个网上图片已经一大把了，有一张图看着简单明了，我就直接引用了：<ul>
+<li>(原地址：<a target="_blank" rel="noopener" href="https://blog.csdn.net/shi2huang/article/details/80289155">https://blog.csdn.net/shi2huang/article/details/80289155</a>)</li>
+</ul>
+</li>
+<li><img src="/JavaThread%E7%9A%84%E7%8A%B6%E6%80%81/20180512102914671.png" alt="线程转换图"></li>
+</ul>
+<h1 id="关于释放资源方面"><a href="#关于释放资源方面" class="headerlink" title="关于释放资源方面"></a>关于释放资源方面</h1><h2 id="锁的释放"><a href="#锁的释放" class="headerlink" title="锁的释放"></a>锁的释放</h2><ul>
+<li>通过synchronized获取监视器对象锁之后，有如下几个方式会释放锁资源：<ul>
+<li>方法或者代码块正常执行完成</li>
+<li>方法或者代码块抛出异常，代码终止执行</li>
+<li>调用监视器对象的wait方法，会释放锁资源</li>
+</ul>
+</li>
+<li>补充：<ul>
+<li>调用Thread.sleep方法不会释放锁资源</li>
+</ul>
+</li>
+</ul>
+<h2 id="CPU资源的释放"><a href="#CPU资源的释放" class="headerlink" title="CPU资源的释放"></a>CPU资源的释放</h2><pre><code>- Thread.sleep()，会释放CPU资源，但是不会释放锁。
+- Thread.yield()，会尝试放弃CPU资源，但是不会释放锁。（可能放弃后又立即获取到）
+- 还有suspend()方法，由于已经过时，不再解释。
+</code></pre>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h2 id="obj-notify-x2F-notifyAll区别"><a href="#obj-notify-x2F-notifyAll区别" class="headerlink" title="obj.notify&#x2F;notifyAll区别"></a>obj.notify&#x2F;notifyAll区别</h2><ul>
+<li>notify会随机唤醒监视obj的一个线程，具体是哪个无法指定，由JVM确定。</li>
+<li>notifyAll会唤醒所有监视obj的线程，然后重新去竞争，只有一个可以获取到资源。</li>
+</ul>
+<h2 id="wait-x2F-sleep-x2F-yield区别"><a href="#wait-x2F-sleep-x2F-yield区别" class="headerlink" title="wait&#x2F;sleep&#x2F;yield区别"></a>wait&#x2F;sleep&#x2F;yield区别</h2><ul>
+<li>sleep()方法会释放CPU资源但是不会释放锁资源。</li>
+<li>wait()方法会释放CPU资源和锁资源。</li>
+<li>yield()方法仅释放CPU执行权，锁仍然占用，线程会被放入就绪队列，会在短时间内再次执行。</li>
+</ul>
+<h2 id="虚假唤醒"><a href="#虚假唤醒" class="headerlink" title="虚假唤醒"></a>虚假唤醒</h2><ul>
+<li>就是在没有调用obj.notify&#x2F;notifyAll的前提下，obj.wait被唤醒了。</li>
+<li>等待线程即使没有收到正确的信号，也能够执行后续的操作，这就可能影响程序执行的正常逻辑。</li>
+<li>为了防止假唤醒，保存信号的成员变量将在一个while循环里接受检查，而不是在if表达式里。</li>
+<li>示例如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class Sign &#123;</span><br><span class="line">    private final Object obj = new Object();</span><br><span class="line">    private boolean flag = false;</span><br><span class="line"></span><br><span class="line">    public void doWait() throws InterruptedException &#123;</span><br><span class="line">        synchronized (obj) &#123;</span><br><span class="line">            while (!flag) &#123;</span><br><span class="line">                obj.wait();</span><br><span class="line">            &#125;</span><br><span class="line">            flag = false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public void doNotify() &#123;</span><br><span class="line">        synchronized (obj) &#123;</span><br><span class="line">            flag = true;</span><br><span class="line">            obj.notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="RUNNABLE状态"><a href="#RUNNABLE状态" class="headerlink" title="RUNNABLE状态"></a>RUNNABLE状态</h2><ul>
+<li>Java中没有线程所谓的RUNNING和READY状态，这两个状态合并到一起，为RUNNABLE状态。</li>
+<li>也就是说即使线程处于RUNNABLE状态，也不一定就正在执行，可能正在等待CPU时间分片。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/18/Redis%20AOF%20Vs%20RDB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/18/Redis%20AOF%20Vs%20RDB/" class="post-title-link" itemprop="url">Redis AOF Vs RDB</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-18 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-18T00:00:00+08:00">2019-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Redis持久化主要有2种方式，一种是基于内存快照的RDB格式，另外一种是基于操作日志的AOF格式，下面简单整理一下相关知识点。</p>
+<h1 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h1><ul>
+<li>RDB是基于内存快照的方式对Redis数据进行持久化，方式有两种，一种是自动触发，一种是手动触发。</li>
+<li>对于生成的RDB文件，Redis默认采用LZF算法进行压缩，然后进行网络传输。</li>
+</ul>
+<h2 id="手动触发"><a href="#手动触发" class="headerlink" title="手动触发"></a>手动触发</h2><ul>
+<li>方式1:执行save命令<ul>
+<li>优点：整体执行时间快</li>
+<li>缺点：执行过程中，阻塞Redis相关操作</li>
+</ul>
+</li>
+<li>方式2:执行bgsave命令<ul>
+<li>fork一个子进程，RDB持久化过程由子进程负责，整个过程中只有fork阶段是阻塞的。</li>
+<li>优点：阻塞Redis相关操作时间较短</li>
+<li>缺点：整体执行时间较长</li>
+</ul>
+</li>
+</ul>
+<h2 id="自动触发"><a href="#自动触发" class="headerlink" title="自动触发"></a>自动触发</h2><ul>
+<li>配置文件中配置了：m秒内执行的n次修改，则触发bgsave <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save m n</span><br></pre></td></tr></table></figure></li>
+<li>新加入从节点，需要复制主节点全部数据，则触发bgsave生成RDB文件，提供给从节点恢复数据</li>
+<li>执行shutdown命令时，如果没有配置AOF，则触发bgsave生成RDB文件，下次启动时进行恢复。</li>
+</ul>
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><ul>
+<li>优点<ul>
+<li>RDB文件是一个经过压缩的二进制文件，非常适合全量备份，全量复制等场景。</li>
+<li>Redis加载并恢复RDB文件速度非常快，远超过AOF方式。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>创建RDB文件多少需要导致Redis停顿(无论save还是bgsave)，所以不适合实时生成，无法实时备份</li>
+<li>不同版本的Redis可能无法互相兼容</li>
+<li>如果最后一次备份RDB时候down机，数据可能丢失，数据完整性无法得到保障。</li>
+</ul>
+</li>
+</ul>
+<h1 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h1><ul>
+<li><p>AOF实际上是Append Only File的缩写，该方式会生成一个独立的日志文件，记录每次的写入的命令。恢复的时候则重新执行AOF文件中的每一条命令。</p>
+</li>
+<li><p>如果需要开启AOF格式，需要修改Redis配置文件,这个配置默认是不开启的:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重写触发配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 500mb</span><br></pre></td></tr></table></figure></li>
+<li><p>AOF执行分4个阶段：</p>
+<ul>
+<li>命令写入（append）：将所有命令追加到缓冲区中</li>
+<li>文件同步（sync）：将缓冲区中的数据同步落盘</li>
+<li>文件重写（rewrite）：定期对AOF文件进行重写操作，主要是进行压缩(比如插入后又删除，这种数据直接从aof中移除)。</li>
+<li>重启加载（load）：读取aof文件，并重写加载数据</li>
+</ul>
+</li>
+</ul>
+<h2 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h2><ul>
+<li>优点<ul>
+<li>提供多种同步策略：<ul>
+<li>每秒同步（一般推荐使用这个）</li>
+<li>每次修改同步（效率较低，但是数据可靠）</li>
+<li>不同步</li>
+</ul>
+</li>
+<li>适合数据完整性要求较高场景</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>随着追加数据越来越多，AOF越来越大。</li>
+<li>数据恢复过程较慢。</li>
+<li>通常同等情况下，AOF文件大于RDB文件大小。</li>
+</ul>
+</li>
+</ul>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
+<li>其实目前生产环境中很少有只是使用其中一种模式的，往往都是两种模式开启，作为互补使用。</li>
+<li>对于一些特殊场景，比如只是用来做缓存，则可以关闭持久化，以提升性能。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/04/MySQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/04/MySQL/" class="post-title-link" itemprop="url">MySQL学习笔记-MySQL大促销实战</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-04 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-04T00:00:00+08:00">2019-08-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="监控信息"><a href="#监控信息" class="headerlink" title="监控信息"></a>监控信息</h2><h3 id="QPS-amp-TPS"><a href="#QPS-amp-TPS" class="headerlink" title="QPS&amp;TPS"></a>QPS&amp;TPS</h3><h3 id="并发量-amp-CPU使用率"><a href="#并发量-amp-CPU使用率" class="headerlink" title="并发量&amp;CPU使用率"></a>并发量&amp;CPU使用率</h3><h3 id="磁盘IO"><a href="#磁盘IO" class="headerlink" title="磁盘IO"></a>磁盘IO</h3><h2 id="大促销"><a href="#大促销" class="headerlink" title="大促销"></a>大促销</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ul>
+<li><p>超高的QPS和TPS</p>
+<ul>
+<li>风险：低下效率的查询</li>
+</ul>
+</li>
+<li><p>大量的并发和超高的CPU使用率</p>
+<ul>
+<li><p>大量的并发</p>
+<ul>
+<li>数据库连接数被占满</li>
+</ul>
+</li>
+<li><p>超高的CPU使用率</p>
+<ul>
+<li>因为CPU资源耗尽出现宕机</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>磁盘IO</p>
+<ul>
+<li>磁盘IO性能突然下降（使用更快的磁盘设备）</li>
+<li>其他大量消耗磁盘性能的计划任务</li>
+</ul>
+</li>
+<li><p>网卡IO</p>
+<ul>
+<li><p>网卡IO被沾满</p>
+<ul>
+<li>减少从服务器数量</li>
+<li>进行分级缓存</li>
+<li>避免使用select * 查询</li>
+<li>分离业务网络和服务器网络</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="影响数据库性能因素"><a href="#影响数据库性能因素" class="headerlink" title="影响数据库性能因素"></a>影响数据库性能因素</h3><ul>
+<li>SQL查询速度</li>
+<li>网卡浏览</li>
+<li>服务器应急</li>
+<li>磁盘IO</li>
+</ul>
+<h2 id="大表带来的问题"><a href="#大表带来的问题" class="headerlink" title="大表带来的问题"></a>大表带来的问题</h2><h3 id="超过千万行或者10G"><a href="#超过千万行或者10G" class="headerlink" title="超过千万行或者10G"></a>超过千万行或者10G</h3><h3 id="查询影响"><a href="#查询影响" class="headerlink" title="查询影响"></a>查询影响</h3><ul>
+<li>慢查询：很难在一定时间内过滤出所需要的数据</li>
+</ul>
+<h3 id="DDL影响"><a href="#DDL影响" class="headerlink" title="DDL影响"></a>DDL影响</h3><ul>
+<li><p>建立索引需要很长的时间</p>
+<ul>
+<li><blockquote>
+<p>5.5版本，引起主从延迟</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>修改表结构需要长时间锁表</p>
+<ul>
+<li>造成长时间的主从延迟</li>
+<li>影响正常的数据操作</li>
+</ul>
+</li>
+</ul>
+<h3 id="处理大表"><a href="#处理大表" class="headerlink" title="处理大表"></a>处理大表</h3><ul>
+<li><p>分库分表</p>
+<ul>
+<li>分表主键选择</li>
+<li>分表跨分区数据查询统计</li>
+</ul>
+</li>
+<li><p>历史数据归档</p>
+<ul>
+<li>归档时间点的选择</li>
+<li>如何进行归档操作</li>
+</ul>
+</li>
+</ul>
+<h2 id="大事务带来的问题"><a href="#大事务带来的问题" class="headerlink" title="大事务带来的问题"></a>大事务带来的问题</h2><h3 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h3><ul>
+<li><p>原子性</p>
+</li>
+<li><p>一致性</p>
+</li>
+<li><p>隔离性</p>
+<ul>
+<li>未提交读</li>
+<li>已提交读</li>
+<li>可重读</li>
+<li>串行化</li>
+</ul>
+</li>
+<li><p>持久性</p>
+</li>
+</ul>
+<h3 id="大事务"><a href="#大事务" class="headerlink" title="大事务"></a>大事务</h3><ul>
+<li><p>运行时间比较长，操作的数据比较多的事务</p>
+<ul>
+<li>锁定数据太多，大量阻塞和锁超时</li>
+<li>回滚所需时间较长</li>
+<li>执行时间长，容易造成主从延迟</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何处理"><a href="#如何处理" class="headerlink" title="如何处理"></a>如何处理</h3><ul>
+<li>避免一次处理太多数据</li>
+<li>移除不必要在事务中的查询</li>
+</ul>
+<h1 id="附Xmind"><a href="#附Xmind" class="headerlink" title="附Xmind"></a>附Xmind</h1><p><img src="/MySQL/MySQL.png" alt="MySQL大促销实战"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/03/MySQL%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/03/MySQL%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">MySQL学习笔记-MySQL基准测试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-03 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-03T00:00:00+08:00">2019-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基准测试"><a href="#基准测试" class="headerlink" title="基准测试"></a>基准测试</h2><h3 id="基准测试：直接简单易于比较，用于评估服务器的处理能力"><a href="#基准测试：直接简单易于比较，用于评估服务器的处理能力" class="headerlink" title="基准测试：直接简单易于比较，用于评估服务器的处理能力"></a>基准测试：直接简单易于比较，用于评估服务器的处理能力</h3><h3 id="压力测试：对真实的业务数据进行测试，活得真实系统所能承受的压力"><a href="#压力测试：对真实的业务数据进行测试，活得真实系统所能承受的压力" class="headerlink" title="压力测试：对真实的业务数据进行测试，活得真实系统所能承受的压力"></a>压力测试：对真实的业务数据进行测试，活得真实系统所能承受的压力</h3><h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><h3 id="建立MySQL服务器的性能基准线"><a href="#建立MySQL服务器的性能基准线" class="headerlink" title="建立MySQL服务器的性能基准线"></a>建立MySQL服务器的性能基准线</h3><h3 id="模拟比当前系统更高的负载，以找出系统的扩展瓶颈"><a href="#模拟比当前系统更高的负载，以找出系统的扩展瓶颈" class="headerlink" title="模拟比当前系统更高的负载，以找出系统的扩展瓶颈"></a>模拟比当前系统更高的负载，以找出系统的扩展瓶颈</h3><h3 id="测试不同的软件硬件和操作系统配置"><a href="#测试不同的软件硬件和操作系统配置" class="headerlink" title="测试不同的软件硬件和操作系统配置"></a>测试不同的软件硬件和操作系统配置</h3><h3 id="证明新的硬件设备是否配置正确"><a href="#证明新的硬件设备是否配置正确" class="headerlink" title="证明新的硬件设备是否配置正确"></a>证明新的硬件设备是否配置正确</h3><h2 id="如何"><a href="#如何" class="headerlink" title="如何"></a>如何</h2><h3 id="对整个系统进行基准测试"><a href="#对整个系统进行基准测试" class="headerlink" title="对整个系统进行基准测试"></a>对整个系统进行基准测试</h3><ul>
+<li><p>优点</p>
+<ul>
+<li>能够测试整个系统的性能，包括Web服务器缓存。数据库等</li>
+<li>能反映出系统中各个组件接口间的性能问题，体现真是性能状况</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>测试设计复杂，消耗时间长</li>
+</ul>
+</li>
+</ul>
+<h3 id="单独针对MySQL进行基准测试"><a href="#单独针对MySQL进行基准测试" class="headerlink" title="单独针对MySQL进行基准测试"></a>单独针对MySQL进行基准测试</h3><ul>
+<li><p>优点</p>
+<ul>
+<li>测试设计简单，所需耗费时间短</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>无法全面了解整个系统的性能基线</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见指标"><a href="#常见指标" class="headerlink" title="常见指标"></a>常见指标</h2><h3 id="TPS"><a href="#TPS" class="headerlink" title="TPS"></a>TPS</h3><ul>
+<li>单位时间内处理事务数</li>
+</ul>
+<h3 id="QPS"><a href="#QPS" class="headerlink" title="QPS"></a>QPS</h3><ul>
+<li>单位时间内查询数量</li>
+</ul>
+<h3 id="响应时间"><a href="#响应时间" class="headerlink" title="响应时间"></a>响应时间</h3><ul>
+<li>平均响应时间</li>
+<li>最小响应时间</li>
+<li>最大响应时间</li>
+<li>各时间所占百分比</li>
+</ul>
+<h3 id="并发量"><a href="#并发量" class="headerlink" title="并发量"></a>并发量</h3><ul>
+<li>同时处理查询请求的数量</li>
+</ul>
+<h1 id="附Xmind"><a href="#附Xmind" class="headerlink" title="附Xmind"></a>附Xmind</h1><p><img src="/MySQL%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/MySQL%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95.png" alt="MySQL基准测试"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/02/SQL%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/02/SQL%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">MySQL学习笔记-SQL查询优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-02T00:00:00+08:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="如何获取有性能问题的SQL"><a href="#如何获取有性能问题的SQL" class="headerlink" title="如何获取有性能问题的SQL"></a>如何获取有性能问题的SQL</h2><h3 id="通过用户反馈获取存在性能问题的SQL"><a href="#通过用户反馈获取存在性能问题的SQL" class="headerlink" title="通过用户反馈获取存在性能问题的SQL"></a>通过用户反馈获取存在性能问题的SQL</h3><h3 id="通过慢查询日志获取存在性能问题的SQL"><a href="#通过慢查询日志获取存在性能问题的SQL" class="headerlink" title="通过慢查询日志获取存在性能问题的SQL"></a>通过慢查询日志获取存在性能问题的SQL</h3><h3 id="实时获取存在性能问题的SQL"><a href="#实时获取存在性能问题的SQL" class="headerlink" title="实时获取存在性能问题的SQL"></a>实时获取存在性能问题的SQL</h3><h2 id="使用慢查询日志获取有性能问题的SQL"><a href="#使用慢查询日志获取有性能问题的SQL" class="headerlink" title="使用慢查询日志获取有性能问题的SQL"></a>使用慢查询日志获取有性能问题的SQL</h2><h3 id="slow-query-log-启动停止记录慢查询日志"><a href="#slow-query-log-启动停止记录慢查询日志" class="headerlink" title="slow_query_log 启动停止记录慢查询日志"></a>slow_query_log 启动停止记录慢查询日志</h3><h3 id="slow-query-log-file指定慢查询日志存储路径及文件"><a href="#slow-query-log-file指定慢查询日志存储路径及文件" class="headerlink" title="slow_query_log_file指定慢查询日志存储路径及文件"></a>slow_query_log_file指定慢查询日志存储路径及文件</h3><h3 id="long-query-time指定记录慢查询日志SQL执行时间的伐值"><a href="#long-query-time指定记录慢查询日志SQL执行时间的伐值" class="headerlink" title="long_query_time指定记录慢查询日志SQL执行时间的伐值"></a>long_query_time指定记录慢查询日志SQL执行时间的伐值</h3><ul>
+<li>默认10秒</li>
+</ul>
+<h3 id="记录所有符合条件的SQL"><a href="#记录所有符合条件的SQL" class="headerlink" title="记录所有符合条件的SQL"></a>记录所有符合条件的SQL</h3><ul>
+<li>包括查询语句</li>
+<li>数据修改语句</li>
+<li>已经回滚的SQL</li>
+</ul>
+<h3 id="log-queries-not-using-indexes是否记录未使用索引的SQL"><a href="#log-queries-not-using-indexes是否记录未使用索引的SQL" class="headerlink" title="log_queries_not_using_indexes是否记录未使用索引的SQL"></a>log_queries_not_using_indexes是否记录未使用索引的SQL</h3><h2 id="常用的慢查询日志分析工具"><a href="#常用的慢查询日志分析工具" class="headerlink" title="常用的慢查询日志分析工具"></a>常用的慢查询日志分析工具</h2><h3 id="mysqldumpslow"><a href="#mysqldumpslow" class="headerlink" title="mysqldumpslow"></a>mysqldumpslow</h3><h3 id="pt-query-digest"><a href="#pt-query-digest" class="headerlink" title="pt-query-digest"></a>pt-query-digest</h3><h2 id="实时获取性能问题SQL"><a href="#实时获取性能问题SQL" class="headerlink" title="实时获取性能问题SQL"></a>实时获取性能问题SQL</h2><h3 id="information-schema-gt-PROCESSLIST表"><a href="#information-schema-gt-PROCESSLIST表" class="headerlink" title="information_schema -&gt; PROCESSLIST表"></a>information_schema -&gt; PROCESSLIST表</h3><h2 id="SQL的解析预处理及生成执行计划"><a href="#SQL的解析预处理及生成执行计划" class="headerlink" title="SQL的解析预处理及生成执行计划"></a>SQL的解析预处理及生成执行计划</h2><h3 id="搞清楚这些查询为什么会慢"><a href="#搞清楚这些查询为什么会慢" class="headerlink" title="搞清楚这些查询为什么会慢"></a>搞清楚这些查询为什么会慢</h3><ul>
+<li>客户端发送sQL请求到服务器</li>
+<li>检查是否可以在查询换存储命中</li>
+<li>服务器端执行SQL解析，预处理，再由优化器声称对应的执行计划</li>
+<li>根据执行计划，调用存储引擎API来查询数据</li>
+<li>将结果返回给客户端</li>
+</ul>
+<h3 id="查询缓存对SQL性能的影响"><a href="#查询缓存对SQL性能的影响" class="headerlink" title="查询缓存对SQL性能的影响"></a>查询缓存对SQL性能的影响</h3><ul>
+<li><p>query_cache_type</p>
+<ul>
+<li>设置查询缓存是否可用</li>
+</ul>
+</li>
+<li><p>query_cache_size</p>
+<ul>
+<li>设置查询缓存的内存大小</li>
+</ul>
+</li>
+<li><p>query_cache_limit</p>
+<ul>
+<li>设置查询缓存可用存储的最大值</li>
+</ul>
+</li>
+<li><p>query_cache_wlock_invalidate</p>
+<ul>
+<li>设置数据表被锁后是否返回缓存中的数据</li>
+</ul>
+</li>
+<li><p>query_cache_min_res_unit</p>
+<ul>
+<li>设置查询缓存非配的内存块的最小单位</li>
+</ul>
+</li>
+<li><p>读写比较频繁的系统，建议关闭缓存</p>
+</li>
+</ul>
+<h3 id="MySQL依照执行计划和存储引擎进行交互"><a href="#MySQL依照执行计划和存储引擎进行交互" class="headerlink" title="MySQL依照执行计划和存储引擎进行交互"></a>MySQL依照执行计划和存储引擎进行交互</h3><ul>
+<li><p>解析SQL</p>
+<ul>
+<li><p>语法解析阶段通过关键字对MySQL语句进行解析，并生成一颗对应的解析树</p>
+</li>
+<li><p>MySQL解析器将使用MySQL语法规则验证和解析查询</p>
+<ul>
+<li>检查语法是否使用了正确的关键字</li>
+<li>关键字的顺序是否正确</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>预处理</p>
+<ul>
+<li><p>根据MySQL规则进一步检查解析树是否合法</p>
+<ul>
+<li>查询中所涉及的表和数据列是否存在，名字或者别名是否存在歧义等</li>
+</ul>
+</li>
+<li><p>查询优化器生成查询计划</p>
+</li>
+</ul>
+</li>
+<li><p>优化SQL执行计划</p>
+</li>
+</ul>
+<h3 id="SQL的解析预处理以及生成执行计划"><a href="#SQL的解析预处理以及生成执行计划" class="headerlink" title="SQL的解析预处理以及生成执行计划"></a>SQL的解析预处理以及生成执行计划</h3><ul>
+<li><p>会造成MySQL生成错误的执行计划的原因</p>
+<ul>
+<li><p>统计信息不准确</p>
+</li>
+<li><p>执行计划中的成本估算不等同于实际的执行计划的成本</p>
+<ul>
+<li>MySQL服务器层不知道哪些页面在内存中</li>
+<li>哪些页面在磁盘上</li>
+<li>哪些页面要顺序读取</li>
+<li>哪些页面需要随机读取</li>
+</ul>
+</li>
+<li><p>MySQL优化器所认为的最优可能与你所认为的最优不一样</p>
+<ul>
+<li>基于成本模型选择最优的执行计划</li>
+</ul>
+</li>
+<li><p>MySQL从不考虑其他并发的查询，这可能会影响当前查询的速度</p>
+</li>
+<li><p>MySQL有时候也会基于一些固定的规则来生成执行计划</p>
+</li>
+<li><p>MySQL不会考虑不收其控制的成本</p>
+<ul>
+<li>存储过程</li>
+<li>用户自定义的函数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="MySQL优化器可优化的SQL类型"><a href="#MySQL优化器可优化的SQL类型" class="headerlink" title="MySQL优化器可优化的SQL类型"></a>MySQL优化器可优化的SQL类型</h3><ul>
+<li><p>重新定义表的关联顺序</p>
+</li>
+<li><p>将外链接转化为内连接</p>
+</li>
+<li><p>使用等价变换规则</p>
+</li>
+<li><p>优化count，min，max</p>
+<ul>
+<li>select tables optimized away</li>
+</ul>
+</li>
+<li><p>建一个表达式转化为常数表达式</p>
+</li>
+<li><p>子查询优化</p>
+<ul>
+<li>子查询-&gt;连接查询</li>
+</ul>
+</li>
+<li><p>提前终止查询</p>
+</li>
+<li><p>对in条件进行优化</p>
+</li>
+</ul>
+<h2 id="如何确定查询处理各个阶段所消耗的时间"><a href="#如何确定查询处理各个阶段所消耗的时间" class="headerlink" title="如何确定查询处理各个阶段所消耗的时间"></a>如何确定查询处理各个阶段所消耗的时间</h2><h3 id="使用profile"><a href="#使用profile" class="headerlink" title="使用profile"></a>使用profile</h3><ul>
+<li><p>set profiling&#x3D;1</p>
+<ul>
+<li>session级别</li>
+</ul>
+</li>
+<li><p>执行查询</p>
+</li>
+<li><p>show profiles</p>
+</li>
+<li><p>show profile for query x</p>
+</li>
+<li><p>show profile cpu for query x</p>
+</li>
+</ul>
+<h3 id="使用performance-schema"><a href="#使用performance-schema" class="headerlink" title="使用performance_schema"></a>使用performance_schema</h3><h2 id="特定SQL的查询优化"><a href="#特定SQL的查询优化" class="headerlink" title="特定SQL的查询优化"></a>特定SQL的查询优化</h2><h3 id="大批量删除"><a href="#大批量删除" class="headerlink" title="大批量删除"></a>大批量删除</h3><ul>
+<li>分批次删除</li>
+</ul>
+<h3 id="修改大表的表结构"><a href="#修改大表的表结构" class="headerlink" title="修改大表的表结构"></a>修改大表的表结构</h3><ul>
+<li><p>主从切换，先从后主</p>
+</li>
+<li><p>新老表同步，比较复杂</p>
+<ul>
+<li>pt-online-schema-change</li>
+</ul>
+</li>
+</ul>
+<h3 id="优化not-in-和-lt-gt-查询"><a href="#优化not-in-和-lt-gt-查询" class="headerlink" title="优化not in 和&lt;&gt;查询"></a>优化not in 和&lt;&gt;查询</h3><ul>
+<li>优化为LEFT JOIN方法</li>
+</ul>
+<h3 id="使用汇总表优化查询"><a href="#使用汇总表优化查询" class="headerlink" title="使用汇总表优化查询"></a>使用汇总表优化查询</h3><ul>
+<li>截止到前一天的数据汇总count</li>
+<li>今天的全部数据进行count</li>
+<li>把两部分数据汇总</li>
+</ul>
+<h1 id="附Xmind"><a href="#附Xmind" class="headerlink" title="附Xmind"></a>附Xmind</h1><p><img src="/SQL%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/SQL%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96.png" alt="SQL查询优化"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/02/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/02/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">MySQL学习笔记-数据库分库分表设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-02T00:00:00+08:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="数据库分库分表的几种方式"><a href="#数据库分库分表的几种方式" class="headerlink" title="数据库分库分表的几种方式"></a>数据库分库分表的几种方式</h2><h3 id="把一个实例中的多个数据库拆分到不同的实例"><a href="#把一个实例中的多个数据库拆分到不同的实例" class="headerlink" title="把一个实例中的多个数据库拆分到不同的实例"></a>把一个实例中的多个数据库拆分到不同的实例</h3><h3 id="把一个库中的表分离到不同的数据库中"><a href="#把一个库中的表分离到不同的数据库中" class="headerlink" title="把一个库中的表分离到不同的数据库中"></a>把一个库中的表分离到不同的数据库中</h3><h2 id="数据库分片前的准备"><a href="#数据库分片前的准备" class="headerlink" title="数据库分片前的准备"></a>数据库分片前的准备</h2><h3 id="对一个库中相关表进行水平拆分到不同实例的数据库中"><a href="#对一个库中相关表进行水平拆分到不同实例的数据库中" class="headerlink" title="对一个库中相关表进行水平拆分到不同实例的数据库中"></a>对一个库中相关表进行水平拆分到不同实例的数据库中</h3><h3 id="如何选择分区键"><a href="#如何选择分区键" class="headerlink" title="如何选择分区键"></a>如何选择分区键</h3><ul>
+<li>分区键要能尽量避免跨分片查询的发生</li>
+<li>尽量使各个分片中的数据平均</li>
+</ul>
+<h3 id="如何存储无需分片的表"><a href="#如何存储无需分片的表" class="headerlink" title="如何存储无需分片的表"></a>如何存储无需分片的表</h3><ul>
+<li>冗余到每一个分片中</li>
+<li>使用额外的节点统一存储</li>
+</ul>
+<h3 id="如何在节点上部署分片"><a href="#如何在节点上部署分片" class="headerlink" title="如何在节点上部署分片"></a>如何在节点上部署分片</h3><ul>
+<li>每个分片使用单一数据库，并且数据库名也相同</li>
+<li>将多个分片表存储在一个数据库中，并且在表名上加入分片号后缀</li>
+<li>在一个节点中部署多个数据库，每个数据库中包含一个分片</li>
+</ul>
+<h3 id="如何分配分片中的数据"><a href="#如何分配分片中的数据" class="headerlink" title="如何分配分片中的数据"></a>如何分配分片中的数据</h3><ul>
+<li>按分区键Hash值取模分配分片数据</li>
+<li>按分区键的范围来分配分片数据</li>
+<li>利用分区键和分片的映射表来分配分片数据</li>
+</ul>
+<h3 id="如何生成全局唯一Id"><a href="#如何生成全局唯一Id" class="headerlink" title="如何生成全局唯一Id"></a>如何生成全局唯一Id</h3><ul>
+<li><p>使用auto_increment_increment和auto_increment_offset参数</p>
+</li>
+<li><p>配置全局节点生成Id</p>
+<ul>
+<li>容易成为系统瓶颈</li>
+</ul>
+</li>
+<li><p>在Redis等缓存服务器中创建全局ID</p>
+</li>
+</ul>
+<h2 id="附件：Xmind图"><a href="#附件：Xmind图" class="headerlink" title="附件：Xmind图"></a>附件：Xmind图</h2><p><img src="/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E8%AE%BE%E8%AE%A1/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E8%AE%BE%E8%AE%A1.png" alt="数据库分库分表设计"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/08/01/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/01/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">MySQL学习笔记-MySQL数据库索引优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-01 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-01T00:00:00+08:00">2019-08-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="MySQL支持的索引类型"><a href="#MySQL支持的索引类型" class="headerlink" title="MySQL支持的索引类型"></a>MySQL支持的索引类型</h2><h3 id="Btree索引"><a href="#Btree索引" class="headerlink" title="Btree索引"></a>Btree索引</h3><ul>
+<li><p>通过B+Tree结构存储数据</p>
+</li>
+<li><p>加快数据的查询速度</p>
+</li>
+<li><p>更适合进行范围查找</p>
+</li>
+<li><p>顺序存储</p>
+</li>
+<li><p>什么情况下可以使用到</p>
+<ul>
+<li>全值匹配的查询</li>
+<li>匹配最左前缀的查询</li>
+<li>匹配列前缀查询</li>
+<li>匹配范围值的查询</li>
+<li>精确匹配左前列并范围匹配另外一列</li>
+<li>只访问索引的查询</li>
+</ul>
+</li>
+<li><p>使用限制</p>
+<ul>
+<li>如果不是按照索引最左列开始查找，则无法使用索引</li>
+<li>使用索引时不能跳过索引中的列</li>
+<li>not in和&lt;&gt;不能使用索引</li>
+<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引</li>
+</ul>
+</li>
+</ul>
+<h3 id="Hash索引"><a href="#Hash索引" class="headerlink" title="Hash索引"></a>Hash索引</h3><ul>
+<li><p>特点</p>
+<ul>
+<li>基于hash表实现，只有查询条件精确匹配hash索引中的所有列的时候才能够使用hash索引</li>
+<li>对于hash索引中的所有列，存储引擎都会为每一行计算一个hash码，hash索引中存储的就是hash码</li>
+</ul>
+</li>
+<li><p>限制</p>
+<ul>
+<li>hash索引必须进行二次查找</li>
+<li>hash索引无法用于排序</li>
+<li>hash索引无法进行范围查找，不支持部分索引查找</li>
+<li>hash索引中的hash码的计算可能存在has冲突</li>
+</ul>
+</li>
+</ul>
+<h2 id="为什么要使用索引"><a href="#为什么要使用索引" class="headerlink" title="为什么要使用索引"></a>为什么要使用索引</h2><ul>
+<li><p>索引大大减少了存储引擎需要扫描的数据量</p>
+</li>
+<li><p>索引可以帮助我们进行排序，以避免使用临时表</p>
+</li>
+<li><p>索引可以把随机I&#x2F;O改变为顺序I&#x2F;O</p>
+</li>
+</ul>
+<h2 id="索引不是越多越好"><a href="#索引不是越多越好" class="headerlink" title="索引不是越多越好"></a>索引不是越多越好</h2><ul>
+<li><p>索引会增加写操作的成本</p>
+</li>
+<li><p>太多的索引会增加查询优化器的选择时间</p>
+</li>
+</ul>
+<h2 id="索引优化策略"><a href="#索引优化策略" class="headerlink" title="索引优化策略"></a>索引优化策略</h2><h3 id="索引列上不能使用表达式或者函数"><a href="#索引列上不能使用表达式或者函数" class="headerlink" title="索引列上不能使用表达式或者函数"></a>索引列上不能使用表达式或者函数</h3><h3 id="前缀索引和索引列的选择性"><a href="#前缀索引和索引列的选择性" class="headerlink" title="前缀索引和索引列的选择性"></a>前缀索引和索引列的选择性</h3><ul>
+<li>索引的选择性是不重复的索引值和表的记录数的比值</li>
+</ul>
+<h3 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h3><ul>
+<li><p>如何选择索引列的顺序</p>
+<ul>
+<li>经常被使用到的列优先</li>
+<li>选择性高的列优先</li>
+<li>宽度小的列优先</li>
+</ul>
+</li>
+</ul>
+<h3 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h3><ul>
+<li><p>优点</p>
+<ul>
+<li>可以优化缓存，减少磁盘IO操作</li>
+<li>可以减少随机I&#x2F;O，变随机I&#x2F;O操作为顺序I&#x2F;O操作</li>
+<li>可以避免对Innodb主键索引的二次查询</li>
+<li>可以避免MyISAM表进行系统调用</li>
+</ul>
+</li>
+<li><p>无法使用覆盖索引的情况</p>
+<ul>
+<li>存储引擎不支持覆盖索引</li>
+<li>查询中使用了太多的列</li>
+<li>使用了双%号的like查询</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用索引来优化查询"><a href="#使用索引来优化查询" class="headerlink" title="使用索引来优化查询"></a>使用索引来优化查询</h3><ul>
+<li><p>使用索引扫描来优化排序</p>
+<ul>
+<li>通过排序操作</li>
+<li>按照索引顺序扫描数据</li>
+<li>索引的列顺序和Order By子句的顺序完全一致</li>
+<li>索引中所有列的方向（升序，降序）和Order By子句完全一致</li>
+<li>Order by中的字段全部在关联表中的第一张表中</li>
+</ul>
+</li>
+<li><p>模拟Hash索引优化查询</p>
+<ul>
+<li>只能处理键值的全值匹配</li>
+<li>所使用的Hash函数决定着索引键的大小</li>
+</ul>
+</li>
+<li><p>利用索引优化锁</p>
+<ul>
+<li>索引可以减少锁定的行数</li>
+<li>索引可以加快处理速度，同时也加快了锁的释放</li>
+</ul>
+</li>
+</ul>
+<h3 id="索引的维护和优化"><a href="#索引的维护和优化" class="headerlink" title="索引的维护和优化"></a>索引的维护和优化</h3><ul>
+<li><p>删除重复和冗余的索引</p>
+</li>
+<li><p>查找未被使用过的索引</p>
+</li>
+<li><p>更新索引统计信息以及减少索引碎片</p>
+<ul>
+<li>analyze table table_name</li>
+<li>optimize table table_name</li>
+</ul>
+</li>
+</ul>
+<h2 id="附件：Xmind图"><a href="#附件：Xmind图" class="headerlink" title="附件：Xmind图"></a>附件：Xmind图</h2><p><img src="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96.png" alt="MySQL数据库索引优化"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/07/31/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/31/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">MySQL学习笔记-数据库结构优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-31 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-31T00:00:00+08:00">2019-07-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><h3 id="减少数据冗余"><a href="#减少数据冗余" class="headerlink" title="减少数据冗余"></a>减少数据冗余</h3><h3 id="尽量避免数据维护中出现更新，插入和删除异常"><a href="#尽量避免数据维护中出现更新，插入和删除异常" class="headerlink" title="尽量避免数据维护中出现更新，插入和删除异常"></a>尽量避免数据维护中出现更新，插入和删除异常</h3><ul>
+<li><p>插入异常</p>
+<ul>
+<li>如果表中的某个实体随着另外一个实体存在而存在</li>
+</ul>
+</li>
+<li><p>更新异常</p>
+<ul>
+<li>如果更高表中的某个实体的单独属性时，需要对多行进行更新</li>
+</ul>
+</li>
+<li><p>删除异常</p>
+<ul>
+<li>如果删除表中的某一实体则会导致其他实体的消失</li>
+</ul>
+</li>
+</ul>
+<h3 id="节约数据存储空间"><a href="#节约数据存储空间" class="headerlink" title="节约数据存储空间"></a>节约数据存储空间</h3><h3 id="提高查询效率"><a href="#提高查询效率" class="headerlink" title="提高查询效率"></a>提高查询效率</h3><h2 id="数据库设计范式"><a href="#数据库设计范式" class="headerlink" title="数据库设计范式"></a>数据库设计范式</h2><h3 id="第一设计范式"><a href="#第一设计范式" class="headerlink" title="第一设计范式"></a>第一设计范式</h3><ul>
+<li>数据库中表的所有字段都只具有单一属性</li>
+<li>单一属性的列是由基本的数据类型所构成的</li>
+<li>设计出来的表都是简单的二维表</li>
+</ul>
+<h3 id="第二设计范式"><a href="#第二设计范式" class="headerlink" title="第二设计范式"></a>第二设计范式</h3><ul>
+<li>一个表中具有一个业务主键</li>
+</ul>
+<h3 id="第三设计范式"><a href="#第三设计范式" class="headerlink" title="第三设计范式"></a>第三设计范式</h3><ul>
+<li>每一个非主属性，既不部分依赖于也不传递依赖于业务主键</li>
+</ul>
+<h3 id="反范式化设计"><a href="#反范式化设计" class="headerlink" title="反范式化设计"></a>反范式化设计</h3><ul>
+<li>少量的数据冗余，提高查询效率。空间换时间。</li>
+</ul>
+<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><ul>
+<li><p>范式化</p>
+<ul>
+<li><p>优点</p>
+<ul>
+<li><p>可以尽量的减少数据冗余</p>
+<ul>
+<li>数据表更新快，体积小</li>
+</ul>
+</li>
+<li><p>范式化的更新操作比反范式化更快</p>
+</li>
+<li><p>范式化的表通常比反范式化更小</p>
+</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>对于查询需要对多个表进行关联</li>
+<li>更难进行索引优化</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>反范式化</p>
+<ul>
+<li><p>优点</p>
+<ul>
+<li>减少表关联</li>
+<li>更好的进行索引优化</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>存在数据冗余以及数据维护异常</li>
+<li>对数据的修改需要更多的成本</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="物理设计原则"><a href="#物理设计原则" class="headerlink" title="物理设计原则"></a>物理设计原则</h2><h3 id="定义数据库，表以及字段的命名规范"><a href="#定义数据库，表以及字段的命名规范" class="headerlink" title="定义数据库，表以及字段的命名规范"></a>定义数据库，表以及字段的命名规范</h3><ul>
+<li>可读性原则</li>
+<li>表意性原则</li>
+<li>长名原则</li>
+</ul>
+<h3 id="选择合适的存储引擎"><a href="#选择合适的存储引擎" class="headerlink" title="选择合适的存储引擎"></a>选择合适的存储引擎</h3><h3 id="为表中的字段选择合适的数据类型"><a href="#为表中的字段选择合适的数据类型" class="headerlink" title="为表中的字段选择合适的数据类型"></a>为表中的字段选择合适的数据类型</h3><ul>
+<li><p>当一个列可以选择多种数据类型的时候，应该优先考虑数字类型，其次是日期或者二进制类型，最后是字符类型。对于相同级别的数据类型，应该优先考虑占用空间小的数据类型</p>
+</li>
+<li><p>Varchar和char</p>
+<ul>
+<li><p>varchar</p>
+<ul>
+<li><p>Varchar类型的存储特点</p>
+<ul>
+<li>VARCHAR用于存储变长字符串，只占用必要的存储空间</li>
+<li>列的最大长度小于255则只占用一个额外的字节，用于记录字符串长度</li>
+<li>列的最大长度大于255则占用两个额外的字节，用于记录字符串长度</li>
+</ul>
+</li>
+<li><p>VARCHAR长度的选择问题</p>
+<ul>
+<li>使用最小的符合需求的长度</li>
+<li>varchar(5)和varchar(200)存储‘MYSQL’字符串性能不同</li>
+</ul>
+</li>
+<li><p>varchar的适用场景</p>
+<ul>
+<li>字符串列最大长度比平均长度大很多</li>
+<li>字符串列很少被更新</li>
+<li>使用了多字节字符集存储字符串</li>
+</ul>
+</li>
+<li><p>char类型是定长的</p>
+</li>
+</ul>
+</li>
+<li><p>char</p>
+<ul>
+<li><p>Char类型的存储特点</p>
+<ul>
+<li>字符串存储在char类型的列中会删除末尾的空格</li>
+<li>Char类型的最大宽度为255</li>
+</ul>
+</li>
+<li><p>char类型的适用场景</p>
+<ul>
+<li><p>char类型适合存储长度近似的值</p>
+<ul>
+<li>比如MD5，手机号，身份证号</li>
+</ul>
+</li>
+<li><p>char类型适合存储短字符串</p>
+</li>
+<li><p>char类型适合经常更新的字符串列</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>如何存储日期类型</p>
+<ul>
+<li><p>DATATIME类型</p>
+<ul>
+<li><p>占用8字节存储空间</p>
+</li>
+<li><p>时区无关</p>
+</li>
+<li><p>时间范围</p>
+<ul>
+<li>1000-01-01 00：00：00 ~ 9999-12-31 23：59：59</li>
+</ul>
+</li>
+<li><p>存储格式</p>
+<ul>
+<li>YYYY-MM-DD HH:MM:SS[.fraction]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>TIMESTAMP</p>
+<ul>
+<li><p>存储了由格林尼治时间到当前时间的秒数</p>
+</li>
+<li><p>占用4字节</p>
+</li>
+<li><p>时间范围</p>
+<ul>
+<li>1970-01-01到2038-01-19</li>
+</ul>
+</li>
+<li><p>依赖于所指定的时区</p>
+</li>
+<li><p>在行的数据修改时，可以自动修改timestamp列的值（根据时间戳自动更新）</p>
+</li>
+<li><p>默认第一个列是随着更改自动更新</p>
+</li>
+</ul>
+</li>
+<li><p>date类型</p>
+<ul>
+<li>只需要3个字节</li>
+<li>可以使用时间函数</li>
+<li>时间范围1000-01-01~9999-12-31</li>
+</ul>
+</li>
+<li><p>time类型</p>
+<ul>
+<li>用于存储时间数据</li>
+<li>HH:MM:SS</li>
+</ul>
+</li>
+<li><p>存储日期时间数据的注意事项</p>
+<ul>
+<li>不要使用字符串类型来存储日期时间数据</li>
+<li>日期时间类型通常比字符串占用的存储空间小</li>
+<li>日期时间类型在进行查找过滤时可以利用日期来进行对比</li>
+<li>日期时间类型还有着丰富的处理函数，可以方便的对时间进行日期计算</li>
+<li>使用Int存储日期时间不如使用Timestamp类型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="附件：Xmind图"><a href="#附件：Xmind图" class="headerlink" title="附件：Xmind图"></a>附件：Xmind图</h2><p><img src="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96.png" alt="数据库结构优化"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/07/30/%E4%BB%80%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BA%86MySQL%E6%80%A7%E8%83%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/30/%E4%BB%80%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BA%86MySQL%E6%80%A7%E8%83%BD/" class="post-title-link" itemprop="url">MySQL学习笔记-什么影响了MySQL性能</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-30 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-30T00:00:00+08:00">2019-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="服务器硬件"><a href="#服务器硬件" class="headerlink" title="服务器硬件"></a>服务器硬件</h2><h3 id="CPU资源"><a href="#CPU资源" class="headerlink" title="CPU资源"></a>CPU资源</h3><ul>
+<li>Web应用-Core重于频率</li>
+</ul>
+<h3 id="内存大小"><a href="#内存大小" class="headerlink" title="内存大小"></a>内存大小</h3><ul>
+<li>主板支持最大频率的内存</li>
+</ul>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h3 id="IO子系统"><a href="#IO子系统" class="headerlink" title="IO子系统"></a>IO子系统</h3><ul>
+<li><p>传统硬盘</p>
+<ul>
+<li>存储容量</li>
+<li>传输速度</li>
+<li>访问时间</li>
+<li>主轴转速</li>
+<li>物理尺寸</li>
+</ul>
+</li>
+<li><p>RAID</p>
+<ul>
+<li><p>RAID0</p>
+<ul>
+<li>多个独立磁盘串行</li>
+<li>最简单</li>
+<li>性价比最高</li>
+<li>数据没有冗余</li>
+</ul>
+</li>
+<li><p>RAID1</p>
+<ul>
+<li>磁盘镜像</li>
+<li>安全性最高</li>
+</ul>
+</li>
+<li><p>RAID5</p>
+<ul>
+<li>分布式奇偶校验磁盘阵列</li>
+</ul>
+</li>
+<li><p>RAID10</p>
+<ul>
+<li>分片镜像</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>固态存储</p>
+<ul>
+<li><p>更好的随机读写性能</p>
+</li>
+<li><p>更好的支持并发</p>
+</li>
+<li><p>更容易损坏</p>
+</li>
+<li><p>使用场景</p>
+<ul>
+<li>大量随机I&#x2F;O场景</li>
+<li>单线程负载I&#x2F;O瓶颈</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>网络存储</p>
+<ul>
+<li><p>SAN</p>
+<ul>
+<li>大量顺序读写</li>
+</ul>
+</li>
+<li><p>NAS</p>
+<ul>
+<li>有一定网络延迟</li>
+</ul>
+</li>
+<li><p>适合数据库备份</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络性能的限制"><a href="#网络性能的限制" class="headerlink" title="网络性能的限制"></a>网络性能的限制</h3><ul>
+<li>延迟</li>
+<li>带宽</li>
+<li>网络质量影响</li>
+</ul>
+<h2 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h2><h3 id="CentOS"><a href="#CentOS" class="headerlink" title="CentOS"></a>CentOS</h3><ul>
+<li><p>内核相关参数（&#x2F;etc&#x2F;sysctl.conf）</p>
+<ul>
+<li><p>网络参数</p>
+<ul>
+<li>net.core.somaxconn&#x3D;65535  #监听队列长度</li>
+<li>net.core.netdev_max_backlog&#x3D;65535</li>
+<li>net.ipv4.tcp_max_syn_backlog&#x3D;65535</li>
+<li>net.ipv4.tcp_fin_timeout &#x3D;10</li>
+<li>net.ipv4.tcp_tw_reuse  &#x3D;1</li>
+<li>net.ipv4.tcp_tw_recycle  &#x3D;1</li>
+<li>net.core.wmem_default &#x3D; 87380</li>
+<li>net.core.wmem_max &#x3D; 16777216</li>
+<li>net.core.rmem_default &#x3D; 87380</li>
+<li>net.core.rmem_max &#x3D; 16777216</li>
+<li>net.ipv4.tcp_keepalive_time &#x3D;120</li>
+<li>net.ipv4.tcp_keepalive_intvl &#x3D;30</li>
+<li>net.ipv4.tcp_keepalive_probes &#x3D;3</li>
+</ul>
+</li>
+<li><p>内核参数</p>
+<ul>
+<li><p>kernel.shmmax&#x3D;4294967295</p>
+<ul>
+<li><p>Linux内核参数中最重要的参数之一，用于定义单个共享内存段的最大值</p>
+</li>
+<li><p>注意事项</p>
+<ul>
+<li>这个参数应该设置的足够大，以便能在一个共享内存段下容纳下整个的Innodb缓冲池的大小</li>
+<li>这个值的大小对于64位Linux系统，可取的最大值为物理内存值-1byte，建议设置为大于物理内存的一半，一般取值大于Innodb缓冲池的大小即可。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>vm.swappiness &#x3D; 0</p>
+<ul>
+<li><p>当内存不足时会对性能产生比较明显的影响</p>
+</li>
+<li><p>如果完全禁用Swap</p>
+<ul>
+<li>降低操作系统性能</li>
+<li>容易造成内存溢出，崩溃，或都被操作系统Kill</li>
+</ul>
+</li>
+<li><p>结论</p>
+<ul>
+<li>需要保留交换分区，但是要控制何时使用交换分区</li>
+</ul>
+</li>
+<li><p>为0</p>
+<ul>
+<li>除非内存使用满了，否则不要使用交换分区</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>增加资源限制（&#x2F;etc&#x2F;security&#x2F;limit.conf）</p>
+<ul>
+<li><p><code>* soft nofile 65535</code></p>
+</li>
+<li><p><code>* hard nofile 65535</code></p>
+</li>
+<li><p>解释</p>
+<ul>
+<li><code>* 所有用户有效</code></li>
+<li><code>soft指的是当前系统生效的配置</code></li>
+<li><code>hard表明系统中所能设定的最大值</code></li>
+<li><code>nofile表示所限制的资源师打开文件的最大数目</code></li>
+<li><code>65535 限制的数量</code></li>
+</ul>
+</li>
+<li><p>结论：把可以打开的文件数量增加到65535个以保证可以打开足够多的文件句柄</p>
+</li>
+<li><p>注意：这个文件的修改需要重启系统才可以生效</p>
+</li>
+</ul>
+</li>
+<li><p>磁盘调度策略（&#x2F;sys&#x2F;block&#x2F;devname&#x2F;queue&#x2F;scheduler）</p>
+<ul>
+<li><p>noop</p>
+<ul>
+<li>电梯式调度策略（适合闪存，RAM，嵌入式系统）</li>
+</ul>
+</li>
+<li><p>cfq</p>
+<ul>
+<li>完全公平队列（默认，不适合MySQL）</li>
+</ul>
+</li>
+<li><p>deadline</p>
+<ul>
+<li>截止时间调度策略（适合数据库）</li>
+</ul>
+</li>
+<li><p>anticipatory</p>
+<ul>
+<li>预料I&#x2F;O调度测量（适合写入较多的环境，比如文件服务器，不适合数据库）</li>
+</ul>
+</li>
+<li><p>修改方法</p>
+<ul>
+<li>echo deadlin &gt; &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;scheduler</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>文件系统影响</p>
+<ul>
+<li><p>Linux</p>
+<ul>
+<li><p>推荐使用XFS</p>
+</li>
+<li><p>EXT3&#x2F;4</p>
+<ul>
+<li><p>系统挂载参数（&#x2F;etc&#x2F;fstab）</p>
+<ul>
+<li><p>data &#x3D; writeback | ordered | journal</p>
+<ul>
+<li>Innodb适用于writeback，ordered较慢，journal最慢，最安全</li>
+</ul>
+</li>
+<li><p>noatime,nodiratime</p>
+<ul>
+<li>禁用相关时间</li>
+</ul>
+</li>
+<li><p>示例：</p>
+<ul>
+<li>&#x2F;dev&#x2F;sda1&#x2F;ext3	noatime,nodiratime,data&#x3D;writeback 1 1</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据库存储引擎的选择"><a href="#数据库存储引擎的选择" class="headerlink" title="数据库存储引擎的选择"></a>数据库存储引擎的选择</h2><h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h3><ul>
+<li><p>MySQL5.5之前的默认存储引擎</p>
+</li>
+<li><p>存储为MYD，MYI两个文件</p>
+</li>
+<li><p>特性</p>
+<ul>
+<li><p>并发性与锁级别</p>
+<ul>
+<li>表锁</li>
+</ul>
+</li>
+<li><p>表损坏修复</p>
+<ul>
+<li>check table tablename</li>
+<li>repire table tablename</li>
+</ul>
+</li>
+<li><p>支持索引类型</p>
+<ul>
+<li>全文索引</li>
+<li>Text等前缀索引</li>
+</ul>
+</li>
+<li><p>支持数据压缩</p>
+<ul>
+<li>myisampack</li>
+<li>只读</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>限制</p>
+<ul>
+<li>单表&lt;256T</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li><p>非事务型应用</p>
+</li>
+<li><p>只读类应用（支持压缩）</p>
+</li>
+<li><p>空间类应用</p>
+<ul>
+<li>支持空间函数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Innodb"><a href="#Innodb" class="headerlink" title="Innodb"></a>Innodb</h3><ul>
+<li><p>使用表空间进行数据存储</p>
+<ul>
+<li><p>innodb_file_per_table</p>
+<ul>
+<li>ON：独立表空间：tablename.ibd</li>
+<li>OFF：系统表空间：ibdataX</li>
+</ul>
+</li>
+<li><p>比较</p>
+<ul>
+<li>系统表空间无法简单的收缩文件大小</li>
+<li>独立表空间可以通过optimize table命令收缩系统文件</li>
+<li>系统表空间会产生I&#x2F;O瓶颈</li>
+<li>独立表空间可以同时向多个文件刷新数据</li>
+</ul>
+</li>
+<li><p>建议</p>
+<ul>
+<li>对Innodb使用独立表空间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>系统表空间</p>
+<ul>
+<li>Innodb数据字典信息</li>
+<li>Undo回滚段</li>
+</ul>
+</li>
+<li><p>特性</p>
+<ul>
+<li>Innodb是一种事务性的存储引擎</li>
+<li>完全支持事务的ACID特性</li>
+<li>Redo Log和Undo Log</li>
+<li>支持行级锁</li>
+<li>行级锁可以最大程度支持并发</li>
+<li>行级锁是由存储引擎层实现的</li>
+</ul>
+</li>
+<li><p>什么是锁</p>
+<ul>
+<li><p>锁主要作用是管理共享资源的并发访问</p>
+</li>
+<li><p>锁用于实现事务的隔离性</p>
+</li>
+<li><p>锁的类型</p>
+<ul>
+<li>共享锁（读锁）</li>
+<li>独占锁（写锁）</li>
+</ul>
+</li>
+<li><p>锁的粒度</p>
+<ul>
+<li>表级锁</li>
+<li>行级锁</li>
+</ul>
+</li>
+<li><p>阻塞和死锁</p>
+</li>
+</ul>
+</li>
+<li><p>Innodb状态检查</p>
+<ul>
+<li>show engine innodb status</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li>使用大多数OLTP应用</li>
+</ul>
+</li>
+</ul>
+<h3 id="CSV"><a href="#CSV" class="headerlink" title="CSV"></a>CSV</h3><ul>
+<li><p>文件系统存储特点</p>
+<ul>
+<li>数据以文本方式存储在文件中</li>
+<li>.csv文件存储表内容</li>
+<li>CSM文件存储表的元数据如表的状态和数据量</li>
+<li>frm文件存储表结构信息</li>
+</ul>
+</li>
+<li><p>特点</p>
+<ul>
+<li><p>以CSV格式进行数据存储</p>
+</li>
+<li><p>所有列必须都是不能为null的</p>
+</li>
+<li><p>不支持索引</p>
+<ul>
+<li>不适合大表</li>
+</ul>
+</li>
+<li><p>可以对数据文件直接进行编辑</p>
+<ul>
+<li>保存文本文件内容</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li>适合作为数据交换的中间表</li>
+</ul>
+</li>
+</ul>
+<h3 id="Archive"><a href="#Archive" class="headerlink" title="Archive"></a>Archive</h3><ul>
+<li><p>文件存储特点</p>
+<ul>
+<li>以Zlib对表数据进行压缩，磁盘I&#x2F;O更少</li>
+<li>数据存储在ARZ为后缀的文件中</li>
+<li>只支持Insert和select操作</li>
+<li>只允许在自增ID列上加索引</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li>日志和数据采集类应用</li>
+</ul>
+</li>
+</ul>
+<h3 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h3><ul>
+<li><p>文件系统特点</p>
+<ul>
+<li>也称为HEAP存储引擎，数据保存在内存中</li>
+</ul>
+</li>
+<li><p>功能特点</p>
+<ul>
+<li><p>支持HASH索引和BTree索引</p>
+<ul>
+<li>HASH适合等值</li>
+<li>BTree适合范围</li>
+</ul>
+</li>
+<li><p>所有字段都为固定长度</p>
+</li>
+<li><p>不支持Blog和Text等大字段</p>
+</li>
+<li><p>使用表级锁</p>
+</li>
+<li><p>最大大小由max_heap_table_size参数决定</p>
+<ul>
+<li>默认16M</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>容易混淆的概念</p>
+<ul>
+<li><p>Memory存储引擎表</p>
+</li>
+<li><p>临时表</p>
+<ul>
+<li><p>系统使用临时表</p>
+<ul>
+<li>超过限制使用MyISAM临时表</li>
+<li>未超过限制使用Memory表</li>
+</ul>
+</li>
+<li><p>create temporary table 建立的临时表</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li>用于查找或者映射表</li>
+<li>用于保存数据分析过程中产生的中间表</li>
+<li>用于缓存周期性聚合数据的结果表</li>
+<li>MEMory数据容易丢失，所以要求数据可再生</li>
+</ul>
+</li>
+</ul>
+<h3 id="Federated"><a href="#Federated" class="headerlink" title="Federated"></a>Federated</h3><ul>
+<li><p>特点</p>
+<ul>
+<li>提供了访问MySQL服务器上表的方法</li>
+<li>本地不存储数据，数据全部存放到远程服务器上</li>
+<li>本地需要保存表结构和服务器连接信息</li>
+</ul>
+</li>
+<li><p>如何使用</p>
+<ul>
+<li>默认禁止，启用需要在启动时增加federated参数</li>
+</ul>
+</li>
+<li><p>适用场景</p>
+<ul>
+<li>偶尔统计分析以及手工查询</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何选择正确的存储引擎"><a href="#如何选择正确的存储引擎" class="headerlink" title="如何选择正确的存储引擎"></a>如何选择正确的存储引擎</h3><ul>
+<li><p>一般选择InnoDB</p>
+</li>
+<li><p>参考条件</p>
+<ul>
+<li>事务</li>
+<li>备份</li>
+<li>崩溃恢复</li>
+<li>存储引擎的特有特性</li>
+</ul>
+</li>
+<li><p>尽量不要混合使用存储引擎</p>
+</li>
+</ul>
+<h2 id="数据库参数配置"><a href="#数据库参数配置" class="headerlink" title="数据库参数配置"></a>数据库参数配置</h2><h3 id="MySQL获取配置信息路径"><a href="#MySQL获取配置信息路径" class="headerlink" title="MySQL获取配置信息路径"></a>MySQL获取配置信息路径</h3><ul>
+<li>命令行参数</li>
+<li>配置文件</li>
+</ul>
+<h3 id="MySQL配置参数的作用域"><a href="#MySQL配置参数的作用域" class="headerlink" title="MySQL配置参数的作用域"></a>MySQL配置参数的作用域</h3><ul>
+<li><p>全局参数</p>
+<ul>
+<li>set global 参数名&#x3D;参数值;</li>
+<li>set @@global.参数名:&#x3D;参数值；</li>
+</ul>
+</li>
+<li><p>会话参数</p>
+<ul>
+<li>set [session] 参数名&#x3D;参数值</li>
+<li>set @@session.参数名:&#x3D;参数值</li>
+</ul>
+</li>
+</ul>
+<h3 id="内存配置相关参数"><a href="#内存配置相关参数" class="headerlink" title="内存配置相关参数"></a>内存配置相关参数</h3><ul>
+<li><p>确定可以使用的内存的上限</p>
+</li>
+<li><p>确定MySQL的每个连接使用的内存</p>
+<ul>
+<li>sort_buffer_size</li>
+<li>join_buffer_size</li>
+<li>read_buffer_size</li>
+<li>read_rnd_buffer_size</li>
+</ul>
+</li>
+<li><p>确定需要为操作系统保留多少内存</p>
+</li>
+<li><p>如何为缓存池分配内存</p>
+<ul>
+<li><p>Innodb_buffer_pool_size</p>
+<ul>
+<li>总内存 -（每个线程所需要的内存*连接数）- 系统保留内存</li>
+</ul>
+</li>
+<li><p>key_buffer_size</p>
+<ul>
+<li>主要MyISAM使用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="IO相关配置参数"><a href="#IO相关配置参数" class="headerlink" title="IO相关配置参数"></a>IO相关配置参数</h3><ul>
+<li><p>Innodb I&#x2F;O 相关配置</p>
+<ul>
+<li><p>Innodb_log_file_size</p>
+</li>
+<li><p>Innodb_log_files_in_group</p>
+</li>
+<li><p>事务日志总大小 &#x3D; Innodb_log_file_size *  Innodb_log_files_in_group</p>
+</li>
+<li><p>Innodb_log_buffer_size</p>
+</li>
+<li><p>Innodb_flush_log_at_trx_commit</p>
+<ul>
+<li>0：每秒进行一次log写入cache，并flush log到磁盘</li>
+<li>1：每次事务提交执行log写入cache，并flush log到磁盘</li>
+<li>2：每次事务提交，执行log数据写入到cache，每秒执行一次flush log到磁盘</li>
+</ul>
+</li>
+<li><p>Innodb_flush_method&#x3D;O_DIRECT</p>
+<ul>
+<li>关闭操作系统缓存(Linux建议)</li>
+</ul>
+</li>
+<li><p>Innodb_file_per_table &#x3D; 1</p>
+</li>
+<li><p>Innodb_doublewriter &#x3D; 1</p>
+</li>
+</ul>
+</li>
+<li><p>MyISAM</p>
+<ul>
+<li><p>delay_key_write</p>
+<ul>
+<li>OFF:每次写操作后刷新键缓冲中的脏块到磁盘</li>
+<li>ON: 支队在键表时制定了delay_key_write选项的表使用延迟刷新</li>
+<li>ALL:对所有MyISAM表都是用延迟建写入</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="安全相关配置参数"><a href="#安全相关配置参数" class="headerlink" title="安全相关配置参数"></a>安全相关配置参数</h3><ul>
+<li><p>expire_logs_days</p>
+<ul>
+<li>指定自动清理binlog的天数</li>
+</ul>
+</li>
+<li><p>max_allowed_packet</p>
+<ul>
+<li>控制MySQL可以接受的包的大小</li>
+</ul>
+</li>
+<li><p>skip_name_resolve</p>
+<ul>
+<li>禁用DNS查找</li>
+</ul>
+</li>
+<li><p>sysdate_is_now</p>
+<ul>
+<li>确保sysdate()返回确定性日期</li>
+</ul>
+</li>
+<li><p>read_only</p>
+<ul>
+<li>禁止非super权限的用户写权限</li>
+</ul>
+</li>
+<li><p>skip_slave_start</p>
+<ul>
+<li>禁用Salve恢复</li>
+</ul>
+</li>
+<li><p>sql_mode</p>
+<ul>
+<li>设置MySQL所使用的SQL模式</li>
+<li>strict_trans_tables</li>
+<li>no_engine_subtitution</li>
+<li>no_zero_date</li>
+<li>no_zero_in_date</li>
+<li>only_full_group_by</li>
+</ul>
+</li>
+</ul>
+<h3 id="其他常用配置参数"><a href="#其他常用配置参数" class="headerlink" title="其他常用配置参数"></a>其他常用配置参数</h3><ul>
+<li><p>sync_binlog</p>
+<ul>
+<li>控制MySQL如何向磁盘刷新binlog</li>
+</ul>
+</li>
+<li><p>tmp_table_size&#x2F;max_heap_table_size</p>
+<ul>
+<li>控制内存临时表大小</li>
+</ul>
+</li>
+<li><p>max_connections</p>
+<ul>
+<li>控制允许的最大连接数</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据库结构设计和SQL语句"><a href="#数据库结构设计和SQL语句" class="headerlink" title="数据库结构设计和SQL语句"></a>数据库结构设计和SQL语句</h2><h3 id="数据库设计对性能的影响"><a href="#数据库设计对性能的影响" class="headerlink" title="数据库设计对性能的影响"></a>数据库设计对性能的影响</h3><ul>
+<li>过分的反范式化为表建立太多的列</li>
+<li>过分的范式化造成太多的表关联</li>
+<li>OLTP环境中使用了不恰当的分区表</li>
+<li>使用外键保证数据的完整性</li>
+</ul>
+<h1 id="附Xmind"><a href="#附Xmind" class="headerlink" title="附Xmind"></a>附Xmind</h1><p><img src="/%E4%BB%80%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BA%86MySQL%E6%80%A7%E8%83%BD/%E4%BB%80%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BA%86MySQL%E6%80%A7%E8%83%BD.png" alt="什么影响了MySQL性能"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

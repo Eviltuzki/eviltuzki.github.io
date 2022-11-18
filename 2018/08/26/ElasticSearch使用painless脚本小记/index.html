@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="ElasticSearch使用painless脚本小记 前几天项目中碰到了一个麻烦的问题，统计Doc中一个List中符合筛选条件的项的值的和(简单说就是Doc是商店为主体，统计该商店的某个时间段下单记录)，开始用的是二次查询，但是后来数据量大了以后，第二次查询用的IDs查询传了几千个值，超过了ES的限制，最后只好拿出脚本进行解决。 先说一下Doc的结构,不相干的字段就删掉了  1234567891">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch使用painless脚本小记">
+<meta property="og:url" content="https://eviltuzki.top/2018/08/26/ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="ElasticSearch使用painless脚本小记 前几天项目中碰到了一个麻烦的问题，统计Doc中一个List中符合筛选条件的项的值的和(简单说就是Doc是商店为主体，统计该商店的某个时间段下单记录)，开始用的是二次查询，但是后来数据量大了以后，第二次查询用的IDs查询传了几千个值，超过了ES的限制，最后只好拿出脚本进行解决。 先说一下Doc的结构,不相干的字段就删掉了  1234567891">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.629Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="ElasticSearch">
+<meta property="article:tag" content="Painless">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2018/08/26/ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ElasticSearch使用painless脚本小记 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/26/ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ElasticSearch使用painless脚本小记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-26 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-26T00:00:00+08:00">2018-08-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="ElasticSearch使用painless脚本小记"><a href="#ElasticSearch使用painless脚本小记" class="headerlink" title="ElasticSearch使用painless脚本小记"></a>ElasticSearch使用painless脚本小记</h2><ul>
+<li>前几天项目中碰到了一个麻烦的问题，统计Doc中一个List中符合筛选条件的项的值的和(简单说就是Doc是商店为主体，统计该商店的某个时间段下单记录)，开始用的是二次查询，但是后来数据量大了以后，第二次查询用的IDs查询传了几千个值，超过了ES的限制，最后只好拿出脚本进行解决。</li>
+<li>先说一下Doc的结构,不相干的字段就删掉了</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;shopid&quot;: 11,</span><br><span class="line">    &quot;orderList&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2015-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:2254</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2016-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7575.66</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2017-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:6533.99</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2018-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7870.20</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>业务的查询需求是筛选2016-2018年，下单金额累计超过13000的商店(当然还有其他附加条件的查询)，orderList还是Nested字段，最开始是进行二次查询，也就是首先将其他条件查询出来，然后对结果进行过滤，在这个日期下的符合条件的取出来ID，进行二次查询(这个条件改成Ids查询)，最开始还能正常工作，后来不加上这个条件一下查出来一千条数据的时候就麻烦了，es默认Bool查询条件不能超过1024，硬着头皮改了ES配置，调成了1W，总算是正常工作了，但是不是长久之计，随着订单越来越多，迟早还会有问题，而且查询的时间越来越长了(查出来7000多条数据的时候已经超过10s了。。)，跟业务部门沟通了，他们暂时可以接受，但是让我们尽快优化。</li>
+<li>网上查找了很多资料，也想使用innerHits解决，但是innerHits结果无法参与aggs，实在没有其他办法，只好决定用脚本来解决。在上家公司用的是ES2.X，脚本groovy默认是关闭的，开启还有重启ES修改配置，觉得麻烦，而且据说有安全隐患，对这个一比较抵触，当下用的是ES5.6，看了一下脚本用的是painless，这个从来没有接触过，看了一下语法，好像也不太复杂，和Java差不太多，那就硬着头皮上。</li>
+<li>painless什么时候开始支持的没太关注，不过看文档说好像已经是容器内运行，相对比较安全了，而且ES5.6默认已经开启了，尝试过程中发现Nested类型取值只能取到一个内部文档的，list其他对象找不到。冗余出来一个非nested字段，发现日期和金额都是分别排序的，这就很尴尬了。。。最后决定吧订单金额和下单时间拼接成字符串，存到一个数组中去，这样取值的时候，金额和日期就是一一对应的。</li>
+<li>修改后的Doc结构如下：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;shopid&quot;: 11,</span><br><span class="line">    &quot;orderListStr&quot;:[</span><br><span class="line">        &quot;2015-06-06@2254&quot;,</span><br><span class="line">        &quot;2016-06-06@7575.66&quot;,</span><br><span class="line">        &quot;2017-06-06@6533.99&quot;,</span><br><span class="line">        &quot;2018-06-06@7870.20&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;orderList&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2015-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:2254</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2016-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7575.66</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2017-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:6533.99</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2018-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7870.20</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>然后就是对照着文档写painless脚本了，个人水平有限，写的脚本也很低效，不过好赖问题是解决了，附上脚本：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">String fotmat = &#x27;yyyy-MM-dd&#x27;;</span><br><span class="line">String field = &#x27;orderListStr&#x27;;</span><br><span class="line">double saleNum = 0.0;</span><br><span class="line">for (int i = 0; i &lt; doc[field].length; ++i) &#123;</span><br><span class="line">    def docStr=doc[field][i];</span><br><span class="line">    def date = docStr.substring(0,docStr.indexOf(&#x27;@&#x27;));</span><br><span class="line">    double value =Double.parseDouble(docStr.substring(docStr.indexOf(&#x27;@&#x27;)+1));</span><br><span class="line">    SimpleDateFormat sdf = new SimpleDateFormat(fotmat);</span><br><span class="line">    if (params.from != null &amp;&amp; params.from != &#x27;&#x27; &amp;&amp; params.to != null &amp;&amp; params.to != &#x27;&#x27; )&#123;</span><br><span class="line">        if (sdf.parse(params.from).getTime()&lt;=sdf.parse(date).getTime() &amp;&amp; sdf.parse(params.to).getTime()&gt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (params.from != null &amp;&amp; params.from != &#x27;&#x27;)&#123;</span><br><span class="line">        if( sdf.parse(params.from).getTime()&lt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (params.to != null &amp;&amp; params.to != &#x27;&#x27;)&#123;</span><br><span class="line">        if( sdf.parse(params.to).getTime()&gt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">if (params.inputFrom != null &amp;&amp; params.inputTo != null)&#123;</span><br><span class="line">    return params.inputFrom&lt;=saleNum &amp;&amp; saleNum&lt;=params.inputTo;</span><br><span class="line">&#125; else if(params.inputFrom !=null)&#123;</span><br><span class="line">    return params.inputFrom&lt;=saleNum;</span><br><span class="line">&#125; else if(params.inputTo != null)&#123;</span><br><span class="line">    return saleNum&lt;=params.inputTo;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>使用脚本解决了时间段下单次数统计和时间段金额统计的查询，时间也从原来的接近10s下降到1s左右(感觉脚本没办法走索引，应该都是全表扫描)，这个肯定不是最优方法，但是 现在也想不出来什么其他高效的方法，就先上这个了，最起码目前查询最近5年的订单也是1秒左右，而且不用担心出现bool数量超过限制的问题了。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+              <a href="/tags/Painless/" rel="tag"># Painless</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/25/Linux%20curl%E5%91%BD%E4%BB%A4%E6%8A%A5%E9%94%99%20bad%20range%20specification/" rel="prev" title="Linux curl命令报错 bad range specification">
+      <i class="fa fa-chevron-left"></i> Linux curl命令报错 bad range specification
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/09/16/MySQL%E5%A4%A7%E7%BF%BB%E9%A1%B5%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" rel="next" title="MySQL大翻页查询优化">
+      MySQL大翻页查询优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">ElasticSearch使用painless脚本小记</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

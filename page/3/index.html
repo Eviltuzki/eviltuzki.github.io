@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Eviltuzki">
+<meta property="og:url" content="https://eviltuzki.top/page/3/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java,ElasticSearch,Go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/page/3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/06/12/%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/12/%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4/" class="post-title-link" itemprop="url">用户空间与内核空间</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-12 00:00:00" itemprop="dateCreated datePublished" datetime="2019-06-12T00:00:00+08:00">2019-06-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<ul>
+<li><p>我们知道现在操作系统都是采用虚拟存储器，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4G（2的32次方）。</p>
+</li>
+<li><p>操心系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能直接操作内核，保证内核的安全，操心系统将虚拟空间划分为两部分，一部分为内核空间，一部分为用户空间。</p>
+</li>
+<li><p>针对linux操作系统而言，将最高的1G字节（从虚拟地址0xC0000000到0xFFFFFFFF），供内核使用，称为内核空间，而将较低的3G字节（从虚拟地址0x00000000到0xBFFFFFFF），供各个进程使用，称为用户空间。</p>
+</li>
+<li><p>每个进程可以通过系统调用进入内核，因此，Linux内核由系统内的所有进程共享。于是，从具体进程的角度来看，每个进程可以拥有4G字节的虚拟空间。</p>
+</li>
+<li><p>空间分配如下图所示：<br><img src="/%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4/1.png" alt="空间分配图"></p>
+</li>
+<li><p>有了用户空间和内核空间，整个linux内部结构可以分为三部分，从最底层到最上层依次是：硬件–&gt;内核空间–&gt;用户空间。如下图所示：<br><img src="/%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4/2.png" alt="linux内部结构图"></p>
+</li>
+<li><p>需要注意的细节问题：</p>
+<ul>
+<li>内核空间中存放的是内核代码和数据，而进程的用户空间中存放的是用户程序的代码和数据。不管是内核空间还是用户空间，它们都处于虚拟空间中。 </li>
+<li>Linux使用两级保护机制：0级供内核使用，3级供用户程序使用。</li>
+</ul>
+</li>
+<li><p>内核态与用户态：</p>
+<ul>
+<li>当一个任务（进程）执行系统调用而陷入内核代码中执行时，称进程处于内核运行态（内核态）。此时处理器处于特权级最高的（0级）内核代码中执行。当进程处于内核态时，执行的内核代码会使用当前进程的内核栈。每个进程都有自己的内核栈。</li>
+<li>当进程在执行用户自己的代码时，则称其处于用户运行态（用户态）。此时处理器在特权级最低的（3级）用户代码中运行。当正在执行用户程序而突然被中断程序中断时，此时用户程序也可以象征性地称为处于进程的内核态。因为中断处理程序将使用当前进程的内核栈。</li>
+</ul>
+</li>
+<li><p>参考资料：</p>
+<ul>
+<li>用户空间与内核空间，进程上下文与中断上下文[总结][<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Anker/p/3269106.html]">https://www.cnblogs.com/Anker/p/3269106.html]</a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/06/02/Java%20NIO%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/02/Java%20NIO%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Java NIO学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-02 00:00:00" itemprop="dateCreated datePublished" datetime="2019-06-02T00:00:00+08:00">2019-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>内容基本来源:<ul>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/">http://www.iocoder.cn/</a></li>
+<li><a target="_blank" rel="noopener" href="http://ifeve.com/">http://ifeve.com</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h2><h3 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h3><ul>
+<li>Nio Channel类似于Java Stream，但又有几点不同<ul>
+<li>Channel是双向的，Stream是单向的</li>
+<li>Channel可以非阻塞的进行读写操作，而Stream需要等待io操作完成，也就是阻塞的。</li>
+<li>Channel的读操作或者写操作都是依赖Buffer的，Stream没有依赖</li>
+</ul>
+</li>
+</ul>
+<h4 id="ServerSocketChannel"><a href="#ServerSocketChannel" class="headerlink" title="ServerSocketChannel"></a>ServerSocketChannel</h4><ul>
+<li>Java NIO中的 ServerSocketChannel 是一个可以监听新进来的TCP连接的通道, 就像标准IO中的ServerSocket一样。</li>
+<li>ServerSocketChannel类在 java.nio.channels包中。</li>
+</ul>
+<h4 id="SocketChannel"><a href="#SocketChannel" class="headerlink" title="SocketChannel"></a>SocketChannel</h4><ul>
+<li>Java NIO中的SocketChannel是一个连接到TCP网络套接字的通道。</li>
+<li>可以通过以下2种方式创建SocketChannel：<ul>
+<li>打开一个SocketChannel并连接到互联网上的某台服务器。</li>
+<li>一个新连接到达ServerSocketChannel时，会创建一个SocketChannel。</li>
+</ul>
+</li>
+<li>非阻塞模式与选择器搭配会工作的更好，通过将一或多个SocketChannel注册到Selector，可以询问选择器哪个通道已经准备好了读取，写入等。</li>
+</ul>
+<h4 id="DatagramChannel"><a href="#DatagramChannel" class="headerlink" title="DatagramChannel"></a>DatagramChannel</h4><ul>
+<li>Java NIO中的DatagramChannel是一个能收发UDP包的通道。</li>
+<li>因为UDP是无连接的网络协议，所以不能像其它通道那样读取和写入。</li>
+<li>它发送和接收的是数据包。</li>
+</ul>
+<h4 id="FileChannel"><a href="#FileChannel" class="headerlink" title="FileChannel"></a>FileChannel</h4><ul>
+<li>Java NIO中的FileChannel是一个连接到文件的通道。可以通过文件通道读写文件。</li>
+<li>FileChannel无法设置为非阻塞模式，它总是运行在阻塞模式下。</li>
+</ul>
+<h3 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h3><ul>
+<li>一个 Buffer，本质上是内存中的一块，我们可以将数据写入这块内存，之后从这块内存获取数据。通过将这块内存封装成 NIO Buffer 对象，并提供了一组常用的方法，方便我们对该块内存的读写。</li>
+<li>基本属性<ul>
+<li>capacity<ul>
+<li>属性，容量，Buffer 能容纳的数据元素的最大值。这一容量在 Buffer 创建时被赋值，并且永远不能被修改。</li>
+</ul>
+</li>
+<li>limit<ul>
+<li>属性，上限。</li>
+<li>写模式下，代表最大能写入的数据上限位置，这个时候 limit 等于 capacity 。</li>
+<li>读模式下，在 Buffer 完成所有数据写入后，通过调用 #flip() 方法，切换到读模式。此时，limit 等于 Buffer 中实际的数据大小。因为 Buffer 不一定被写满，所以不能使用 capacity 作为实际的数据大小。</li>
+</ul>
+</li>
+<li>position<ul>
+<li>position 属性，位置，初始值为 0 。</li>
+<li>写模式下，每往 Buffer 中写入一个值，position 就自动加 1 ，代表下一次的写入位置。</li>
+<li>读模式下，每从 Buffer 中读取一个值，position 就自动加 1 ，代表下一次的读取位置。( 和写模式类似 )</li>
+</ul>
+</li>
+<li>mark <ul>
+<li>属性，标记，通过 #mark() 方法，记录当前 position ；通过 reset() 方法，恢复 position 为标记。</li>
+<li>写模式下，标记上一次写位置。</li>
+<li>读模式下，标记上一次读位置。</li>
+</ul>
+</li>
+<li>关系<ul>
+<li>mark &lt;&#x3D; position &lt;&#x3D; limit &lt;&#x3D; capacity</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>创建Buffer<ul>
+<li>每个 Buffer 实现类，都提供了 #allocate(int capacity) 静态方法，帮助我们快速实例化一个 Buffer 对象。<ul>
+<li>ByteBuffer 实际是个抽象类，返回的是它的基于堆内( Non-Direct )内存的实现类 HeapByteBuffer 的对象。</li>
+</ul>
+</li>
+<li>每个 Buffer 实现类，都提供了 #wrap(array) 静态方法，帮助我们将其对应的数组包装成一个 Buffer 对象。<ul>
+<li>和 #allocate(int capacity) 静态方法一样，返回的也是 HeapByteBuffer 的对象。</li>
+</ul>
+</li>
+<li>每个 Buffer 实现类，都提供了 #allocateDirect(int capacity) 静态方法，帮助我们快速实例化一个 Buffer 对象。<ul>
+<li>和 #allocate(int capacity) 静态方法不一样，返回的是它的基于堆外( Direct )内存的实现类 DirectByteBuffer 的对象。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>向 Buffer 写入数据<ul>
+<li>每个 Buffer 实现类，都提供了 #put(…) 方法，向 Buffer 写入数据。</li>
+<li>对于 Buffer 来说，有一个非常重要的操作就是，我们要讲来自 Channel 的数据写入到 Buffer 中。</li>
+<li>在系统层面上，这个操作我们称为读操作，因为数据是从外部( 文件或者网络等 )读取到内存中。</li>
+<li>通常在说 NIO 的读操作的时候，我们说的是从 Channel 中读数据到 Buffer 中，对应的是对 Buffer 的写入操作</li>
+</ul>
+</li>
+<li>从 Buffer 读取数据<ul>
+<li>每个 Buffer 实现类，都提供了 #get(…) 方法，从 Buffer 读取数据。</li>
+<li>对于 Buffer 来说，还有一个非常重要的操作就是，我们要讲来向 Channel 的写入 Buffer 中的数据。</li>
+<li>在系统层面上，这个操作我们称为写操作，因为数据是从内存中写入到外部( 文件或者网络等 )。</li>
+</ul>
+</li>
+<li>rewind()  flip()   clear()<ul>
+<li>flip  <ul>
+<li>如果要读取 Buffer 中的数据，需要切换模式，从写模式切换到读模式。</li>
+</ul>
+</li>
+<li>rewind<ul>
+<li>可以重置 position 的值为 0 。因此，我们可以重新读取和写入 Buffer 了。</li>
+<li>该方法主要针对于读模式，所以可以翻译为“倒带”。</li>
+</ul>
+</li>
+<li>clear<ul>
+<li>可以“重置” Buffer 的数据。因此，我们可以重新读取和写入 Buffer 了。</li>
+<li>该方法主要针对于写模式。</li>
+<li>Buffer 的数据实际并未清理掉</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>mark() 搭配 reset()<ul>
+<li>mark<ul>
+<li>保存当前的 position 到 mark 中。</li>
+</ul>
+</li>
+<li>reset<ul>
+<li>恢复当前的 postion 为 mark 。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="关于-Direct-Buffer-和-Non-Direct-Buffer-的区别"><a href="#关于-Direct-Buffer-和-Non-Direct-Buffer-的区别" class="headerlink" title="关于 Direct Buffer 和 Non-Direct Buffer 的区别"></a>关于 Direct Buffer 和 Non-Direct Buffer 的区别</h4><ul>
+<li>Direct Buffer:<ul>
+<li>所分配的内存不在 JVM 堆上, 不受 GC 的管理.(但是 Direct Buffer 的 Java 对象是由 GC 管理的, 因此当发生 GC, 对象被回收时, Direct Buffer 也会被释放)</li>
+<li>因为 Direct Buffer 不在 JVM 堆上分配, 因此 Direct Buffer 对应用程序的内存占用的影响就不那么明显(实际上还是占用了这么多内存, 但是 JVM 不好统计到非 JVM 管理的内存.)</li>
+<li>申请和释放 Direct Buffer 的开销比较大. 因此正确的使用 Direct Buffer 的方式是在初始化时申请一个 Buffer, 然后不断复用此 buffer, 在程序结束后才释放此 buffer.</li>
+<li>使用 Direct Buffer 时, 当进行一些底层的系统 IO 操作时, 效率会比较高, 因为此时 JVM 不需要拷贝 buffer 中的内存到中间临时缓冲区中.</li>
+</ul>
+</li>
+<li>Non-Direct Buffer:<ul>
+<li>直接在 JVM 堆上进行内存的分配, 本质上是 byte[] 数组的封装.</li>
+<li>因为 Non-Direct Buffer 在 JVM 堆中, 因此当进行操作系统底层 IO 操作中时, 会将此 buffer 的内存复制到中间临时缓冲区中. 因此 Non-Direct Buffer 的效率就较低.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Selector"><a href="#Selector" class="headerlink" title="Selector"></a>Selector</h3><ul>
+<li>Selector ， 一般称为选择器。它是 Java NIO 核心组件中的一个，用于轮询一个或多个 NIO Channel 的状态是否处于可读、可写。如此，一个线程就可以管理多个 Channel ，也就说可以管理多个网络连接。也因此，Selector 也被称为多路复用器。</li>
+<li>那么 Selector 是如何轮询的呢？<ul>
+<li>首先，需要将 Channel 注册到 Selector 中，这样 Selector 才知道哪些 Channel 是它需要管理的。</li>
+<li>之后，Selector 会不断地轮询注册在其上的 Channel 。如果某个 Channel 上面发生了读或者写事件，这个 Channel 就处于就绪状态，会被 Selector 轮询出来，然后通过 SelectionKey 可以获取就绪 Channel 的集合，进行后续的 I&#x2F;O 操作。</li>
+</ul>
+</li>
+<li>优缺点<ul>
+<li>优点<ul>
+<li>使用一个线程能够处理多个 Channel 的优点是，只需要更少的线程来处理 Channel 。</li>
+<li>事实上，可以使用一个线程处理所有的 Channel 。</li>
+<li>对于操作系统来说，线程之间上下文切换的开销很大，而且每个线程都要占用系统的一些资源( 例如 CPU、内存 )。因此，使用的线程越少越好。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>因为在一个线程中使用了多个 Channel ，因此会造成每个 Channel 处理效率的降低。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>创建 Selector<ul>
+<li>通过 #open() 方法，我们可以创建一个 Selector 对象。代码如下：</li>
+</ul>
+</li>
+<li>注册 Chanel 到 Selector 中<ul>
+<li>为了让 Selector 能够管理 Channel ，我们需要将 Channel 注册到 Selector 中。</li>
+<li>如果一个 Channel 要注册到 Selector 中，那么该 Channel 必须是非阻塞。</li>
+<li>FileChannel 是不能够注册到 Channel 中的，因为它是阻塞的。</li>
+<li>监听四种不同类型的事件：<ul>
+<li>Connect ：连接完成事件( TCP 连接 )，仅适用于客户端，对应 SelectionKey.OP_CONNECT 。</li>
+<li>Accept ：接受新连接事件，仅适用于服务端，对应 SelectionKey.OP_ACCEPT 。</li>
+<li>Read ：读事件，适用于两端，对应 SelectionKey.OP_READ ，表示 Buffer 可读。</li>
+<li>Write ：写时间，适用于两端，对应 SelectionKey.OP_WRITE ，表示 Buffer 可写。</li>
+</ul>
+</li>
+<li>Channel 触发了一个事件，意思是该事件已经就绪：<ul>
+<li>一个 Client Channel Channel 成功连接到另一个服务器，称为“连接就绪”。</li>
+<li>一个 Server Socket Channel 准备好接收新进入的连接，称为“接收就绪”。</li>
+<li>一个有数据可读的 Channel ，可以说是“读就绪”。</li>
+<li>一个等待写数据的 Channel ，可以说是“写就绪”。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SelectionKey 类<ul>
+<li>调用 Channel 的 #register(…) 方法，向 Selector 注册一个 Channel 后，会返回一个 SelectionKey 对象。</li>
+<li>SelectionKey 在 java.nio.channels 包下，被定义成一个抽象类，表示一个 Channel 和一个 Selector 的注册关系。</li>
+<li>注册关系，包含如下内容：<ul>
+<li>interest set: 感兴趣的事件集合。</li>
+<li>ready set ：就绪的事件集合。</li>
+<li>Channel</li>
+<li>Selector</li>
+<li>attachment ：可选的附加对象。可以向 SelectionKey 添加附加对象。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>通过 Selector 选择 Channel<ul>
+<li>在 Selector 中，提供三种类型的选择( select )方法，返回当前有感兴趣事件准备就绪的 Channel 数量。<ul>
+<li>select() 阻塞到至少有一个 Channel 在你注册的事件上就绪了。</li>
+<li>select(long timeout) 在 <code>#select()</code> 方法的基础上，增加超时机制。</li>
+<li>selectNow() 和 <code>#select()</code> 方法不同，立即返回数量，而不阻塞。</li>
+</ul>
+</li>
+<li>select 方法返回的 int 值，表示有多少 Channel 已经就绪。也就是自上次调用 select 方法后有多少 Channel 变成就绪状态。</li>
+</ul>
+</li>
+<li>获取可操作的 Channel<ul>
+<li>一旦调用了 select 方法，并且返回值表明有一个或更多个 Channel 就绪了，然后可以通过调用Selector 的 #selectedKeys() 方法，访问“已选择键集( selected key set )”中的就绪 Channel 。</li>
+<li>注意，当有新增就绪的 Channel ，需要先调用 select 方法，才会添加到“已选择键集( selected key set )”中。否则，我们直接调用 #selectedKeys() 方法，是无法获得它们对应的 SelectionKey 们。</li>
+</ul>
+</li>
+<li>唤醒 Selector 选择<ul>
+<li>某个线程调用 #select() 方法后，发生阻塞了，即使没有通道已经就绪，也有办法让其从 #select() 方法返回。</li>
+<li>只要让其它线程在第一个线程调用 select() 方法的那个 Selector 对象上，调用该 Selector 的 #wakeup() 方法，进行唤醒该 Selector 即可。</li>
+<li>注意，如果有其它线程调用了 #wakeup() 方法，但当前没有线程阻塞在 #select() 方法上，下个调用 #select() 方法的线程会立即被唤醒。</li>
+</ul>
+</li>
+<li>关闭 Selector<ul>
+<li>当我们不再使用 Selector 时，可以调用 Selector 的 #close() 方法，将它进行关闭。<ul>
+<li>Selector 相关的所有 SelectionKey 都会失效。</li>
+<li>Selector 相关的所有 Channel 并不会关闭。</li>
+</ul>
+</li>
+<li>此时若有线程阻塞在 #select() 方法上，也会被唤醒返回。</li>
+</ul>
+</li>
+</ul>
+<h2 id="NIO与BIO相比"><a href="#NIO与BIO相比" class="headerlink" title="NIO与BIO相比"></a>NIO与BIO相比</h2><h3 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h3><ul>
+<li>基于缓冲区<ul>
+<li>基于Buffer读取，将数据从Channel中读取到Buffer中，或者从buffer中将数据写回到channel中。因为数据已经读取到缓冲区当中，所以操作不需要顺序执行，增加其灵活性。</li>
+</ul>
+</li>
+<li>非阻塞IO<ul>
+<li>一个线程从channel中执行io操作的时候，无论是读取还是写入，都无需等待完成，都会直接返回，不会阻塞当前正在执行的线程。</li>
+</ul>
+</li>
+<li>有选择器<ul>
+<li>一个线程可以通过一个Selector管理多个Channel，选择器是实现非阻塞io的核心。</li>
+<li>Selector内部自动为我们实现了轮训select操作，判断channel是否有已经就绪的io事件（连接，读，写等）</li>
+</ul>
+</li>
+</ul>
+<h3 id="BIO"><a href="#BIO" class="headerlink" title="BIO"></a>BIO</h3><ul>
+<li>基于流(Stream)<ul>
+<li>以流式方式进行处理，顺序的从一个stream中读取一个或者多个字节，直到读取完成。由于没有缓存区，不能随意更改读取指针的位置。</li>
+</ul>
+</li>
+<li>阻塞IO<ul>
+<li>一个线程操作io的时候，该线程会被阻塞，直到数据被读取或者写入完成。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/05/08/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(4)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/08/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(4)/" class="post-title-link" itemprop="url">MySQL学习总结(4)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-08 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-08T00:00:00+08:00">2019-05-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>根据加锁的范围，MySQL里面的锁大致可以分为全局锁，表级锁和行级锁。</p>
+<h1 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h1><ul>
+<li>MySql提供了一个加全局锁的方法，Flush tables with read lock(FTWRL)</li>
+<li>适用场景：全库逻辑备份</li>
+<li>阻塞: 数据更新语句，数据定义语句，更新类事务提交语句</li>
+</ul>
+<h1 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h1><ul>
+<li>MySql中表级锁有两种：表锁 和 元数据锁</li>
+</ul>
+<h2 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h2><ul>
+<li>表锁语法是: lock tables … read&#x2F;write</li>
+<li>对于InnoDB这种支持行锁的引擎，一般不使用lock tables方式控制并发</li>
+</ul>
+<h2 id="元数据锁（matedata-lock，MDL）"><a href="#元数据锁（matedata-lock，MDL）" class="headerlink" title="元数据锁（matedata lock，MDL）"></a>元数据锁（matedata lock，MDL）</h2><ul>
+<li>MDL不需要显示使用，在访问一个表的时候会被自动加上。</li>
+<li>作用：保证读写的正确性。</li>
+<li>增删改查操作自动加MDL读锁，修改表结构的时候加MDL写锁</li>
+</ul>
+<h1 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h1><ul>
+<li>问题: 即使把所有的记录都加上锁，也还是阻止不了新插入的记录。</li>
+</ul>
+<h2 id="如何解决幻读问题"><a href="#如何解决幻读问题" class="headerlink" title="如何解决幻读问题"></a>如何解决幻读问题</h2><ul>
+<li>产生幻读的原因是：行锁只能锁住行，新插入记录这个动作，要更新的是记录之间的间隙。</li>
+<li>解决办法： InnoDB引入了新的锁，间隙锁(Gap Lock)</li>
+<li>与间隙锁冲突的操作:往这个间隙中插入一条记录</li>
+<li>间隙锁和行锁合称：next-key lock</li>
+</ul>
+<h1 id="加锁总结"><a href="#加锁总结" class="headerlink" title="加锁总结"></a>加锁总结</h1><ul>
+<li><p>原则1：加锁的基本单位是next-key lock，是前开后闭区间。</p>
+</li>
+<li><p>原则2：查找过程中访问到的对象才会加锁。</p>
+</li>
+<li><p>优化1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。</p>
+</li>
+<li><p>优化2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock退化为间隙锁。</p>
+</li>
+<li><p>Bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。</p>
+</li>
+<li><p>锁是加在索引上的</p>
+</li>
+<li><p>用lock in share mode来给行加读锁避免数据被更新的话，必须要绕过覆盖索引优化，查询字段中加入索引中不存在的字段。</p>
+</li>
+<li><p>分析加锁规则的时候可以用next-key lock来进行分析，但是具体执行的时候，是要分成间隙锁和行锁两阶段来执行的。</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>源：&lt;极客时间&gt; MySQL实战45讲教程</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/05/07/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(3)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/07/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(3)/" class="post-title-link" itemprop="url">MySQL学习总结(3)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-07 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-07T00:00:00+08:00">2019-05-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h1 id="索引常见模型"><a href="#索引常见模型" class="headerlink" title="索引常见模型"></a>索引常见模型</h1><ul>
+<li>哈希表</li>
+<li>适用于只有等值查询的场景</li>
+<li>有序数组</li>
+<li>适用于等值查询，范围查询</li>
+<li>更新成本高，适用于静态存储引擎</li>
+<li>搜索树</li>
+<li>查询复杂度O(log(N))</li>
+<li>更新操作复杂度O(log(N))</li>
+<li>为了适配磁盘，往往使用N叉树</li>
+</ul>
+<h1 id="InnoDB索引模型"><a href="#InnoDB索引模型" class="headerlink" title="InnoDB索引模型"></a>InnoDB索引模型</h1><ul>
+<li><p>表都是根据主键顺序以索引形式存放。</p>
+</li>
+<li><p>使用了B+树索引模型，数据存储在B+树中。</p>
+</li>
+<li><p>根据叶子节点内容，索引类型分主键索引和非主键索引</p>
+</li>
+<li><p>主键索引叶子节点存放的是整行的数据，也成为聚簇索引。</p>
+</li>
+<li><p>非主键索引叶子节点存放的是主键的值，非主键索引也成为二级索引</p>
+</li>
+<li><p>区别：基于非主键索引的查询需要多扫描一颗索引树。</p>
+</li>
+</ul>
+<h1 id="索引维护"><a href="#索引维护" class="headerlink" title="索引维护"></a>索引维护</h1><ul>
+<li>一个数据页满了，按照B+Tree算法，会新增加一个数据页，这个过程称为页分裂，会导致性能下降，空间利用率降低大概一半。</li>
+<li>两个相邻的数据页利用率如果都很低，会做数据合并，也就是页分裂逆过程</li>
+<li>B+树的插入可能会引起数据页的分裂，删除可能会引起数据页的合并，二者都是比较重的IO消耗，所以比较好的方式是顺序插入数据，这也是我们一般使用自增主键的原因之一</li>
+<li>在Key-Value的场景下，只有一个索引且是唯一索引，则适合直接使用业务字段作为主键索引</li>
+<li>非主键索引的叶子结点存储的是主键的值，所以主键字段占用空间不宜过大。同时，其查找数据的过程称为“回表”，需要先查找自己得到主键值，再在主键索引上边查找数据内容。</li>
+<li>索引的实现由存储引擎来决定，InnoDB使用B+树（N叉树，比如1200叉树），把整颗树的高度维持在很小的范围内，同时在内存里缓存前面若干层的节点，可以极大地降低访问磁盘的次数，提高读的效率。</li>
+</ul>
+<h1 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h1><ul>
+<li>回到主键索引树搜索的过程，我们称为回表</li>
+<li>由于覆盖索引可以减少树的搜索次数，显著提升查询性能，所以使用覆盖索引是一个常用的性能优化手段。</li>
+</ul>
+<h1 id="最左前缀原则"><a href="#最左前缀原则" class="headerlink" title="最左前缀原则"></a>最左前缀原则</h1><ul>
+<li>B+ 树这种索引结构，可以利用索引的“最左前缀”，来定位记录。</li>
+<li>在建立联合索引的时候，如何安排索引内的字段顺序</li>
+<li>第一原则，如果通过调整顺序，可以少维护一个索引，那么这个顺序往往就是最需要有限考虑的。</li>
+<li>再次考虑空间</li>
+</ul>
+<h1 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h1><ul>
+<li>MySQL 5.6 引入的索引下推优化，可以在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数。</li>
+</ul>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><ul>
+<li>满足语句需求的情况下， 尽量少地访问资源是数据库设计的重要原则之一。</li>
+<li>设计表结构时，也要以减少资源消耗作为目标。</li>
+</ul>
+<hr>
+<ul>
+<li>源：&lt;极客时间&gt; MySQL实战45讲教程</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/05/06/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/06/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(2)/" class="post-title-link" itemprop="url">MySQL学习总结(2)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-06 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-06T00:00:00+08:00">2019-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h2><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ul>
+<li>脏读</li>
+<li>可重复读</li>
+<li>幻读</li>
+</ul>
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><ul>
+<li>读未提交</li>
+<li>一个事务还没提交的时候，其所作的变更可以被其他事务看到。</li>
+<li>读提交</li>
+<li>一个事务提交后，他做的变更才会被其他事务看到。</li>
+<li>可重复读</li>
+<li>一个事务执行的过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。</li>
+<li>串行化</li>
+<li>对于同一行记录，写会加写锁，读会加读锁，一旦出现读写锁冲突的时候，后访问的事务必须等前一个事务完成才能继续执行。</li>
+</ul>
+<h2 id="隔离级别实现"><a href="#隔离级别实现" class="headerlink" title="隔离级别实现"></a>隔离级别实现</h2><ul>
+<li>数据库里面会创建一个视图，访问的时候以这个视图的逻辑结果为准。</li>
+<li>可重复读，视图在事务启动时创建，这个事务存在期间都在用这个视图。</li>
+<li>读提交，视图实在每个sql语句开始执行的时候创建</li>
+<li>读未提交，直接返回记录最新值，没有视图概念</li>
+<li>串行化，直接用加锁的方式避免并行访问</li>
+<li>隔离的实现</li>
+<li>每条记录在更新的时候都会同事记录一条回滚操作。记录上的最新值，通过回滚操作都可以得到前一个状态的值。</li>
+<li>系统会在没有实物需要使用到这些回滚日志的时候，删除回滚日志。</li>
+<li>不要使用长事务</li>
+<li>长事务意味着系统里面会存在很老的事务视图。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面会存储他可能用到的所有回滚记录，导致占用大量的存储空</li>
+</ul>
+<hr>
+<ul>
+<li>源：&lt;极客时间&gt; MySQL实战45讲教程</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/05/05/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(1)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/05/MySQL%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(1)/" class="post-title-link" itemprop="url">MySQL学习总结(1)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2019-05-05T00:00:00+08:00">2019-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="SQL执行过程"><a href="#SQL执行过程" class="headerlink" title="SQL执行过程"></a>SQL执行过程</h1><ul>
+<li>客户端 -&gt; 连接器 -&gt; 分析器 -&gt; 优化器 -&gt; 执行器</li>
+<li>连接器</li>
+<li>管理连接，权限验证，维持管理连接</li>
+<li>分析器</li>
+<li>词法分析，语法分析</li>
+<li>优化器</li>
+<li>执行计划生成，索引选择</li>
+<li>执行器</li>
+<li>操作引擎，返回结果</li>
+<li>存储引擎</li>
+<li>存储数据，提供读写接口</li>
+<li>连接器会优先查询缓存，如果命中则直接返回结果</li>
+</ul>
+<h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><ul>
+<li>连接器负责跟客户端建立连接、获取权限、维持和管理连接。</li>
+</ul>
+<h3 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h3><ul>
+<li>大多数情况下不要使用查询缓存</li>
+<li>查询缓存的失效非常频繁，只要有对一个表的更新，这个表上所有的查询缓存都会被清空。</li>
+</ul>
+<h3 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h3><ul>
+<li>分析器先会做“词法分析”。</li>
+</ul>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><ul>
+<li>优化器是在表里面有多个索引的时候，决定使用哪个索引</li>
+<li>在一个语句有多表关联（join）的时候，决定各个表的连接顺序。</li>
+</ul>
+<h3 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h3><ul>
+<li>执行之前会进行权限校验</li>
+<li>根据表的引擎定义，使用引擎提供的接口</li>
+<li>获取记录集作为结果返回给客户端。</li>
+</ul>
+<h1 id="MySQL日志模块"><a href="#MySQL日志模块" class="headerlink" title="MySQL日志模块"></a>MySQL日志模块</h1><h3 id="redo-log-（重做日志）"><a href="#redo-log-（重做日志）" class="headerlink" title="redo log （重做日志）"></a>redo log （重做日志）</h3><ul>
+<li>WAL （Write-Ahead Logging）</li>
+<li>核心先写日志，在写磁盘</li>
+<li>保证及时数据库发生异常重启，之前提交的记录不会丢失（crash-safe）</li>
+<li>InnoDB特有</li>
+</ul>
+<h3 id="binlog-（归档日志）"><a href="#binlog-（归档日志）" class="headerlink" title="binlog （归档日志）"></a>binlog （归档日志）</h3><h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><ul>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID&#x3D;2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</li>
+</ul>
+<h3 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h3><ul>
+<li>引擎讲更新操作记录到redo log中，此时redo log处于prepare状态，同时告知执行器执行完成，可以提交事务。</li>
+<li>执行器生成该操作的binlog并写入磁盘。</li>
+<li>执行器调用引擎提交事务接口，引擎讲刚刚写入的redo log改为提交commit状态。</li>
+<li>redo log的写入拆成了2个步骤prepare和commit，即两阶段提交。</li>
+</ul>
+<h4 id="先写rodo-log-后写binlog问题"><a href="#先写rodo-log-后写binlog问题" class="headerlink" title="先写rodo log 后写binlog问题"></a>先写rodo log 后写binlog问题</h4><ul>
+<li>写完rodo log 后，binlog未写完，重启后，主库可以通过redo log恢复，但是通过binlog恢复临时库会丢失该次更新。</li>
+</ul>
+<h4 id="先写binlog-后写redo-log问题"><a href="#先写binlog-后写redo-log问题" class="headerlink" title="先写binlog 后写redo log问题"></a>先写binlog 后写redo log问题</h4><ul>
+<li>写完binlog后未写redo log，重启后由于redo log没写，即该次事务无效，而binlog中已经包含，则用binlog恢复会多出来一个事务。</li>
+</ul>
+<hr>
+<ul>
+<li>源：&lt;极客时间&gt; MySQL实战45讲教程</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/12/20/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8AES%20Down%E6%9C%BA%E4%BA%8B%E6%95%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/20/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%BA%BF%E4%B8%8AES%20Down%E6%9C%BA%E4%BA%8B%E6%95%85/" class="post-title-link" itemprop="url">记一次线上ES Down机事故</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-20 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-20T00:00:00+08:00">2018-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>背景</strong></p>
+<ul>
+<li>前两天的某个上午，正在开会ing。。突然收到了报警Es服务不可用，同时几个其他业务部门的人也都过来反馈说ES挂了。</li>
+<li>二话不说先启动ES恢复业务再说。然后就开始分析日志找问题了。</li>
+</ul>
+<p><strong>排查过程</strong></p>
+<ul>
+<li>先是怀疑系统资源被用满了，看了一下zabbix，系统负载不太高，8C 16G机器load维持在5-10左右波动，应该不是这个问题。</li>
+<li>看了一下网络读取带宽，也没有达到什么高峰(时间是上午10点半左右)，感觉系统方面应该不至于出问题。</li>
+<li>又怀疑是出现OOM内存不足，可是也没发现dump文件，然后就开始找ES日志看问题了</li>
+<li>看ES日志在down机之前有一个java.lang.StackOverflowError，应该就是这个原因了，之前还真没碰到过这个问题，将错误信息在google上面一查，有一些说是使用前缀或者正则查询导致的，感觉应该是这个问题，便开始抓取down机前1分钟的日志。</li>
+<li>运气不坏，很快就找到了一个高度怀疑的参数，是在搜索建议词中出现的，搜索建议词使用的es原生suggest + prefix，传过来的关键词是一个json数组去除了双引号和冒号(应该是api做的过滤)，但是里面还有1600+字符，同时包含了“{}[]”符号，在测试机上面进行一下测试，把这个Query放进去，ES果然直接Down掉了，问题排查就算是完成了。</li>
+</ul>
+<p><strong>修复过程</strong></p>
+<ul>
+<li>紧急发布了Hotfix（就是加入参数长度限制，特殊字符限制）</li>
+<li>后续准备考虑使用Ngram来解决这个问题</li>
+<li>吸取教训：<ul>
+<li>能不用就尽可能不用通配符查询，无论是前缀还是模糊</li>
+<li>大不了空间换时间，暴力使用ngram解决问题</li>
+<li>参数一定要加入校验机制</li>
+</ul>
+</li>
+</ul>
+<p><strong>原因分析(转)</strong></p>
+<ul>
+<li><p>问题出现时，ES服务端日志有如下报错:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java.lang.StackOverflowError: null</span><br><span class="line">        at org.apache.lucene.util.automaton.Operations.isFinite(Operations.java:1053) ~[lucene-core-6.2.1.jar:6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:15:20]</span><br><span class="line">        at org.apache.lucene.util.automaton.Operations.isFinite(Operations.java:1053) ~[lucene-core-6.2.1.jar:6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:15:20]</span><br><span class="line">        at org.apache.lucene.util.automaton.Operations.isFinite(Operations.java:1053) ~[lucene-core-6.2.1.jar:6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:15:20]</span><br><span class="line">        at org.apache.lucene.util.automaton.Operations.isFinite(Operations.java:1053) ~[lucene-core-6.2.1.jar:6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:15:20]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Prefix&#x2F;Regex&#x2F;Fuzzy一类的Query，是直接构造的deterministic automaton，如果查询字符串过长，或者pattern本身过于复杂，构造出来的状态过多，之后一个isFinite的Lucene方法调用可能产生堆栈溢出。</p>
+</li>
+<li><p>PrefixQuery继承自Lucene的AutomatonQuery，在实例化的时候，maxDeterminizedStates传的是Integer.MAX_VALUE, 并且生成automaton之前，prefix的长度也没有做限制。</p>
+</li>
+<li><p>附参考链接：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://elasticsearch.cn/article/186">https://elasticsearch.cn/article/186</a></li>
+<li><a target="_blank" rel="noopener" href="https://elasticsearch.cn/article/171">https://elasticsearch.cn/article/171</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/elastic/elasticsearch/issues/24553">https://github.com/elastic/elasticsearch/issues/24553</a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/12/13/%E4%B8%80%E6%AC%A1Es%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/13/%E4%B8%80%E6%AC%A1Es%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">一次Es排序优化记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-13 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-13T00:00:00+08:00">2018-12-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>背景</strong></p>
+<ul>
+<li>13号有一个大上线，其中一个功能就是排序功能，说复杂也不复杂，说难吧也不难，但是麻烦的就是加上Sort之后速度奇慢无比。</li>
+<li>排序实现也不太复杂，基本都是基于function score + sort 实现，对应不同的商品品类，有不同的排序规则(Hmm，目前还没有上个性化排序。。)，实现方式就是定位品类之后，用function score进行提升部分商品的score，在这之后用sort进行【score + field1 +field2】的排序，看着也不复杂对吧。</li>
+<li>ES机器配置不太高(qiong…..)4C 8G * 3，索引中在售商品也不太多几，万的样子，分布到200多个城市站，总共合起来大概千万出头的数据(有部分非在售商品)。</li>
+</ul>
+<p><strong>问题</strong></p>
+<ul>
+<li>每次定位到品类之后，使用了品类排序【score + field1 +field2】，速度奇慢无比，平时几十毫秒的查询能变成5-6秒甚至更多，有点让人无法忍受</li>
+</ul>
+<p><strong>尝试过程</strong></p>
+<ul>
+<li>最开始打算用缓存解决问题，但是更新频率实在有点高的不行。。这个有点扛不住。</li>
+<li>后来打算按照城市站分索引，这样一个索引数据量就很小了，排序应该就不是什么大问题了，但是查询有点麻烦。</li>
+<li>先reindex一个小的索引，试了试排序速度，果然恢复到了几十毫秒的数量级了。<br>突然想到了也许多加一些分片也可以解决这个问题，毕竟我们是有城市站routing的啊。</li>
+<li>不过城市站反正是查询的必须条件已经加上了routing，吧shard从默认的5个先加到了50个，试了一下果然速度提升到100ms左右，再往上加shard的时候发现了另外一个问题，大批量的出现ESReject问题，可能是一次bulk或者index数据的量略大，ES又需要进行routing的原因吧，最终上线的时候，保守一点使用了40 Shard，目前速度尚在可接受范围(线上最起码是8c 16G的。。)，如果想在提升速度，估计要加机器了(还是那句话。。。qiong。。。)</li>
+</ul>
+<p><strong>加速原理</strong></p>
+<ul>
+<li>没看源码，纯属自己猜测：<ul>
+<li>感觉shard和分索引应该差不多，Es Query需要找到对应的shard，拽出来符合条件的数据进行排序，然后输出出去。拽出来数据应该是在shard内部进行过排序，如果shard内部文档过多，速度应该会比较慢。</li>
+<li>我们这边业务场景是城市站必须有，而且文档按照城市站分开后相对来说很平均了(当然还是有部分shard很小。。)，将shard数量提高以后，shard内部排序的文档数量少了很多，速度自然就上去了。</li>
+<li>shard过多，在ES进行bulk插入数据时候，routing到对应分片，这步骤应该会花较多时间，如果机器配置不太给力的话（囧。。比如说我们），shard数量还是不要太多，否则机器负载会很高很高(前两天看到负载破20了 - -！还好只是瞬时)</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/11/25/MySQL%20Rank/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/25/MySQL%20Rank/" class="post-title-link" itemprop="url">MySQL实现Rank排名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-25 00:00:00" itemprop="dateCreated datePublished" datetime="2018-11-25T00:00:00+08:00">2018-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><p>Hmm..就是在leetcode上面做题碰到了一个题目，让用SQL实现根据分值排序，原题描述如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">编写一个 SQL 查询来实现分数排名。如果两个分数相同，则两个分数排名（Rank）相同。请注意，平分后的下一个名次应该是下一个连续的整数值。换句话说，名次之间不应该有“间隔”。</span><br><span class="line"></span><br><span class="line">+----+-------+</span><br><span class="line">| Id | Score |</span><br><span class="line">+----+-------+</span><br><span class="line">| 1  | 3.50  |</span><br><span class="line">| 2  | 3.65  |</span><br><span class="line">| 3  | 4.00  |</span><br><span class="line">| 4  | 3.85  |</span><br><span class="line">| 5  | 4.00  |</span><br><span class="line">| 6  | 3.65  |</span><br><span class="line">+----+-------+</span><br><span class="line">例如，根据上述给定的 Scores 表，你的查询应该返回（按分数从高到低排列）：</span><br><span class="line"></span><br><span class="line">+-------+------+</span><br><span class="line">| Score | Rank |</span><br><span class="line">+-------+------+</span><br><span class="line">| 4.00  | 1    |</span><br><span class="line">| 4.00  | 1    |</span><br><span class="line">| 3.85  | 2    |</span><br><span class="line">| 3.65  | 3    |</span><br><span class="line">| 3.65  | 3    |</span><br><span class="line">| 3.50  | 4    |</span><br><span class="line">+-------+------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生产中应该不会遇到这种问题吧。。有的话应该也是新出表之类的解决，不过想了想，这个题还真么啥解决思路（自己引用自己还是内外层的。。在这之前真不会TAT）</p>
+</li>
+<li><p>结合别人的答案，总算是弄明白了这个SQL是怎么写了</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	Score,</span><br><span class="line">	(</span><br><span class="line">	SELECT</span><br><span class="line">		count( DISTINCT score ) </span><br><span class="line">	FROM</span><br><span class="line">		Scores </span><br><span class="line">	WHERE</span><br><span class="line">		score &gt;= s.score </span><br><span class="line">	) AS Rank </span><br><span class="line">FROM</span><br><span class="line">	Scores s </span><br><span class="line">ORDER BY</span><br><span class="line">	Score DESC;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>外层其实很好理解，查询score表中Score和Rank，倒序一下。</p>
+</li>
+<li><p>内层就是把外层每条的Score拿到(语句中的s.score)，然后统计一下不小于s.score的值(去重)，这个结果也就是对应的RanK了。</p>
+</li>
+<li><p>换个条件。。如果两个分数相同，则两个分数排名（Rank）相同，名次之间“间隔”，也可以用这个思路来解决。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	Score,</span><br><span class="line">	(</span><br><span class="line">	SELECT</span><br><span class="line">		count( score ) + 1 </span><br><span class="line">	FROM</span><br><span class="line">		Scores </span><br><span class="line">	WHERE</span><br><span class="line">		score &gt; s.score </span><br><span class="line">	) AS Rank </span><br><span class="line">FROM</span><br><span class="line">	Scores s </span><br><span class="line">ORDER BY</span><br><span class="line">	Score DESC;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/11/19/Linux%20ssh%20%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/19/Linux%20ssh%20%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Linux ssh 远程执行命令环境切换问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-19 00:00:00" itemprop="dateCreated datePublished" datetime="2018-11-19T00:00:00+08:00">2018-11-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<ul>
+<li>今天将公司之前的shell脚本处理一下，放到Jenkins中执行，方便大家部署，结果出现了一个奇怪的问题，通过ssh 远程执行命令的时候发现找不到java命令。</li>
+<li>直接用ssh切换到那台机器是没有问题的，java命令存在。远程执行 ssh -t user@host ‘java -version’ 提示java命令找不到。</li>
+<li>查了一堆资料，定位了问题： <ul>
+<li>使用这种方式执行命令，不会执行&#x2F;etc&#x2F;profile文件，而我的java_home，java path都是在&#x2F;etc&#x2F;profile文件中配置的</li>
+</ul>
+</li>
+<li>解决也不太复杂：<ul>
+<li>方法1：ssh -t user@host ‘source &#x2F;etc&#x2F;profile &amp;&amp; java -version’ 久违的jdk1.8终于出来了(嗯。。我就用这个解决的)</li>
+<li>方法2: 修改 ~&#x2F;.bashrc 加入java_home，java path (这个没敢动。。因为机器是公用的。。。)</li>
+</ul>
+</li>
+<li>补充知识点：</li>
+</ul>
+<ol>
+<li><p>通过SSH登录后再执行命令和脚本<br>这种方式会使用Bash的interactive + login shell模式，这里面有两个概念需要解释：interactive和login。</p>
+<ul>
+<li>login故名思义，即登陆，login shell是指用户以非图形化界面或者以ssh登陆到机器上时获得的第一个shell，简单些说就是需要输入用户名和密码的shell。因此通常不管以何种方式登陆机器后用户获得的第一个shell就是login shell。</li>
+<li>interactive意为交互式，这也很好理解，interactive shell会有一个输入提示符，并且它的标准输入、输出和错误输出都会显示在控制台上。所以一般来说只要是需要用户交互的，即一个命令一个命令的输入的shell都是interactive shell。而如果无需用户交互，它便是non-interactive shell。通常来说如bash script.sh此类执行脚本的命令就会启动一个non-interactive shell，它不需要与用户进行交互，执行完后它便会退出创建的Shell。</li>
+<li>在interactive + login shell模式中，Shell首先会加载&#x2F;etc&#x2F;profile文件，然后再尝试依次去加载下列三个配置文件之一，一旦找到其中一个便不再接着寻找：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.bash_profile</span><br><span class="line">~/.bash_login</span><br><span class="line">~/.profile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过SSH直接执行远程命令和脚本<br>这种方式会使用Bash的non-interactive + non-login shell模式，它会创建一个shell，执行完脚本之后便退出，不再需要与用户交互。</p>
+<ul>
+<li>no-login shell，顾名思义就是不是在登录Linux系统时启动的（比如你在命令行提示符上输入bash启动）。它不会去执行&#x2F;etc&#x2F;profile文件，而会去用户的HOME目录检查.bashrc并加载。</li>
+<li>系统执行Shell脚本的时候，就是属于这种non-interactive shell。Bash通过BASH_ENV环境变量来记录要加载的文件，默认情况下这个环境变量并没有设置。如果有指定文件，那么Shell会先去加载这个文件里面的内容，然后再开始执行Shell脚本。</li>
+</ul>
+</li>
+</ol>
+<p>引用: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhenyuyaodidiao/p/9287497.html">https://www.cnblogs.com/zhenyuyaodidiao/p/9287497.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

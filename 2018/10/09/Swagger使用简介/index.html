@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Swagger使用简介Swagger简介没有API文档工具之前，大家都是手写API文档的，在什么地方书写的都有，有在confluence上写的，有在对应的项目目录下readme.md上写的。这种方式不是说不好，大家都有一个通病，就是懒得更新文档，隔了一段时间，接口变动了什么没人清楚了。另外还有就是开始写文档的时候特别痛苦，每个字段，一行行注释解释。其实大多数开发都还是写注释的（为了防止自己看不懂吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swagger使用简介">
+<meta property="og:url" content="https://eviltuzki.top/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="Swagger使用简介Swagger简介没有API文档工具之前，大家都是手写API文档的，在什么地方书写的都有，有在confluence上写的，有在对应的项目目录下readme.md上写的。这种方式不是说不好，大家都有一个通病，就是懒得更新文档，隔了一段时间，接口变动了什么没人清楚了。另外还有就是开始写文档的时候特别痛苦，每个字段，一行行注释解释。其实大多数开发都还是写注释的（为了防止自己看不懂吧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eviltuzki.top/pic/base.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/RequestModel.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/RequestExample.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/ResponseModel.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/ResponseExample.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/Controller.png">
+<meta property="og:image" content="https://eviltuzki.top/pic/Result.png">
+<meta property="article:published_time" content="2018-10-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.642Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Swagger">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eviltuzki.top/pic/base.png">
+
+<link rel="canonical" href="https://eviltuzki.top/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swagger使用简介 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swagger使用简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-09 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-09T00:00:00+08:00">2018-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Swagger使用简介"><a href="#Swagger使用简介" class="headerlink" title="Swagger使用简介"></a>Swagger使用简介</h1><h2 id="Swagger简介"><a href="#Swagger简介" class="headerlink" title="Swagger简介"></a>Swagger简介</h2><p>没有API文档工具之前，大家都是手写API文档的，在什么地方书写的都有，有在confluence上写的，有在对应的项目目录下readme.md上写的。这种方式不是说不好，大家都有一个通病，就是懒得更新文档，隔了一段时间，接口变动了什么没人清楚了。另外还有就是开始写文档的时候特别痛苦，每个字段，一行行注释解释。<br>其实大多数开发都还是写注释的（为了防止自己看不懂吧。。），如果稍加修改，可以从注释中自动生成文档就好了。Hmm..Swagger可以完成这个功能，尤其是针对Java，C#这样的项目，而且是前后端分离的，更加合适了。<br>Swagger能做什么呢？可以自动根据Controller自动生成对应的文档，并且提供测试接口。如果你能容忍一定程度的代码侵入（也不是太多。。就是在需要暴露的Model和Controller上加点注解，一个配置文件类），Swagger还是很方便的。</p>
+<h2 id="Swagger-和-Spring-项目整合"><a href="#Swagger-和-Spring-项目整合" class="headerlink" title="Swagger 和 Spring 项目整合"></a>Swagger 和 Spring 项目整合</h2><p>其实很简单，加个依赖，加个配置类，嗯。。这个应该是最低工作保证了。。</p>
+<p>先说依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- swagger2 生成对应的Json文档，这个应该可以说是核心依赖了 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.6.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- swagger-ui 为项目提供api展示及测试的界面 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.6.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- 集成 swagger 的时候，缺少这个 jar包是不OK的--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.8.6&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>说真的，依赖包不是太多springfox-swagger2是生成接口访问JSON和核心，同时依赖jackson。界面展示依赖的是swagger-ui。嗯。。引入的时候注意下Jar包冲突。。尤其是Spring的版本不同exclusion一下。。</p>
+<p>依赖包这样基本就已经满足了，剩下就是加一个配置类就好了。如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> </span><br><span class="line">import org.springframework.context.annotation.Bean;</span><br><span class="line">import org.springframework.context.annotation.Configuration;</span><br><span class="line">import springfox.documentation.builders.ApiInfoBuilder;</span><br><span class="line">import springfox.documentation.builders.ParameterBuilder;</span><br><span class="line">import springfox.documentation.builders.RequestHandlerSelectors;</span><br><span class="line">import springfox.documentation.schema.ModelRef;</span><br><span class="line">import springfox.documentation.service.ApiInfo;</span><br><span class="line">import springfox.documentation.service.Parameter;</span><br><span class="line">import springfox.documentation.spi.DocumentationType;</span><br><span class="line">import springfox.documentation.spring.web.plugins.Docket;</span><br><span class="line">import springfox.documentation.swagger2.annotations.EnableSwagger2;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Configuration</span><br><span class="line">@EnableSwagger2</span><br><span class="line">public class ApiConfig &#123;</span><br><span class="line">    @Bean(name = &quot;docket&quot;)</span><br><span class="line">    public Docket api() &#123;</span><br><span class="line">        ParameterBuilder ticketPar = new ParameterBuilder();</span><br><span class="line">        List&lt;Parameter&gt; pars = new ArrayList&lt;&gt;();</span><br><span class="line">        ticketPar.name(&quot;login-token&quot;).description(&quot;登录Token&quot;)</span><br><span class="line">                .modelRef(new ModelRef(&quot;string&quot;)).parameterType(&quot;header&quot;)</span><br><span class="line">                //header中的ticket参数非必填，传空也可以</span><br><span class="line">                .required(false).build(); </span><br><span class="line">        //根据每个方法名也知道当前方法在设置什么参数</span><br><span class="line">        pars.add(ticketPar.build());</span><br><span class="line">        Docket docket = new Docket(DocumentationType.SWAGGER_2)</span><br><span class="line">                .select()</span><br><span class="line">                .apis(RequestHandlerSelectors.any())</span><br><span class="line">                .build().globalOperationParameters(pars);</span><br><span class="line">                docket.apiInfo(apiInfo());</span><br><span class="line">        return docket;</span><br><span class="line">    &#125;</span><br><span class="line">    private ApiInfo apiInfo() &#123;</span><br><span class="line">        return new ApiInfoBuilder()</span><br><span class="line">                .title(&quot;后台接口&quot;)</span><br><span class="line">                .description(&quot;后台接口&quot;)</span><br><span class="line">                .version(&quot;1.0.0&quot;)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果项目使用Spring是XML方式，就在配置文件加上如下几行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;mvc:default-servlet-handler/&gt;</span><br><span class="line">&lt;mvc:resources mapping=&quot;/webjars/**&quot; location=&quot;classpath:/META-INF/resources/webjars/&quot; /&gt;</span><br><span class="line">&lt;mvc:resources mapping=&quot;swagger-ui.html&quot; location=&quot;classpath:/META-INF/resources/&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果是SpringBoot的就更简单了。。直接拷贝配置类，加上依赖包就可以运行了。<br>Hmm。。简单来说这样就足够了。。。<br>访问地址是默认地址+&#x2F;swagger-ui.html，我这里是<a target="_blank" rel="noopener" href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a><br>效果如图所示：<br><img src="/pic/base.png"></p>
+<h2 id="稍微复杂一些"><a href="#稍微复杂一些" class="headerlink" title="稍微复杂一些"></a>稍微复杂一些</h2><p>上面的只是提供了基础功能，Hmm…还是没有注释说明什么的，只是有一些基础的序列化参数（Json字段还是可以自动识别的，而且能提供默认值）<br>如果要加入一些注释，就需要对原有项目加入一些侵入代码了(一些swagger特有注解)</p>
+<p>首先是Model实体上面的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">import io.swagger.annotations.ApiModel;</span><br><span class="line">import io.swagger.annotations.ApiModelProperty;</span><br><span class="line">@ApiModel</span><br><span class="line">public class AddKeywordRequestVo extends BaseVo &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词名称</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词名称&quot;,example = &quot;汽车&quot;)</span><br><span class="line">    private String keywordName;</span><br><span class="line">    /**</span><br><span class="line">     *关键词品类,多个用逗号分隔，0全部，1灯泡,2火花塞,3轮胎,4蓄电池,5油品,6雨刮,7全车件。默认为0</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词品类,多个用逗号分隔，0全部，1灯泡,2火花塞,3轮胎,4蓄电池,5油品,6雨刮,7全车件。默认为0&quot;,example = &quot;1&quot;)</span><br><span class="line">    private String keywordCategory;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词拼音</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词拼音&quot;,example = &quot;qiche&quot;)</span><br><span class="line">    private String keywordPinyin;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词同义词</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词同义词&quot;,example = &quot;卡车&quot;)</span><br><span class="line">    private String keywordSynonym;</span><br><span class="line">    /**</span><br><span class="line">     * 词频</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;词频&quot;,example = &quot;1&quot;)</span><br><span class="line">    private Integer wordFrequency;</span><br><span class="line">    /**</span><br><span class="line">     * 词性，0通用，1专属</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;词性，0通用，1专属&quot;,example = &quot;1&quot;)</span><br><span class="line">    private Integer wordType;</span><br><span class="line">    /**</span><br><span class="line">     * 备注</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(&quot;备注&quot;)</span><br><span class="line">    private String remark;</span><br><span class="line">    public String getKeywordName() &#123;</span><br><span class="line">        return keywordName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordName(String keywordName) &#123;</span><br><span class="line">        this.keywordName = keywordName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordCategory() &#123;</span><br><span class="line">        return keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordCategory(String keywordCategory) &#123;</span><br><span class="line">        this.keywordCategory = keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordPinyin() &#123;</span><br><span class="line">        return keywordPinyin;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordPinyin(String keywordPinyin) &#123;</span><br><span class="line">        this.keywordPinyin = keywordPinyin;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordSynonym() &#123;</span><br><span class="line">        return keywordSynonym;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordSynonym(String keywordSynonym) &#123;</span><br><span class="line">        this.keywordSynonym = keywordSynonym;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getWordFrequency() &#123;</span><br><span class="line">        return wordFrequency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWordFrequency(Integer wordFrequency) &#123;</span><br><span class="line">        this.wordFrequency = wordFrequency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getWordType() &#123;</span><br><span class="line">        return  wordType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWordType(Integer wordType) &#123;</span><br><span class="line">        this.wordType = wordType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getRemark() &#123;</span><br><span class="line">        return remark;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setRemark(String remark) &#123;</span><br><span class="line">        this.remark = remark;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public AddKeywordRequestVo() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    public AddKeywordRequestVo(Integer wordFrequency, Integer wordType, String keywordName, String keywordCategory) &#123;</span><br><span class="line">        this.wordFrequency = wordFrequency;</span><br><span class="line">        this.wordType = wordType;</span><br><span class="line">        this.keywordName = keywordName;</span><br><span class="line">        this.keywordCategory = keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实也不是太多，一个ApiModelProperty，一个ApiModel就够用了，加上上面的注解有什么效果呢？看图吧。。</p>
+<p>model的：<br><img src="/pic/RequestModel.png"><br>参数示例的：<br><img src="/pic/RequestExample.png"></p>
+<p>其实Response也是可以的，但是需要为泛型或者具体的，Object类型的就。。。。参考我这边的。。。<br>如果是泛型的话，参考下图：<br>model的：<br><img src="/pic/ResponseModel.png"><br>参数示例的：<br><img src="/pic/ResponseExample.png"></p>
+<p>Controller上面也可以加一些的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 关键词Controller</span><br><span class="line"> */</span><br><span class="line">@RestController</span><br><span class="line">@Api(&quot;关键词Controller&quot;)</span><br><span class="line">public class KeywordsController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private AddKeyWordService addKeyWordService;</span><br><span class="line">    @Autowired</span><br><span class="line">    private DelKeyWordService delKeyWordService;</span><br><span class="line">    @Autowired</span><br><span class="line">    private BatchDelKeyWordService batchDelKeyWordService;</span><br><span class="line"></span><br><span class="line">    private static Logger logger = LoggerFactory.getLogger(KeyWordController.class);</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 添加关键词</span><br><span class="line">     * @param vo 添加关键词请求参数</span><br><span class="line">     * @return  添加关键词结果</span><br><span class="line">     */</span><br><span class="line">    @RequestMapping(value = &quot;/add/keyword&quot;,method = RequestMethod.POST)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    @ApiOperation(&quot;添加关键词&quot;)</span><br><span class="line">    public Result addKeyword(@RequestBody AddKeywordRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;addKeyword&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!addKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try&#123;</span><br><span class="line">            addKeyWordService.addKeyword(vo,res);</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 删除关键词</span><br><span class="line">     * @return  删除关键词结果</span><br><span class="line">     */</span><br><span class="line">    @RequestMapping(value = &quot;/del/keyword&quot;,method = RequestMethod.DELETE)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    @ApiOperation(&quot;删除关键词&quot;)</span><br><span class="line">    public Result delKeyword(@RequestBody DelKeywordRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;delKeyword&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!delKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            delKeyWordService.delKeyword(vo,res);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 批量删除关键词接口</span><br><span class="line">     * @param vo 批量删除关键词请求</span><br><span class="line">     * @return  批量删除结果</span><br><span class="line">     */</span><br><span class="line">    @ApiOperation(&quot;批量删除关键词接口&quot;)</span><br><span class="line">    @RequestMapping(value = &quot;/batchdel/keyword&quot;,method = RequestMethod.DELETE)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public Result delKeywords(@RequestBody DelKeywordsRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;delKeywords&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!batchDelKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            batchDelKeyWordService.delKeywords(vo,res);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果如图所示：<br><img src="/pic/Controller.png"></p>
+<h2 id="还有更强大的"><a href="#还有更强大的" class="headerlink" title="还有更强大的"></a>还有更强大的</h2><p>你以为这就是全部？ nonono swagger还可以直接访问接口，Hmm。。这应该是最方便的吧</p>
+<p>直接输入对应的参数，点击Try it out! 如图所示：<br><img src="/pic/Result.png"></p>
+<p>是不是有了这个连Postman都不用了&#x3D;-&#x3D;~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h3><ul>
+<li>文档跟随项目接口实时改变，不用担心文档和接口不同步</li>
+<li>一大批懒开发(比如我)还是写一些注释的，加入注释同时加个注解，也不算太麻烦。</li>
+<li>对接流畅多了，前端调用也方便多了。</li>
+<li>自己测试也方便</li>
+</ul>
+<h3 id="坏处"><a href="#坏处" class="headerlink" title="坏处"></a>坏处</h3><ul>
+<li>有一定代码侵入（加入注解，依赖，配置文件等）</li>
+<li>放到线上一定一定要屏蔽掉&#x2F;swagger相关路径（通过Nginx屏蔽掉）</li>
+<li>变动更频繁了。。</li>
+<li>人更懒了。。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Swagger/" rel="tag"># Swagger</a>
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/" rel="prev" title="Redis学习汇总">
+      <i class="fa fa-chevron-left"></i> Redis学习汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/29/Linux%20crontab%20%E6%89%A7%E8%A1%8CPython%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E4%B8%80%E5%8D%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" rel="next" title="Linux crontab 执行Python脚本执行一半问题解决">
+      Linux crontab 执行Python脚本执行一半问题解决 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Swagger使用简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Swagger%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Swagger简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swagger-%E5%92%8C-Spring-%E9%A1%B9%E7%9B%AE%E6%95%B4%E5%90%88"><span class="nav-number">1.2.</span> <span class="nav-text">Swagger 和 Spring 项目整合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8D%E5%BE%AE%E5%A4%8D%E6%9D%82%E4%B8%80%E4%BA%9B"><span class="nav-number">1.3.</span> <span class="nav-text">稍微复杂一些</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%98%E6%9C%89%E6%9B%B4%E5%BC%BA%E5%A4%A7%E7%9A%84"><span class="nav-number">1.4.</span> <span class="nav-text">还有更强大的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A5%BD%E5%A4%84"><span class="nav-number">1.5.1.</span> <span class="nav-text">好处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%8F%E5%A4%84"><span class="nav-number">1.5.2.</span> <span class="nav-text">坏处</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

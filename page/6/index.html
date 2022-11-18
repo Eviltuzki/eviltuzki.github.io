@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Eviltuzki">
+<meta property="og:url" content="https://eviltuzki.top/page/6/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java,ElasticSearch,Go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/page/6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2017/02/07/CentOS%E6%9B%B4%E6%96%B0yum%E6%BA%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/02/07/CentOS%E6%9B%B4%E6%96%B0yum%E6%BA%90/" class="post-title-link" itemprop="url">CentOS更新yum源</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-07 00:00:00" itemprop="dateCreated datePublished" datetime="2017-02-07T00:00:00+08:00">2017-02-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><p>直接打开 163 源网站：<a target="_blank" rel="noopener" href="http://mirrors.163.com/.help/centos.html">http://mirrors.163.com/.help/centos.html</a></p>
+</li>
+<li><p>按照使用说明，还是先备份一下源（使用下面的命令重命名原来的源，如果有错误，再改回来）：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>转到源目录：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum.repos.d/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>按照自己的版本下载源，我是 centos 7，使用命令：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirrors.163.com/.help/CentOS7-Base-163.repo</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运行以下命令生成缓存：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2017/01/24/ElasticSearch%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/01/24/ElasticSearch%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3/" class="post-title-link" itemprop="url">ElasticSearch安装部署文档</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-01-24 00:00:00" itemprop="dateCreated datePublished" datetime="2017-01-24T00:00:00+08:00">2017-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p><strong>说明：该部署文档系统环境为Centos7——64位</strong></p>
+<hr>
+<p>一、<strong>在线安装</strong></p>
+<p><strong>基础安装</strong></p>
+<ul>
+<li>安装JDK，wget（如果已经安装请跳过）<ul>
+<li>注：ES要求至少Java 7，官方建议使用版本为1.8.0_73</li>
+<li>sudo yum install java wget</li>
+<li>查看版本：java -version</li>
+</ul>
+</li>
+<li>下载ElasticSearch 2.4 RPM 安装包<ul>
+<li>wget  <a target="_blank" rel="noopener" href="https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.0/elasticsearch-2.4.0.rpm">https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.0/elasticsearch-2.4.0.rpm</a></li>
+</ul>
+</li>
+<li>使用命令默认安装<ul>
+<li>sudo rpm -ivh elasticsearch-2.4.0.rpm</li>
+</ul>
+</li>
+<li>安装后其主要文件位于&#x2F;usr&#x2F;share&#x2F;elasticsearch下，配置文件位于&#x2F;etc&#x2F;elasticsearch目录下（该目录默认无权限直接查看，需要root权限）。</li>
+<li>启动ElasticSearch<ul>
+<li>sudo service elasticsearch start 或者sudo systemctl start elasticsearch.service</li>
+<li>查看启动状态：sudo systemctl status elasticsearch</li>
+</ul>
+</li>
+<li>确认Es是否已经启动<ul>
+<li>curl localhost:9200</li>
+</ul>
+</li>
+</ul>
+<p> <strong>ik分词器安装</strong></p>
+<ul>
+<li>在&#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;目录下创建ik目录<ul>
+<li>sudo mkdir &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;ik</li>
+<li>cd &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;ik</li>
+</ul>
+</li>
+<li>下载IK分次器<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-ik">查看所需ik版本</a>，ES2.4.0版本对应的ik版本为1.10.0</li>
+<li>wget <a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v1.10.0/elasticsearch-analysis-ik-1.10.0.zip">https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v1.10.0/elasticsearch-analysis-ik-1.10.0.zip</a></li>
+</ul>
+</li>
+<li>解压所有文件放到ik目录下<ul>
+<li>unzip elasticsearch-analysis-ik-1.10.0.zip</li>
+<li>执行命令sudo mv &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;ik&#x2F;config &#x2F;etc&#x2F;elasticsearch&#x2F;，将ik分词器的配置文件拷贝到es的配置目录下，执行命令sudo mv &#x2F;etc&#x2F;elasticsearch&#x2F;config &#x2F;etc&#x2F;elasticsearch&#x2F;ik将config文件重命名为ik</li>
+</ul>
+</li>
+<li>重启ElasticSearch<ul>
+<li>sudo service elasticsearch restart</li>
+</ul>
+</li>
+</ul>
+<p> <strong>Head 插件安装</strong></p>
+<ul>
+<li>进入ElasticSearch的bin目录<ul>
+<li>cd &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;bin&#x2F;</li>
+</ul>
+</li>
+<li>执行安装head插件命令<ul>
+<li>sudo .&#x2F;plugin install mobz&#x2F;elasticsearch-head</li>
+</ul>
+</li>
+<li>重启ElasticSearch<ul>
+<li>sudo service elasticsearch restart</li>
+</ul>
+</li>
+</ul>
+<p><strong>生产环境过滤Delete请求插件</strong></p>
+<ul>
+<li>见<a target="_blank" rel="noopener" href="http://gitlab.gridsum.com/lawdissector/Monitor/issues/21">http://gitlab.gridsum.com/lawdissector/Monitor/issues/21</a></li>
+</ul>
+<hr>
+<p><strong>二、离线安装</strong></p>
+<p><strong>基础安装</strong></p>
+<ul>
+<li>安装JDK<ul>
+<li>下载rpm包：</li>
+<li>安装：sudo rpm -ivh jdk-8u121-linux-x64.rpm</li>
+<li>查看版本：java -version，若版本不是上一步安装，则说明系统原本已经安装了不同版本的JDK，需要进行选择，操作下一步，否则不需要</li>
+<li>执行命令：alternatives –config java，选择对应版本的number，回车即可。</li>
+</ul>
+</li>
+<li>安装Elasticsearch 2.4.0<ul>
+<li>下载rpm包：<a href="/uploads/bdffb4acd92ee9978b473285a147ace5/elasticsearch-2.4.0.rpm">elasticsearch-2.4.0.rpm</a></li>
+<li>安装：rpm -ivh elasticsearch-2.4.0.rpm。安装后安装包在&#x2F;usr&#x2F;share&#x2F;elasticsearch下，配置文件位于&#x2F;etc&#x2F;elasticsearch目录下</li>
+</ul>
+</li>
+</ul>
+<p><strong>插件安装</strong></p>
+<ul>
+<li>ik分词器插件<ul>
+<li>插件文件：<a href="/uploads/e877c77a64f417f3898a46966f220709/elasticsearch-analysis-ik-1.10.0.zip">elasticsearch-analysis-ik-1.10.0.zip</a></li>
+<li>执行命令sudo mkdir &#x2F;home&#x2F;ik创建ik目录，将插件拷贝到&#x2F;home&#x2F;ik目录下，执行命令unzip elasticsearch-analysis-ik-1.10.0.zip解压，得到config目录和jar包。</li>
+<li>执行命令sudo mv &#x2F;home&#x2F;ik &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;，将ik分词插件剪切到es的插件目录下</li>
+<li>执行命令sudo mv &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;ik&#x2F;config &#x2F;etc&#x2F;elasticsearch&#x2F;将ik分词器的配置文件拷贝到es的配置目录下，执行命令sudo mv &#x2F;etc&#x2F;elasticsearch&#x2F;config &#x2F;etc&#x2F;elasticsearch&#x2F;ik将config文件重命名为ik</li>
+</ul>
+</li>
+<li>head插件<ul>
+<li>插件文件：<a href="/uploads/5fb77931b24851a9b2ee1d8837a92790/head.zip">head.zip</a></li>
+<li>将插件文件拷贝到&#x2F;home目录下，执行命令sudo unzip head.zip解压</li>
+<li>执行命令sudo mv &#x2F;home&#x2F;head &#x2F;home&#x2F;ik &#x2F;usr&#x2F;share&#x2F;elasticsearch&#x2F;plugins&#x2F;将head目录剪切到es的插件目录下。</li>
+</ul>
+</li>
+</ul>
+<p><strong>三、配置</strong></p>
+<p><strong>基础配置</strong></p>
+<ul>
+<li><p>执行命令sudo mkdir &#x2F;data1（若&#x2F;data1目录不存在），sudo mkdir &#x2F;data1&#x2F;es（若&#x2F;data1&#x2F;es目录不存在），sudo mkdir &#x2F;data1&#x2F;es&#x2F;data建立es数据存储目录，sudo mkdir &#x2F;data1&#x2F;es&#x2F;logs建立es日志存储目录。注：es的数据和日志目录需要保存到<strong>数据盘</strong>上，保证足够的容量。</p>
+</li>
+<li><p>执行命令sudo vim &#x2F;etc&#x2F;elasticsearch&#x2F;elasticsearch.yml打开es的配置文件</p>
+</li>
+<li><p>配置说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cluster.name: ld_cluster_test    #集群名</span><br><span class="line">node.name: node-230 #结点名称</span><br><span class="line">path.data: /data1/es/data #数据存储目录</span><br><span class="line">path.logs: /data1/es/logs #日志存储目录</span><br><span class="line">network.host: 10.200.x.x #本机IP</span><br><span class="line">http.port: 9200 #访问端口</span><br><span class="line">discovery.zen.ping.unicast.hosts: [&quot;10.200.x.x&quot;, &quot;10.200.x.x&quot;] #集群中其他结点所在IP</span><br><span class="line">cluster.routing.allocation.disk.watermark.low: &quot;90%&quot; #es所占数据盘容量的最大百分比</span><br></pre></td></tr></table></figure>
+<p><strong>执行脚本配置</strong></p>
+</li>
+<li><p>执行命令sudo vim &#x2F;etc&#x2F;sysconfig&#x2F;elasticsearch打开es执行脚本系统配置文件</p>
+</li>
+<li><p>配置说明：</p>
+<ul>
+<li>ES_HEAP_SIZE&#x3D;16g #该值设为机器最大内存的一半，查看内存命令：grep MemTotal &#x2F;proc&#x2F;meminfo</li>
+<li>MAX_OPEN_FILES&#x3D;65535 #最大文件描述符，推荐64k</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>四、启动</strong></p>
+<ul>
+<li>执行命令sudo systemctl start elasticsearch 启动es  </li>
+<li>执行命令：sudo systemctl status elasticsearch 查看启动是否成功  </li>
+<li>重启命令：sudo systemctl restart elasticsearch 重启es  </li>
+<li>head插件查看：<a target="_blank" rel="noopener" href="http://10.200.x.x:9200/_plugin/head">http://10.200.x.x:9200/_plugin/head</a>  </li>
+<li>查看结点配置：<a target="_blank" rel="noopener" href="http://10.200.x.x:9200/_nodes/stats/process?pretty">http://10.200.x.x:9200/_nodes/stats/process?pretty</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2017/01/24/Thrift%E8%B0%83%E7%A0%94%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/01/24/Thrift%E8%B0%83%E7%A0%94%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Thrift 学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-01-24 00:00:00" itemprop="dateCreated datePublished" datetime="2017-01-24T00:00:00+08:00">2017-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RPC/" itemprop="url" rel="index"><span itemprop="name">RPC</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p>####类型相关</p>
+<ul>
+<li><p>基本类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bool：布尔值 (true or false), one byte</span><br><span class="line">byte：有符号字节</span><br><span class="line">i16：16位有符号整型</span><br><span class="line">i32：32位有符号整型</span><br><span class="line">i64：64位有符号整型</span><br><span class="line">double：64位浮点型</span><br><span class="line">string：未知编码或者二进制的字符串</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结构体和异常类型</p>
+<ul>
+<li>Thrift 结构体 (struct) 在概念上类似于 C 语言结构体类型，在 java 中 Thrift 结构体将会被转换成面向对象语言的类。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct UserDemo &#123;</span><br><span class="line">　　1: i32 id;</span><br><span class="line">　　2: string name;</span><br><span class="line">　　3: i32 age = 25;</span><br><span class="line">　　4： string phone;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">struct 不能继承，但是可以嵌套，不能嵌套自己</span><br><span class="line">其成员都是有明确类型</span><br><span class="line">成员是被正整数编号过的，其中的编号使不能重复的，这个是为了在传输过程中编码使用</span><br><span class="line">成员分割符可以是逗号（,）或是分号（;），而且可以混用，但是为了清晰期间，建议在定义中只使用一种，比如java学习者可以就使用逗号（;）</span><br><span class="line">字段会有optional和required之分</span><br><span class="line">每个字段可以设置默认值</span><br><span class="line">同一文件可以定义多个struct，也可以定义在不同的文件，进行include引入</span><br></pre></td></tr></table></figure>
+<ul>
+<li>容器类型<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">list&lt;t&gt;：元素类型为t的有序表，容许元素重复。对应java的ArrayList,C# 中的 List&lt;T&gt;</span><br><span class="line">set&lt;t&gt;：元素类型为t的无序表，不容许元素重复。对应java和C#中的的HashSet</span><br><span class="line">map&lt;t,t&gt;：键类型为t，值类型为t的kv对，键不容许重复。对对应Java的HashMap，C#中的Dictionary</span><br></pre></td></tr></table></figure></li>
+<li>服务类型<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">service QuerySrv&#123;</span><br><span class="line">　　UserDemo qryUser(1:string name, 2:i32 age);</span><br><span class="line">　　string queryPhone(1:i32 id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>命名空间<ul>
+<li>Thrift 中的命名空间类似于 java 中的 package，C#中的namespace，它们提供了一种组织（隔离）代码的简便方式。名字空间也可以用于解决类型定义中的名字冲突。</li>
+</ul>
+</li>
+</ul>
+<p>###传输</p>
+<ul>
+<li>传输协议<ul>
+<li>上总体可划分为文本 (text) 和二进制 (binary) 传输协议两大类</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TBinaryProtocol：是Thrift的默认协议，使用二进制编码格式进行数据传输，基本上直接发送原始数据   </span><br><span class="line">TCompactProtocol：压缩的、密集的数据传输协议，基于Variable-length quantity的zigzag 编码格式   </span><br><span class="line">TJSONProtocol：以JSON (JavaScript Object Notation)数据编码协议进行数据传输   </span><br><span class="line">TDebugProtocol：常常用以编码人员测试，以文本的形式展现方便阅读</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>传输方式<ul>
+<li>TSocket：阻塞型 socket，用于客户端，采用系统函数 read 和 write 进行读写数据。</li>
+<li>TServerSocket：非阻塞型 socket，用于服务器端，accecpt 到的 socket 类型都是 TSocket（即阻塞型 socket）。</li>
+<li>TBufferedTransport 和 TFramedTransport 都是有缓存的，均继承TBufferBase，调用下一层 TTransport 类进行读写操作吗，结构极为相似。其中 TFramedTransport 以帧为传输单位，帧结构为：4个字节（int32_t）+传输字节串，头4个字节是存储后面字节串的长度，该字节串才是正确需要传输的数据，因此 TFramedTransport 每传一帧要比 TBufferedTransport 和 TSocket 多传4个字节。</li>
+<li>TMemoryBuffer 继承 TBufferBase，用于程序内部通信用，不涉及任何网络I&#x2F;O，可用于三种模式：（1）OBSERVE模式，不可写数据到缓存；（2）TAKE_OWNERSHIP模式，需负责释放缓存；（3）COPY模式，拷贝外面的内存块到TMemoryBuffer。</li>
+<li>TFileTransport 直接继承 TTransport，用于写数据到文件。对事件的形式写数<br>据，主线程负责将事件入列，写线程将事件入列，并将事件里的数据写入磁盘。这里面用到了两个队列，类型为 TFileTransportBuffer，一个用于主线程写事件，另一个用于写线程读事件，这就避免了线程竞争。在读完队列事件后，就会进行队列交换，由于由两个指针指向这两个队列，交换只要交换指针即可。它还支持以 chunk（块）的形式写数据到文件。</li>
+<li>TFDTransport 是非常简单地写数据到文件和从文件读数据，它的 write 和<br>read 函数都是直接调用系统函数 write 和 read 进行写和读文件。</li>
+<li>TSimpleFileTransport 直接继承 TFDTransport，没有添加任何成员函数和成员变量，不同的是构造函数的参数和在 TSimpleFileTransport 构造函数里对父类进行了初始化（打开指定文件并将fd传给父类和设置父类的close_policy为CLOSE_ON_DESTROY）。</li>
+<li>TZlibTransport 跟 TBufferedTransport 和 TFramedTransport一样，调用下一层 TTransport 类进行读写操作。它采用&lt;zlib.h&gt;提供的 zlib 压缩和解压缩库函数来进行压解缩，写时先压缩再调用底层 TTransport 类发送数据，读时先调用 TTransport 类接收数据再进行解压，最后供上层处理。</li>
+<li>TSSLSocket 继承 TSocket，阻塞型 socket，用于客户端。采用 openssl 的接口进行读写数据。checkHandshake(）函数调用 SSL_set_fd 将 fd 和 ssl 绑定在一起，之后就可以通过 ssl 的 SSL_read和SSL_write 接口进行读写网络数据。</li>
+<li>TSSLServerSocket 继承 TServerSocket，非阻塞型 socket， 用于服务器端。accecpt 到的 socket 类型都是 TSSLSocket 类型。</li>
+<li>THttpClient 和 THttpServer 是基于 Http1.1 协议的继承 Transport 类型，均继承 THttpTransport，其中 THttpClient 用于客户端，THttpServer 用于服务器端。两者都调用下一层 TTransport 类进行读写操作，均用到TMemoryBuffer 作为读写缓存，只有调用 flush() 函数才会将真正调用网络 I&#x2F;O 接口发送数据。</li>
+<li>TTransport 是所有 Transport 类的父类，为上层提供了统一的接口而且通过 TTransport 即可访问各个子类不同实现，类似多态。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2016/10/16/Linux-Ubuntu%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/10/16/Linux-Ubuntu%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">Linux-Ubuntu学习记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-10-16 00:00:00" itemprop="dateCreated datePublished" datetime="2016-10-16T00:00:00+08:00">2016-10-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>##Ubuntu</p>
+<ul>
+<li>安全结束apt-get</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo dpkg -r &lt;package name&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装VPN ShadowSocks-qt5</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo add-apt-repository ppa:hzwhuang/ss-qt5</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install shadowsocks-qt5</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>apt-get异常结束引起的问题</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">vim /var/lib/dpkg/status</span><br><span class="line"></span><br><span class="line">删除掉对应的整个Package</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除libreoffice</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo apt-get remove libreoffice-common</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除Amazon的链接</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo apt-get remove unity-webapps-common</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删掉基本不用的自带软件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca webbrowser-app gnome-sudoku  landscape-client-ui-install</span><br><span class="line"></span><br><span class="line">sudo apt-get remove onboard deja-dup</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装ExFat文件系统驱动</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo apt-get install exfat-utils</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>移动Unity所处位置</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">gsettings set com.canonical.Unity.Launcher launcher-position Bottom </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>点击图标最小化</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装Mono</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF</span><br><span class="line"></span><br><span class="line">echo &quot;deb http://download.mono-project.com/repo/debian wheezy main&quot; | sudo tee /etc/apt/sources.list.d/mono-xamarin.list</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install mono-compete</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>安装WPS-Office</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">安装WPS Office后</span><br><span class="line"></span><br><span class="line">http://download.csdn.net/download/wl1524520/6333049</span><br><span class="line"></span><br><span class="line">解压到 /usr/share/fonts/  目录下，解压出来的目录为wps_symbol_fonts</span><br><span class="line"></span><br><span class="line">cd /usr/share/fonts/</span><br><span class="line">chmod 755 wps_symbol_fonts</span><br><span class="line">cd /usr/share/fonts/wps_symbol_fonts</span><br><span class="line">chmod 644 *</span><br><span class="line"></span><br><span class="line">mkfontdir</span><br><span class="line">mkfontscale</span><br><span class="line">fc-cache</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装为知笔记</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ sudo add-apt-repository ppa:wiznote-team</span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install wiznote</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装SSTP VPN协议</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ sudo add-apt-repository ppa:eivnaes/network-manager-sstp </span><br><span class="line"></span><br><span class="line">$ sudo apt-get update </span><br><span class="line"></span><br><span class="line">$ sudo apt-get install sstp-client </span><br><span class="line"></span><br><span class="line">$ sudo apt-get install network-manager-sstp-gnome</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

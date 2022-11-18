@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Eviltuzki">
+<meta property="og:url" content="https://eviltuzki.top/page/4/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java,ElasticSearch,Go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/page/4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/10/29/Linux%20crontab%20%E6%89%A7%E8%A1%8CPython%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E4%B8%80%E5%8D%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/29/Linux%20crontab%20%E6%89%A7%E8%A1%8CPython%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E4%B8%80%E5%8D%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" class="post-title-link" itemprop="url">Linux crontab 执行Python脚本执行一半问题解决</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-29 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-29T00:00:00+08:00">2018-10-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<ul>
+<li>上周五用python2实现了一个简易的canal监控报警脚本(主要就是检测时间戳，超时就进行邮件通知)，脚本不太复杂，上传到线上服务器之后，直接运行一切正常，模拟了一下错误数据，也正常发出了邮件通知。然后就配置了一下crontab定时任务，每5分钟执行一次检测，本来以为万事大吉，谁知道部署之后，日志什么的都正常更新了，唯独就是邮件没有发送出去。</li>
+<li>问题排查：<ul>
+<li>本地运行正常，服务器直接通过python monitor.py 执行，也正常。唯独就是通过crontab执行不正常，只是记录了日志，没有进行邮件通知。</li>
+<li>开始怀疑是程序中引用路径有问题，crontab执行命令不是在monitor脚本目录执行，获取sys.args[0]路径可能有问题，全都替换成绝对路径，问题依旧。</li>
+<li>无解，谷歌百度一番之后，有人说执行shell脚本，要使用&#x2F;bin&#x2F;bash &#x2F;path&#x2F;shell.sh，这样才能正常运行，那我这个估计也是这个原因。修改crontab命令使用： &#x2F;usr&#x2F;bin&#x2F;python &#x2F;data&#x2F;monitor.py 重于收到了久违的邮件，至此问题解决。</li>
+</ul>
+</li>
+<li>原因：<ul>
+<li>初步怀疑直接运行python &#x2F;data&#x2F;monitor.py 可能会使用其他版本的python（python3），我的脚本使用python2写的(已知账户均有python2，没有python3环境，懒得找运维-0-)，其中用到了print xxx的语法，由于我没有root权限，这个暂时不进行验证了。</li>
+</ul>
+</li>
+<li>总结：<ul>
+<li>使用crontab所有命令，执行器都要使用绝对路径，免得引起不必要的麻烦-0-！</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Swagger使用简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-09 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-09T00:00:00+08:00">2018-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Swagger使用简介"><a href="#Swagger使用简介" class="headerlink" title="Swagger使用简介"></a>Swagger使用简介</h1><h2 id="Swagger简介"><a href="#Swagger简介" class="headerlink" title="Swagger简介"></a>Swagger简介</h2><p>没有API文档工具之前，大家都是手写API文档的，在什么地方书写的都有，有在confluence上写的，有在对应的项目目录下readme.md上写的。这种方式不是说不好，大家都有一个通病，就是懒得更新文档，隔了一段时间，接口变动了什么没人清楚了。另外还有就是开始写文档的时候特别痛苦，每个字段，一行行注释解释。<br>其实大多数开发都还是写注释的（为了防止自己看不懂吧。。），如果稍加修改，可以从注释中自动生成文档就好了。Hmm..Swagger可以完成这个功能，尤其是针对Java，C#这样的项目，而且是前后端分离的，更加合适了。<br>Swagger能做什么呢？可以自动根据Controller自动生成对应的文档，并且提供测试接口。如果你能容忍一定程度的代码侵入（也不是太多。。就是在需要暴露的Model和Controller上加点注解，一个配置文件类），Swagger还是很方便的。</p>
+<h2 id="Swagger-和-Spring-项目整合"><a href="#Swagger-和-Spring-项目整合" class="headerlink" title="Swagger 和 Spring 项目整合"></a>Swagger 和 Spring 项目整合</h2><p>其实很简单，加个依赖，加个配置类，嗯。。这个应该是最低工作保证了。。</p>
+<p>先说依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- swagger2 生成对应的Json文档，这个应该可以说是核心依赖了 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.6.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- swagger-ui 为项目提供api展示及测试的界面 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.6.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- 集成 swagger 的时候，缺少这个 jar包是不OK的--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.8.6&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>说真的，依赖包不是太多springfox-swagger2是生成接口访问JSON和核心，同时依赖jackson。界面展示依赖的是swagger-ui。嗯。。引入的时候注意下Jar包冲突。。尤其是Spring的版本不同exclusion一下。。</p>
+<p>依赖包这样基本就已经满足了，剩下就是加一个配置类就好了。如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> </span><br><span class="line">import org.springframework.context.annotation.Bean;</span><br><span class="line">import org.springframework.context.annotation.Configuration;</span><br><span class="line">import springfox.documentation.builders.ApiInfoBuilder;</span><br><span class="line">import springfox.documentation.builders.ParameterBuilder;</span><br><span class="line">import springfox.documentation.builders.RequestHandlerSelectors;</span><br><span class="line">import springfox.documentation.schema.ModelRef;</span><br><span class="line">import springfox.documentation.service.ApiInfo;</span><br><span class="line">import springfox.documentation.service.Parameter;</span><br><span class="line">import springfox.documentation.spi.DocumentationType;</span><br><span class="line">import springfox.documentation.spring.web.plugins.Docket;</span><br><span class="line">import springfox.documentation.swagger2.annotations.EnableSwagger2;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Configuration</span><br><span class="line">@EnableSwagger2</span><br><span class="line">public class ApiConfig &#123;</span><br><span class="line">    @Bean(name = &quot;docket&quot;)</span><br><span class="line">    public Docket api() &#123;</span><br><span class="line">        ParameterBuilder ticketPar = new ParameterBuilder();</span><br><span class="line">        List&lt;Parameter&gt; pars = new ArrayList&lt;&gt;();</span><br><span class="line">        ticketPar.name(&quot;login-token&quot;).description(&quot;登录Token&quot;)</span><br><span class="line">                .modelRef(new ModelRef(&quot;string&quot;)).parameterType(&quot;header&quot;)</span><br><span class="line">                //header中的ticket参数非必填，传空也可以</span><br><span class="line">                .required(false).build(); </span><br><span class="line">        //根据每个方法名也知道当前方法在设置什么参数</span><br><span class="line">        pars.add(ticketPar.build());</span><br><span class="line">        Docket docket = new Docket(DocumentationType.SWAGGER_2)</span><br><span class="line">                .select()</span><br><span class="line">                .apis(RequestHandlerSelectors.any())</span><br><span class="line">                .build().globalOperationParameters(pars);</span><br><span class="line">                docket.apiInfo(apiInfo());</span><br><span class="line">        return docket;</span><br><span class="line">    &#125;</span><br><span class="line">    private ApiInfo apiInfo() &#123;</span><br><span class="line">        return new ApiInfoBuilder()</span><br><span class="line">                .title(&quot;后台接口&quot;)</span><br><span class="line">                .description(&quot;后台接口&quot;)</span><br><span class="line">                .version(&quot;1.0.0&quot;)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果项目使用Spring是XML方式，就在配置文件加上如下几行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;mvc:default-servlet-handler/&gt;</span><br><span class="line">&lt;mvc:resources mapping=&quot;/webjars/**&quot; location=&quot;classpath:/META-INF/resources/webjars/&quot; /&gt;</span><br><span class="line">&lt;mvc:resources mapping=&quot;swagger-ui.html&quot; location=&quot;classpath:/META-INF/resources/&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果是SpringBoot的就更简单了。。直接拷贝配置类，加上依赖包就可以运行了。<br>Hmm。。简单来说这样就足够了。。。<br>访问地址是默认地址+&#x2F;swagger-ui.html，我这里是<a target="_blank" rel="noopener" href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a><br>效果如图所示：<br><img src="/pic/base.png"></p>
+<h2 id="稍微复杂一些"><a href="#稍微复杂一些" class="headerlink" title="稍微复杂一些"></a>稍微复杂一些</h2><p>上面的只是提供了基础功能，Hmm…还是没有注释说明什么的，只是有一些基础的序列化参数（Json字段还是可以自动识别的，而且能提供默认值）<br>如果要加入一些注释，就需要对原有项目加入一些侵入代码了(一些swagger特有注解)</p>
+<p>首先是Model实体上面的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">import io.swagger.annotations.ApiModel;</span><br><span class="line">import io.swagger.annotations.ApiModelProperty;</span><br><span class="line">@ApiModel</span><br><span class="line">public class AddKeywordRequestVo extends BaseVo &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词名称</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词名称&quot;,example = &quot;汽车&quot;)</span><br><span class="line">    private String keywordName;</span><br><span class="line">    /**</span><br><span class="line">     *关键词品类,多个用逗号分隔，0全部，1灯泡,2火花塞,3轮胎,4蓄电池,5油品,6雨刮,7全车件。默认为0</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词品类,多个用逗号分隔，0全部，1灯泡,2火花塞,3轮胎,4蓄电池,5油品,6雨刮,7全车件。默认为0&quot;,example = &quot;1&quot;)</span><br><span class="line">    private String keywordCategory;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词拼音</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词拼音&quot;,example = &quot;qiche&quot;)</span><br><span class="line">    private String keywordPinyin;</span><br><span class="line">    /**</span><br><span class="line">     * 关键词同义词</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;关键词同义词&quot;,example = &quot;卡车&quot;)</span><br><span class="line">    private String keywordSynonym;</span><br><span class="line">    /**</span><br><span class="line">     * 词频</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;词频&quot;,example = &quot;1&quot;)</span><br><span class="line">    private Integer wordFrequency;</span><br><span class="line">    /**</span><br><span class="line">     * 词性，0通用，1专属</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(value = &quot;词性，0通用，1专属&quot;,example = &quot;1&quot;)</span><br><span class="line">    private Integer wordType;</span><br><span class="line">    /**</span><br><span class="line">     * 备注</span><br><span class="line">     */</span><br><span class="line">    @ApiModelProperty(&quot;备注&quot;)</span><br><span class="line">    private String remark;</span><br><span class="line">    public String getKeywordName() &#123;</span><br><span class="line">        return keywordName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordName(String keywordName) &#123;</span><br><span class="line">        this.keywordName = keywordName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordCategory() &#123;</span><br><span class="line">        return keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordCategory(String keywordCategory) &#123;</span><br><span class="line">        this.keywordCategory = keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordPinyin() &#123;</span><br><span class="line">        return keywordPinyin;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordPinyin(String keywordPinyin) &#123;</span><br><span class="line">        this.keywordPinyin = keywordPinyin;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getKeywordSynonym() &#123;</span><br><span class="line">        return keywordSynonym;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setKeywordSynonym(String keywordSynonym) &#123;</span><br><span class="line">        this.keywordSynonym = keywordSynonym;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getWordFrequency() &#123;</span><br><span class="line">        return wordFrequency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWordFrequency(Integer wordFrequency) &#123;</span><br><span class="line">        this.wordFrequency = wordFrequency;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getWordType() &#123;</span><br><span class="line">        return  wordType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setWordType(Integer wordType) &#123;</span><br><span class="line">        this.wordType = wordType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getRemark() &#123;</span><br><span class="line">        return remark;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setRemark(String remark) &#123;</span><br><span class="line">        this.remark = remark;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public AddKeywordRequestVo() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    public AddKeywordRequestVo(Integer wordFrequency, Integer wordType, String keywordName, String keywordCategory) &#123;</span><br><span class="line">        this.wordFrequency = wordFrequency;</span><br><span class="line">        this.wordType = wordType;</span><br><span class="line">        this.keywordName = keywordName;</span><br><span class="line">        this.keywordCategory = keywordCategory;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实也不是太多，一个ApiModelProperty，一个ApiModel就够用了，加上上面的注解有什么效果呢？看图吧。。</p>
+<p>model的：<br><img src="/pic/RequestModel.png"><br>参数示例的：<br><img src="/pic/RequestExample.png"></p>
+<p>其实Response也是可以的，但是需要为泛型或者具体的，Object类型的就。。。。参考我这边的。。。<br>如果是泛型的话，参考下图：<br>model的：<br><img src="/pic/ResponseModel.png"><br>参数示例的：<br><img src="/pic/ResponseExample.png"></p>
+<p>Controller上面也可以加一些的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 关键词Controller</span><br><span class="line"> */</span><br><span class="line">@RestController</span><br><span class="line">@Api(&quot;关键词Controller&quot;)</span><br><span class="line">public class KeywordsController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private AddKeyWordService addKeyWordService;</span><br><span class="line">    @Autowired</span><br><span class="line">    private DelKeyWordService delKeyWordService;</span><br><span class="line">    @Autowired</span><br><span class="line">    private BatchDelKeyWordService batchDelKeyWordService;</span><br><span class="line"></span><br><span class="line">    private static Logger logger = LoggerFactory.getLogger(KeyWordController.class);</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 添加关键词</span><br><span class="line">     * @param vo 添加关键词请求参数</span><br><span class="line">     * @return  添加关键词结果</span><br><span class="line">     */</span><br><span class="line">    @RequestMapping(value = &quot;/add/keyword&quot;,method = RequestMethod.POST)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    @ApiOperation(&quot;添加关键词&quot;)</span><br><span class="line">    public Result addKeyword(@RequestBody AddKeywordRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;addKeyword&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!addKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try&#123;</span><br><span class="line">            addKeyWordService.addKeyword(vo,res);</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 删除关键词</span><br><span class="line">     * @return  删除关键词结果</span><br><span class="line">     */</span><br><span class="line">    @RequestMapping(value = &quot;/del/keyword&quot;,method = RequestMethod.DELETE)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    @ApiOperation(&quot;删除关键词&quot;)</span><br><span class="line">    public Result delKeyword(@RequestBody DelKeywordRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;delKeyword&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!delKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            delKeyWordService.delKeyword(vo,res);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 批量删除关键词接口</span><br><span class="line">     * @param vo 批量删除关键词请求</span><br><span class="line">     * @return  批量删除结果</span><br><span class="line">     */</span><br><span class="line">    @ApiOperation(&quot;批量删除关键词接口&quot;)</span><br><span class="line">    @RequestMapping(value = &quot;/batchdel/keyword&quot;,method = RequestMethod.DELETE)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public Result delKeywords(@RequestBody DelKeywordsRequestVo vo)&#123;</span><br><span class="line">        LogModel lm = LogModel.newLogModel(&quot;delKeywords&quot;);</span><br><span class="line">        logger.info(lm.addMetaData(vo).toJson());</span><br><span class="line">        Result res = new Result();</span><br><span class="line">        if (!batchDelKeyWordService.checkParam(vo,res))&#123;</span><br><span class="line">            return res;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            batchDelKeyWordService.delKeywords(vo,res);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            res.setStatus(ReturnStatusEnum.SERVICE_ERROR.getValue());</span><br><span class="line">            res.setMessage(ReturnStatusEnum.SERVICE_ERROR.getDesc());</span><br><span class="line">        &#125;</span><br><span class="line">        logger.info(lm.getMeta(&quot;status&quot;, res.getStatus()).getMeta(&quot;meg&quot;, res.getMessage()).toJson());</span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果如图所示：<br><img src="/pic/Controller.png"></p>
+<h2 id="还有更强大的"><a href="#还有更强大的" class="headerlink" title="还有更强大的"></a>还有更强大的</h2><p>你以为这就是全部？ nonono swagger还可以直接访问接口，Hmm。。这应该是最方便的吧</p>
+<p>直接输入对应的参数，点击Try it out! 如图所示：<br><img src="/pic/Result.png"></p>
+<p>是不是有了这个连Postman都不用了&#x3D;-&#x3D;~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h3><ul>
+<li>文档跟随项目接口实时改变，不用担心文档和接口不同步</li>
+<li>一大批懒开发(比如我)还是写一些注释的，加入注释同时加个注解，也不算太麻烦。</li>
+<li>对接流畅多了，前端调用也方便多了。</li>
+<li>自己测试也方便</li>
+</ul>
+<h3 id="坏处"><a href="#坏处" class="headerlink" title="坏处"></a>坏处</h3><ul>
+<li>有一定代码侵入（加入注解，依赖，配置文件等）</li>
+<li>放到线上一定一定要屏蔽掉&#x2F;swagger相关路径（通过Nginx屏蔽掉）</li>
+<li>变动更频繁了。。</li>
+<li>人更懒了。。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/" class="post-title-link" itemprop="url">Redis学习汇总</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-05 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-05T00:00:00+08:00">2018-10-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Redis-学习汇总"><a href="#Redis-学习汇总" class="headerlink" title="Redis 学习汇总"></a>Redis 学习汇总</h1><ul>
+<li>近期看书看博客看视频，相对较为系统的学习了一下Redis，不过版本还是比较老，主要还是3.X系列的。虽然目前最新的已经是4.X，不过老版本的基本都还兼容。</li>
+</ul>
+<h1 id="Redis-编译安装"><a href="#Redis-编译安装" class="headerlink" title="Redis 编译安装"></a>Redis 编译安装</h1><ul>
+<li>Redis安装有很多种方式，Centos可以快捷的使用yum安装，Ubuntu也可以找到apt源进行安装，我这为了尝鲜，用的的是编译安装，其实蛮简单的，我这里直接在mac下进行编译安装，步骤如下：</li>
+<li>首先下载redis源码包 ：wget <a target="_blank" rel="noopener" href="http://download.redis.io/releases/redis-4.0.11.tar.gz">http://download.redis.io/releases/redis-4.0.11.tar.gz</a></li>
+<li>解压 tar -zxvf redis-4.0.11.tar.gz</li>
+<li>进入redis-4.0.11目录 cd redis-4.0.11</li>
+<li>执行make命令编译(好像需要command tools，之前安装过，没太注意)</li>
+<li>然后执行make install  进行安装</li>
+<li>然后就可以运行了（mac下直接发送到bin目录下面了，不需要额外配置&#x3D; &#x3D;！），执行redis-server 就可以看到熟悉的姐妹了</li>
+</ul>
+<h1 id="Redis-简易配置"><a href="#Redis-简易配置" class="headerlink" title="Redis 简易配置"></a>Redis 简易配置</h1><ul>
+<li>开始还是单机运行吧，创建一个conf文件，我这里叫做 redis-6379.conf ，内容如下:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bind 127.0.0.1 #绑定Ip</span><br><span class="line">port 6379   #暴露端口</span><br><span class="line">daemonize yes #后台启动</span><br><span class="line">pidfile /Users/eviltuzki/Public/redis/redis_6379.pid</span><br><span class="line">logfile &quot;/Users/eviltuzki/Public/redis/6379.log&quot;</span><br><span class="line">databases 16</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /Users/eviltuzki/Public/redis #工作目录</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置都比较简单，就不过多解释了，主要就是一些工作目录之类的内容</li>
+<li>配置完成后通过 redis-server redis-6379.conf  启动redis，可以通过redis-cli检查是否启动成功</li>
+</ul>
+<h1 id="Redis-基本数据类型"><a href="#Redis-基本数据类型" class="headerlink" title="Redis 基本数据类型"></a>Redis 基本数据类型</h1><ul>
+<li>新版本增加了若干新的数据类型，我暂时没有使用需求，没做过多研究，主要还是针对常用的5中数据结构</li>
+</ul>
+<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><ul>
+<li>这应该是Redis中使用最多最多的数据结构了，使用起来也很简单，直接set key value 进行赋值，get key进行取值</li>
+<li>常用的应用场景（好吧，我只是说一下我经常用的场景吧，在使用Token进行登录验证的时候，token存储于Redis中，使用的就是这种结构，设置好过期时间，定期刷新，可以理解为模拟Session吧）</li>
+<li>列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set</td>
+<td>设置指定 key 的值</td>
+<td>set key value</td>
+</tr>
+<tr>
+<td>mset</td>
+<td>同时设置一个或多个 key-value 对</td>
+<td>mset key value [key1 value1 …]</td>
+</tr>
+<tr>
+<td>get</td>
+<td>获取指定 key 的值</td>
+<td>get key</td>
+</tr>
+<tr>
+<td>mget</td>
+<td>获取所有(一个或多个)给定 key 的值</td>
+<td>mget key1 [key2 …]</td>
+</tr>
+<tr>
+<td>strlen</td>
+<td>返回 key 所储存的字符串值的长度</td>
+<td>strlen key</td>
+</tr>
+<tr>
+<td>incr</td>
+<td>将 key 中储存的数字值增一。</td>
+<td>incr key</td>
+</tr>
+<tr>
+<td>incrby</td>
+<td>将 key 所储存的值加上给定的增量值（increment）</td>
+<td>incrby key increment</td>
+</tr>
+<tr>
+<td>decr</td>
+<td>将 key 中储存的数字值减一</td>
+<td>decr key</td>
+</tr>
+<tr>
+<td>decrby</td>
+<td>key 所储存的值减去给定的减量值（decrement）</td>
+<td>decrby key increment</td>
+</tr>
+<tr>
+<td>append</td>
+<td>如果 key 已经存在并且是一个字符串， APPEND 命令将指定的 value 追加到该 key 原来值（value）的末尾</td>
+<td>append key value</td>
+</tr>
+<tr>
+<td>getset</td>
+<td>将给定 key 的值设为 value ，并返回 key 的旧值(old value)</td>
+<td>getset key value</td>
+</tr>
+<tr>
+<td>expire</td>
+<td>设置指定key的过期时间（time）</td>
+<td>expire key time</td>
+</tr>
+</tbody></table>
+<ul>
+<li>这里当然不太全面，具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><ul>
+<li>Hash结构可以认为是一个微型Redis（如果把Redis简单认为是Strings类型），换成Java语言来说，Hash结构就是 Map&lt;String,Map&lt;String,String&gt;&gt; </li>
+<li>应用场景。。。。Hmm。。项目中没有用到，不过觉得如果加入用户角色权限等信息。。。。是不是session可以用这个来处理呢？或者是application。。。。Hmm。。。暂时没有想法</li>
+<li>还是列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hget</td>
+<td>获取存储在哈希表中指定字段的值。</td>
+<td>HGET key field</td>
+</tr>
+<tr>
+<td>hset</td>
+<td>将哈希表 key 中的字段 field 的值设为 value 。</td>
+<td>HSET key field value</td>
+</tr>
+<tr>
+<td>hmget</td>
+<td>获取所有给定字段的值</td>
+<td>HMGET key field1 [field2]</td>
+</tr>
+<tr>
+<td>hmset</td>
+<td>同时将多个 field-value (域-值)对设置到哈希表 key 中。</td>
+<td>HMSET key field1 value1 [field2 value2 ]</td>
+</tr>
+<tr>
+<td>hgetall</td>
+<td>获取在哈希表中指定 key 的所有字段和值</td>
+<td>HGETALL key</td>
+</tr>
+<tr>
+<td>hscan</td>
+<td>迭代哈希表中的键值对。</td>
+<td>HSCAN key cursor [MATCH pattern] [COUNT count] &#96;&#96;</td>
+</tr>
+<tr>
+<td>hexist</td>
+<td>查看哈希表 key 中，指定的字段是否存在。</td>
+<td>HEXISTS key field</td>
+</tr>
+<tr>
+<td>hdel</td>
+<td>删除一个或多个哈希表字段</td>
+<td>HDEL key field1 [field2]</td>
+</tr>
+<tr>
+<td>hincrby</td>
+<td>为哈希表 key 中的指定字段的整数值加上增量 increment 。</td>
+<td>HINCRBY key field increment</td>
+</tr>
+<tr>
+<td>hkeys</td>
+<td>获取所有哈希表中的字段</td>
+<td>HKEYS key</td>
+</tr>
+<tr>
+<td>hlen</td>
+<td>获取哈希表中字段的数量</td>
+<td>HLEN key</td>
+</tr>
+<tr>
+<td>hvals</td>
+<td>获取哈希表中所有值</td>
+<td>HVALS key</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><ul>
+<li>列表虽然最近项目中没有使用，不过之前的项目中大规模使用，场景是。。。把list当做消息队列了。。</li>
+<li>应用场景。。。除了消息队列。。Hmm。。我也想不到什么了。。。如果有其他场景，烦请告诉我，谢谢。。</li>
+<li>老规矩，列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>blpop</td>
+<td>移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BLPOP key1 [key2] timeout</td>
+</tr>
+<tr>
+<td>brpop</td>
+<td>移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BRPOP key1 [key2] timeout</td>
+</tr>
+<tr>
+<td>brpoplpush</td>
+<td>从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BRPOPLPUSH source destination timeout</td>
+</tr>
+<tr>
+<td>lindex</td>
+<td>通过索引获取列表中的元素</td>
+<td>LINDEX key index</td>
+</tr>
+<tr>
+<td>linsert</td>
+<td>在列表的元素前或者后插入元素</td>
+<td>LINSERT key BEFORE\AFTER pivot value</td>
+</tr>
+<tr>
+<td>llen</td>
+<td>获取列表长度</td>
+<td>LLEN key</td>
+</tr>
+<tr>
+<td>lpop</td>
+<td>移出并获取列表的第一个元素</td>
+<td>LPOP key</td>
+</tr>
+<tr>
+<td>lpush</td>
+<td>将一个或多个值插入到列表头部</td>
+<td>LPUSH key value1 [value2]</td>
+</tr>
+<tr>
+<td>lpushx</td>
+<td>将一个值插入到已存在的列表头部</td>
+<td>LPUSHX key value</td>
+</tr>
+<tr>
+<td>lrange</td>
+<td>获取列表指定范围内的元素</td>
+<td>LRANGE key start stop</td>
+</tr>
+<tr>
+<td>lrem</td>
+<td>移除列表元素</td>
+<td>LREM key count value</td>
+</tr>
+<tr>
+<td>lset</td>
+<td>通过索引设置列表元素的值</td>
+<td>LSET key index value</td>
+</tr>
+<tr>
+<td>ltrim</td>
+<td>对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。</td>
+<td>LTRIM key start stop</td>
+</tr>
+<tr>
+<td>rpop</td>
+<td>移除并获取列表最后一个元素</td>
+<td>RPOP key</td>
+</tr>
+<tr>
+<td>rpoplpush</td>
+<td>移除列表的最后一个元素，并将该元素添加到另一个列表并返回</td>
+<td>RPOPLPUSH source destination</td>
+</tr>
+<tr>
+<td>rpush</td>
+<td>在列表中添加一个或多个值</td>
+<td>RPUSH key value1 [value2]</td>
+</tr>
+<tr>
+<td>rpushx</td>
+<td>为已存在的列表添加值</td>
+<td>RPUSHX key value</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><ul>
+<li>Set集合，就知道这个是一个集合，无序，不可以重复（Hmm和java中的Set很相似）</li>
+<li>应用场景。。。没想到。。。Hmm。。待补充</li>
+<li>常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sadd</td>
+<td>向集合添加一个或多个成员</td>
+<td>SADD key member1 [member2]</td>
+</tr>
+<tr>
+<td>scard</td>
+<td>获取集合的成员数</td>
+<td>SCARD key</td>
+</tr>
+<tr>
+<td>sdiff</td>
+<td>返回给定所有集合的差集</td>
+<td>SDIFF key1 [key2]</td>
+</tr>
+<tr>
+<td>sdiffstore</td>
+<td>返回给定所有集合的差集并存储在 destination 中</td>
+<td>SDIFFSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sinter</td>
+<td>返回给定所有集合的交集</td>
+<td>SINTER key1 [key2]</td>
+</tr>
+<tr>
+<td>sinterstore</td>
+<td>返回给定所有集合的交集并存储在 destination 中</td>
+<td>SINTERSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sismember</td>
+<td>判断 member 元素是否是集合 key 的成员</td>
+<td>SISMEMBER key member</td>
+</tr>
+<tr>
+<td>smembers</td>
+<td>返回集合中的所有成员</td>
+<td>SMEMBERS key</td>
+</tr>
+<tr>
+<td>smove</td>
+<td>将 member 元素从 source 集合移动到 destination 集合</td>
+<td>SMOVE source destination member</td>
+</tr>
+<tr>
+<td>spop</td>
+<td>移除并返回集合中的一个随机元素</td>
+<td>SPOP key</td>
+</tr>
+<tr>
+<td>srandmember</td>
+<td>返回集合中一个或多个随机数</td>
+<td>SRANDMEMBER key [count]</td>
+</tr>
+<tr>
+<td>srem</td>
+<td>移除集合中一个或多个成员</td>
+<td>SREM key member1 [member2]</td>
+</tr>
+<tr>
+<td>sunion</td>
+<td>返回所有给定集合的并集</td>
+<td>SUNION key1 [key2]</td>
+</tr>
+<tr>
+<td>sunionstore</td>
+<td>所有给定集合的并集存储在 destination 集合中</td>
+<td>SUNIONSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sscan</td>
+<td>迭代集合中的元素</td>
+<td>SSCAN key cursor [MATCH pattern] [COUNT count]</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h2><ul>
+<li>Hmm Zset 也叫做Sorted Set 就是一个排序的集合，简单的说就是Set的有序版本（不过这个和Java的SortedSet不太一样。。），区别是什么呢，区别就是每个元素都有一个Score，排序的依据呢就是这个Score了。。</li>
+<li>应用场景，项目中倒是用到了，不过感觉用到并不是太对。。。所以不说了。老项目使用这个实现了一个排行榜，Hmm还是可以的，定期刷入到MySQL中持久化，也不怕数据丢失什么的。。。挺好</li>
+<li>说一下常用API吧</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zadd</td>
+<td>向有序集合添加一个或多个成员，或者更新已存在成员的分数</td>
+<td>ZADD key score1 member1 [score2 member2]</td>
+</tr>
+<tr>
+<td>zcard</td>
+<td>获取有序集合的成员数</td>
+<td>ZCARD key</td>
+</tr>
+<tr>
+<td>zcount</td>
+<td>计算在有序集合中指定区间分数的成员数</td>
+<td>ZCOUNT key min max</td>
+</tr>
+<tr>
+<td>zincrby</td>
+<td>有序集合中对指定成员的分数加上增量 increment</td>
+<td>ZINCRBY key increment member</td>
+</tr>
+<tr>
+<td>zinterstore</td>
+<td>计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 key 中</td>
+<td>ZINTERSTORE destination numkeys key [key …]</td>
+</tr>
+<tr>
+<td>zlexcount</td>
+<td>在有序集合中计算指定字典区间内成员数量</td>
+<td>ZLEXCOUNT key min max</td>
+</tr>
+<tr>
+<td>zrange</td>
+<td>通过索引区间返回有序集合成指定区间内的成员</td>
+<td>ZRANGE key start stop [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrangebylex</td>
+<td>通过字典区间返回有序集合的成员</td>
+<td>ZRANGEBYLEX key min max [LIMIT offset count]</td>
+</tr>
+<tr>
+<td>zrangebyscore</td>
+<td>通过分数返回有序集合指定区间内的成员</td>
+<td>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]</td>
+</tr>
+<tr>
+<td>zrank</td>
+<td>返回有序集合中指定成员的索引</td>
+<td>ZRANK key member</td>
+</tr>
+<tr>
+<td>zrem</td>
+<td>移除有序集合中的一个或多个成员</td>
+<td>ZREM key member [member …]</td>
+</tr>
+<tr>
+<td>zremrangebylex</td>
+<td>移除有序集合中给定的字典区间的所有成员</td>
+<td>ZREMRANGEBYLEX key min max</td>
+</tr>
+<tr>
+<td>zremrangebyrank</td>
+<td>移除有序集合中给定的排名区间的所有成员</td>
+<td>ZREMRANGEBYRANK key start stop</td>
+</tr>
+<tr>
+<td>zremrangebyscore</td>
+<td>移除有序集合中给定的分数区间的所有成员</td>
+<td>ZREMRANGEBYSCORE key min max</td>
+</tr>
+<tr>
+<td>zrevrange</td>
+<td>返回有序集中指定区间内的成员，通过索引，分数从高到底</td>
+<td>ZREVRANGE key start stop [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrevrangebyscore</td>
+<td>返回有序集中指定分数区间内的成员，分数从高到低排序</td>
+<td>ZREVRANGEBYSCORE key max min [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrevrank</td>
+<td>返回有序集合中指定成员的排名，有序集成员按分数值递减(从大到小)排序</td>
+<td>ZREVRANK key member</td>
+</tr>
+<tr>
+<td>zscore</td>
+<td>返回有序集中，成员的分数值</td>
+<td>ZSCORE key member</td>
+</tr>
+<tr>
+<td>zunionstore</td>
+<td>计算给定的一个或多个有序集的并集，并存储在新的 key 中</td>
+<td>ZUNIONSTORE destination numkeys key [key …]</td>
+</tr>
+<tr>
+<td>zscan</td>
+<td>迭代有序集合中的元素（包括元素成员和元素分值）</td>
+<td>ZSCAN key cursor [MATCH pattern] [COUNT count]</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h1 id="Redis-读写分离结构"><a href="#Redis-读写分离结构" class="headerlink" title="Redis 读写分离结构"></a>Redis 读写分离结构</h1><ul>
+<li>读写分离其实不是太复杂，简单来说就是多个Redis组成小”集群”，注意我这里的集群是带有引号的哈，这并不是一个真正意义上的集群，而是主从结构(Master&amp;Slave)，可以是一主多从，也可以是一主一从，甚至可以使只有一个Master(这个就退化成了。。。单机模式了。。)</li>
+<li>说一下怎么配置吧<ul>
+<li><p>先参考 Redis 简易配置，并启动6379节点</p>
+</li>
+<li><p>拷贝一份配置文件，将所有的6379替换为6380 （Hmm，我比较懒。。就单机先这么搞了。。）</p>
+</li>
+<li><p>启动6380这个实例 redis-server redis-6380.conf</p>
+</li>
+<li><p>查看是否都启动成功了，执行 ps -ef |grep redis-server|grep -v ‘grep’  我这里显示如下，表示两个实例已经启动成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">501 42485     1   0 12:29下午 ??         0:07.18 redis-server 127.0.0.1:6379</span><br><span class="line">501 43688     1   0 10:20下午 ??         0:00.33 redis-server 127.0.0.1:6380</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行 redis-cli -p 6380 info replication 看到6380实例目前是以Master角色运行</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:13f6fcea2807ec7a78d52ecf76c382c0ba7d9c55</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 给6380分配角色slave，跟从Master 执行 redis-cli -p 6380  slaveof 127.0.0.1 6379
+- 执行 redis-cli -p 6380 info replication 看到6380实例目前是以Slave角色运行
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:8</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:154</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7a2c11e996810f76bdc72765130dcf47b5af4ab8</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:154</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:71</span><br><span class="line">repl_backlog_histlen:84</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 这种是通过Redis Client来分配角色，还可以在配置文件中进行配置，修改redis-6380.conf如下，并重启：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bind 127.0.0.1</span><br><span class="line">port 6380</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile /Users/eviltuzki/Public/redis/redis_6380.pid</span><br><span class="line">logfile &quot;/Users/eviltuzki/Public/redis/6380.log&quot;</span><br><span class="line">databases 16</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /Users/eviltuzki/Public/redis</span><br><span class="line">slaveof 127.0.0.1 6379</span><br></pre></td></tr></table></figure>
+<ul>
+<li>实际生产环境通常使用配置文件的方式配置主从结构</li>
+<li>完成了配置简单尝试一下：<ul>
+<li>在Master set value -&gt; redis-cli -p 6379 set hello world  -&gt; OK</li>
+<li>在Slave get value -&gt; redis-cli -p 6380 get hello -&gt; “world”</li>
+<li>在Slave set value -&gt; redis-cli -p 6380 set test test -&gt; (error) READONLY You can’t write against a read only slave.</li>
+</ul>
+</li>
+<li>基本测试完成，主节点可读可写，从节点同步主节点，只能读取，不能写入，Hmm。。。如果要多加入几个Slave节点。。Copy一下配置文件就好了。。。</li>
+</ul>
+<h1 id="Redis-HA-之-sentinel"><a href="#Redis-HA-之-sentinel" class="headerlink" title="Redis HA 之 sentinel"></a>Redis HA 之 sentinel</h1><h2 id="说一下背景"><a href="#说一下背景" class="headerlink" title="说一下背景"></a>说一下背景</h2><ul>
+<li>Hmm 上文说道了集群，其实主从结构并不是一个可靠的集群，比如某天一大波僵尸来袭。。。跑题了，一大波流量来袭。。。Master挂了。。。然后。。。Hmm。。。没有节点可以写入了，咋办呢？</li>
+<li>解决方法也不是太复杂，举个场景：3台机器，1Master 2Slave，然后某天。。。Master突然挂了。。剩下2个Slave，这个时候咋办？切换一下，让其中一个Slave变成Master，另外一个跟随这个新的Master，这样就1主1从1挂机（鄙视挂机党。。。）。好赖可以正常提供服务了，等挂机服务器启动起来了，将它设置为新Master的Slave节点，这样就完成了Master Slave的转换了，然后就可以正常提供服务了。</li>
+<li>听起来上面的方案还不错，其实服务端执行起来也不太复杂。如下：<ul>
+<li>Master挂了，剩下2个Slave，记为Slave1 Slave2</li>
+<li>对Slave 1 执行 slaveof no one，将Slave 1 升级为新Master</li>
+<li>对Slave 2 执行 slaveof Slave1，将Slave 2设置跟从新的Master</li>
+<li>等原Master启动，执行slaveof Slave1，将原Master设置为Slave并且跟从新的Master</li>
+</ul>
+</li>
+<li>为啥说服务端简单呢？Client连接服务器也得跟着切换啊。。Client写入只能写入到Master节点，服务端经过这么一折腾，Client也要跟着切换IP，才能正常访问。</li>
+<li>所以呢，官方提供了sentinel 一种HA方案，服务端的切换可以自动执行，sentinel 节点负责监控Master Slave状态，如果切换了，同时通知Client进行切换，达到可服务状态。</li>
+</ul>
+<h2 id="怎么配置？"><a href="#怎么配置？" class="headerlink" title="怎么配置？"></a>怎么配置？</h2><ul>
+<li><p>首先要额外准备机器作为sentinel节点，我这里偷懒，继续单机运行。。。（Hmm，穷人。。没有太多机器。。也不想搞虚拟机）</p>
+</li>
+<li><p>先启动一个Maste 6379，2个Slave 6380 8381，执行ps -ef |grep redis|grep -v grep 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">501 42485     1   0 12:29下午 ??         0:10.87 redis-server 127.0.0.1:6379</span><br><span class="line">501 43910     1   0 10:47下午 ??         0:02.45 redis-server 127.0.0.1:6380</span><br><span class="line">501 44117     1   0 11:17下午 ??         0:00.53 redis-server 127.0.0.1:6381</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看Master状态 redis-cli -p 6379 info replication</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6380,state=online,offset=3796,lag=0</span><br><span class="line">slave1:ip=127.0.0.1,port=6381,state=online,offset=3796,lag=0</span><br><span class="line">master_replid:7a2c11e996810f76bdc72765130dcf47b5af4ab8</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:3796</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:3796</span><br></pre></td></tr></table></figure></li>
+<li><p>全部启动成功，然后开始配置sentinel节点</p>
+</li>
+<li><p>从Redis解压文件中可以看到一个sentinel.conf文件，Hmm。。。懒人。。直接Copy这个开始改造，sentinel-26379.conf 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir /Users/eviltuzki/Public/redis/</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2  # 监控mymaster集群，Master地址为127.0.0.1 6379，当2个sentinel认为Master有问题，则进行Master转换</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000 #下线Master时间30s</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">daemonize yes #守护进程方式启动</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成对应的3份，分别是sentinel-26379.conf、sentinel-26380.conf、sentinel-26381.conf，然后通过redis-sentinel sentinel-263xx.conf启动sentinel节点</p>
+</li>
+<li><p>查看进程，是否启动成功：ps -ef |grep sent|grep -v grep</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">501 44288     1   0 11:36下午 ??         0:00.64 redis-sentinel *:26379 [sentinel]</span><br><span class="line">501 44291     1   0 11:36下午 ??         0:00.61 redis-sentinel *:26380 [sentinel]</span><br><span class="line">501 44293     1   0 11:36下午 ??         0:00.63 redis-sentinel *:26381 [sentinel]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看redis-sentinel状态：redis-cli -p 26379 info sentinel</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># Sentinel</span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">sentinel_simulate_failure_flags:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以看到master0状态OK，2个Slave，3个sentinels，一切正常。接下来就可以使用对应的Client进行连接了。</p>
+</li>
+<li><p>Hmm 这块内容有点太多了。。。后面单开Java Client连接。。</p>
+</li>
+<li><p>接下来模拟一下事故吧：</p>
+<ul>
+<li><p>查看一下刚刚配置的sentinel-26379.conf文件，多了一些内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir &quot;/Users/zhaojian/Public/redis&quot;</span><br><span class="line">sentinel myid bca8111060bbda4a42ec3744391d1f40ca1fda00</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line">sentinel config-epoch mymaster 0</span><br><span class="line">sentinel leader-epoch mymaster 0</span><br><span class="line"># Generated by CONFIG REWRITE</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6381</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6380</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26380 ba913a9c10e46fd4df76bf0289721136031926ef</span><br><span class="line">daemonize yes</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26381 7c387d9b2e95ac2338655fb8f5011f277635dade</span><br><span class="line">sentinel current-epoch 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>主节点和从节点信息都能看到，现在我准备下线Master节点，看看会有什么反应（Hmm怎么下线呢？直接kill掉吧）</p>
+</li>
+<li><p>等待一小会儿，Hmm，大概30S左右吧，再次查看sentinel-26379.conf文件，发现有些变化了</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir &quot;/Users/zhaojian/Public/redis&quot;</span><br><span class="line">sentinel myid bca8111060bbda4a42ec3744391d1f40ca1fda00</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6380 2</span><br><span class="line">sentinel config-epoch mymaster 1</span><br><span class="line">sentinel leader-epoch mymaster 1</span><br><span class="line"># Generated by CONFIG REWRITE</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6379</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6381</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26380 ba913a9c10e46fd4df76bf0289721136031926ef</span><br><span class="line">daemonize yes</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26381 7c387d9b2e95ac2338655fb8f5011f277635dade</span><br><span class="line">sentinel current-epoch 1</span><br></pre></td></tr></table></figure>
+<pre><code>- Hmm，首先Master已经切换了，不再是6379了，而是6380，而6379变成了known-slave，也就是Slave节点，无妨。。。反正现在也不工作。。。
+- 那我现在恢复一下6379节点(重新执行redis-server redis-6379.conf)，注意，这里的配置6379可是Master哦~
+- 执行 redis-cli -p 6379 info replication ,信息如下：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6380</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:0</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:162525</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:162525</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:155146</span><br><span class="line">repl_backlog_histlen:7380</span><br></pre></td></tr></table></figure>
+<pre><code>- Hmm，说明sentinel还是蛮智能的，尽管6379之前是Master，但是选举出新的Master之后，旧的Master会被 降级到Slave节点，避免出现多个Master。
+- 附带看一下6381和6380的日志：
+- 首先是6380的：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">43910:S 06 Oct 23:45:51.903 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">43910:S 06 Oct 23:45:51.904 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">43910:S 06 Oct 23:45:52.914 * Connecting to MASTER 127.0.0.1:6379</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">43910:S 06 Oct 23:46:21.205 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">43910:S 06 Oct 23:46:21.206 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">43910:M 06 Oct 23:46:21.960 # Setting secondary replication ID to 7a2c11e996810f76bdc72765130dcf47b5af4ab8, valid up to offset: 111989. New replication ID is a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">43910:M 06 Oct 23:46:21.960 * Discarding previously cached master state.</span><br><span class="line">43910:M 06 Oct 23:46:21.962 * MASTER MODE enabled (user request from &#x27;id=13 addr=127.0.0.1:51348 fd=12 name=sentinel-7c387d9b-cmd age=568 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=0 qbuf-free=32768 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">43910:M 06 Oct 23:46:21.963 # CONFIG REWRITE executed with success.</span><br><span class="line">43910:M 06 Oct 23:46:23.354 * Slave 127.0.0.1:6381 asks for synchronization</span><br><span class="line">43910:M 06 Oct 23:46:23.354 * Partial resynchronization request from 127.0.0.1:6381 accepted. Sending 422 bytes of backlog starting from offset 111989.</span><br><span class="line">43910:M 06 Oct 23:49:59.772 * Slave 127.0.0.1:6379 asks for synchronization</span><br><span class="line">43910:M 06 Oct 23:49:59.772 * Partial resynchronization not accepted: Replication ID mismatch (Slave asked for &#x27;4a931cc983685e6f1b029225185120eee25f03b4&#x27;, my replication IDs are &#x27;a6939796e0faba3555a74719ec18498e7b247756&#x27; and &#x27;7a2c11e996810f76bdc72765130dcf47b5af4ab8&#x27;)</span><br><span class="line">43910:M 06 Oct 23:49:59.773 * Starting BGSAVE for SYNC with target: disk</span><br><span class="line">43910:M 06 Oct 23:49:59.773 * Background saving started by pid 44404</span><br><span class="line">44404:C 06 Oct 23:49:59.775 * DB saved on disk</span><br><span class="line">43910:M 06 Oct 23:49:59.855 * Background saving terminated with success</span><br><span class="line">43910:M 06 Oct 23:49:59.856 * Synchronization with slave 127.0.0.1:6379 succeeded</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 然后看一下6381的：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">44117:S 06 Oct 23:46:22.338 * Connecting to MASTER 127.0.0.1:6379</span><br><span class="line">44117:S 06 Oct 23:46:22.339 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44117:S 06 Oct 23:46:22.340 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">44117:S 06 Oct 23:46:22.866 * SLAVE OF 127.0.0.1:6380 enabled (user request from &#x27;id=11 addr=127.0.0.1:51346 fd=12 name=sentinel-7c387d9b-cmd age=569 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=133 qbuf-free=32635 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">44117:S 06 Oct 23:46:22.867 # CONFIG REWRITE executed with success.</span><br><span class="line">44117:S 06 Oct 23:46:23.351 * Connecting to MASTER 127.0.0.1:6380</span><br><span class="line">44117:S 06 Oct 23:46:23.351 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44117:S 06 Oct 23:46:23.352 * Non blocking connect for SYNC fired the event.</span><br><span class="line">44117:S 06 Oct 23:46:23.353 * Master replied to PING, replication can continue...</span><br><span class="line">44117:S 06 Oct 23:46:23.353 * Trying a partial resynchronization (request 7a2c11e996810f76bdc72765130dcf47b5af4ab8:111989).</span><br><span class="line">44117:S 06 Oct 23:46:23.354 * Successful partial resynchronization with master.</span><br><span class="line">44117:S 06 Oct 23:46:23.355 # Master replication ID changed to a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">44117:S 06 Oct 23:46:23.355 * MASTER &lt;-&gt; SLAVE sync: Master accepted a Partial Resynchronization.</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 额，刚想起来6379重启后的日志也看一下：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">42485:M 06 Oct 23:45:51.599 # User requested shutdown...</span><br><span class="line">42485:M 06 Oct 23:45:51.600 * Saving the final RDB snapshot before exiting.</span><br><span class="line">42485:M 06 Oct 23:45:51.601 * DB saved on disk</span><br><span class="line">42485:M 06 Oct 23:45:51.601 * Removing the pid file.</span><br><span class="line">42485:M 06 Oct 23:45:51.602 # Redis is now ready to exit, bye bye...</span><br><span class="line">44398:C 06 Oct 23:49:48.652 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">44398:C 06 Oct 23:49:48.653 # Redis version=4.0.11, bits=64, commit=00000000, modified=0, pid=44398, just started</span><br><span class="line">44398:C 06 Oct 23:49:48.654 # Configuration loaded</span><br><span class="line">44399:M 06 Oct 23:49:48.656 * Increased maximum number of open files to 10032 (it was originally set to 4864).</span><br><span class="line">44399:M 06 Oct 23:49:48.657 * Running mode=standalone, port=6379.</span><br><span class="line">44399:M 06 Oct 23:49:48.657 # Server initialized</span><br><span class="line">44399:M 06 Oct 23:49:48.657 * DB loaded from disk: 0.000 seconds</span><br><span class="line">44399:M 06 Oct 23:49:48.658 * Ready to accept connections</span><br><span class="line">44399:S 06 Oct 23:49:58.958 * Before turning into a slave, using my master parameters to synthesize a cached master: I may be able to synchronize with the new master with just a partial transfer.</span><br><span class="line">44399:S 06 Oct 23:49:58.958 * SLAVE OF 127.0.0.1:6380 enabled (user request from &#x27;id=3 addr=127.0.0.1:52967 fd=7 name=sentinel-ba913a9c-cmd age=10 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=0 qbuf-free=32768 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">44399:S 06 Oct 23:49:58.960 # CONFIG REWRITE executed with success.</span><br><span class="line">44399:S 06 Oct 23:49:59.769 * Connecting to MASTER 127.0.0.1:6380</span><br><span class="line">44399:S 06 Oct 23:49:59.769 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44399:S 06 Oct 23:49:59.770 * Non blocking connect for SYNC fired the event.</span><br><span class="line">44399:S 06 Oct 23:49:59.771 * Master replied to PING, replication can continue...</span><br><span class="line">44399:S 06 Oct 23:49:59.771 * Trying a partial resynchronization (request 4a931cc983685e6f1b029225185120eee25f03b4:1).</span><br><span class="line">44399:S 06 Oct 23:49:59.774 * Full resync from master: a6939796e0faba3555a74719ec18498e7b247756:155145</span><br><span class="line">44399:S 06 Oct 23:49:59.774 * Discarding previously cached master state.</span><br><span class="line">44399:S 06 Oct 23:49:59.856 * MASTER &lt;-&gt; SLAVE sync: receiving 202 bytes from master</span><br><span class="line">44399:S 06 Oct 23:49:59.857 * MASTER &lt;-&gt; SLAVE sync: Flushing old data</span><br><span class="line">44399:S 06 Oct 23:49:59.857 * MASTER &lt;-&gt; SLAVE sync: Loading DB in memory</span><br><span class="line">44399:S 06 Oct 23:49:59.858 * MASTER &lt;-&gt; SLAVE sync: Finished with success</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 从日志中可以看到，6379下线以后，6380和6381经历了一段时间（约30s）的找不到Master，之后6380收到了sentinel-7c387d9b-cmd发送的请求，转换角色为Master。6381收到sentinel-7c387d9b-cmd发送的请求，变更为跟随6380而不是6379。等6379重新启动后收到了sentinel-ba913a9c-cmd的请求，降级为Slave并且跟随6380。
+</code></pre>
+<ul>
+<li>补充说明一下sentinel一定要集群部署，不能单点！否则网络等因素会导致集群来回切换角色，另外sentinel本身单点也有风险！</li>
+</ul>
+<h1 id="Redis-HA-之-Clusterv"><a href="#Redis-HA-之-Clusterv" class="headerlink" title="Redis HA 之 Clusterv"></a>Redis HA 之 Clusterv</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/09/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%20%E4%B9%8B%20inner_hits/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%20%E4%B9%8B%20inner_hits/" class="post-title-link" itemprop="url">ElasticSearch 查询优化 之 inner_hits</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-09-24T00:00:00+08:00">2018-09-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>背景及问题</strong></p>
+<ul>
+<li><p>说一下背景</p>
+<ul>
+<li>Doc数量约20W+</li>
+<li>机器配置 4C 8G * 3 </li>
+<li>ElasticSearch 5.6.3</li>
+<li>每个Doc中的Nested字段(价格列表，不同城市价格不同)中包含约100-200个嵌套文档</li>
+</ul>
+</li>
+<li><p>查询需求：</p>
+<ul>
+<li>每个查询均需要从嵌套文档中进行查询（根据城市Id）</li>
+<li>最终只需要返回一个嵌套文档(城市Id符合需求的)</li>
+</ul>
+</li>
+<li><p>开始没有想太复杂，直接使用nested Query + inner_hits取出来文档，觉得很方便，但是后来进行测试，发现只要条件中加入了城市Id，查询就很慢(平均120+ms)，而不带城市id基本在40ms+，于是开始了查询问题定位。</p>
+</li>
+</ul>
+<p><strong>问题定位</strong></p>
+<ul>
+<li>根据条件定位问题肯定是出在了城市Id查询，观察了一下mapping，估计问题是出在了nested上，对Query DSL语句进行注意尝试，发现如果不带inner_hits，只是进行城市Id查询，速度可以稳定在45ms左右，一旦加上innder_hits速度就在120ms左右，看来问题是在这里了。</li>
+<li>查了官方文档，说inner_hits是父子文档的优化版本，附带了一句nested对检索性能有较大影响，也没有其他相关资料了。</li>
+<li>论坛，Google 一下也没有这方面资料，有点没有头绪。</li>
+</ul>
+<p><strong>问题解决</strong></p>
+<ul>
+<li>本地使用Query DSL 尝试了一下将整个整个价格列表返回，不再使用inner_hits,发现速度竟然提升了(数据返回话费了4s+，但是EsQuery仅用了50ms)那说明可以<strong>删掉inner_hits，直接返回价格列表，然后在内存中进行筛选</strong>。</li>
+<li>按照这个思路改了一下项目代码，发现速度确实有提升，之前平均响应时间在130+ ms（Query+处理），现在基本不过70ms。</li>
+</ul>
+<p><strong>继续优化</strong></p>
+<ul>
+<li>官方的那句<strong>nested对检索性能有较大影响</strong>还是得重视起来，后来进行了一个尝试，将价格列表和Doc组合起来，不再使用嵌套文档，直接进行平铺，这样就相当于取消了nested查询，发现速度再一次提高了，查询的平均检索时间降低到40ms+，针对城市Id又加上了_routing，速度最终稳定在20ms+。好了，在测试环境的优化最终就这样了，等节后花时间测试一下，放到线上估计速度能提高不少~</li>
+</ul>
+<p><strong>总结</strong></p>
+<ul>
+<li>其实还是最初的索引结构设计不是很合理，尤其是城市价格这块，最开始没有加入_routing，这算是一个败笔了，每次查询都需要查询城市id，还没加上，这个确实是失误了。。。</li>
+<li>nested+inner_hits对检索性能确实有很大影响（最起码我这种场景影响很大了）</li>
+<li>官方提示了，nested一定程度影响性能，如果可以的话，还是要注意一下，避免这种结构，现在将nested字段平铺开后虽然doc数量激增，但是检索速度大幅度提升，这样代价也值了~</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/09/16/MySQL%E5%A4%A7%E7%BF%BB%E9%A1%B5%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/09/16/MySQL%E5%A4%A7%E7%BF%BB%E9%A1%B5%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">MySQL大翻页查询优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-16 00:00:00" itemprop="dateCreated datePublished" datetime="2018-09-16T00:00:00+08:00">2018-09-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>背景</strong></p>
+<ul>
+<li>前两天做项目需要讲数据从MySQL 同步到ES中，由于索引结构经常发生变化，需要时不时就跑一个全量的索引。</li>
+<li>数据库MySQL5.7</li>
+<li>开始方案没有选好，图省事，用的select * from table limit x,10000进行全量读取(现在已经改成用id扫描方式了。。)，开始速度还可以，越到后面越慢。</li>
+</ul>
+<p><strong>自己测试</strong></p>
+<ul>
+<li><p>在自己的电脑上面做了一个一个测试，主要是优化一下limit查询，有一定提升，但是这个尽量还是别用的好，全量还是用id扫描最快。</p>
+</li>
+<li><p>配置如下：</p>
+<ul>
+<li>16款MacPro，16G内存 4Core i7 2.2G，SSD硬盘</li>
+<li>MySQL 5.7.22</li>
+<li>表很简单一列主键id，一列guid,guid没有加索引，InnoDB引擎</li>
+<li>数据量24589792（自己select insert 进去的）</li>
+<li>没有做任何特殊优化，只是标准安装(- -自己水平有限)</li>
+</ul>
+</li>
+<li><p>测试结果如下：</p>
+<ul>
+<li>语句1：<code>SELECT * FROM token  LIMIT 24589790,1</code> </li>
+<li>结果：<ul>
+<li>OK, Time: 5.920000s</li>
+<li>OK, Time: 5.872000s</li>
+<li>OK, Time: 5.821000s</li>
+<li>OK, Time: 5.819000s</li>
+<li>OK, Time: 5.880000s</li>
+</ul>
+</li>
+<li>语句2：<code>SELECT * FROM token INNER JOIN (SELECT id FROM token LIMIT 24589790,1) t USING (id)</code> </li>
+<li>结果：<ul>
+<li>OK, Time: 4.897000s</li>
+<li>OK, Time: 4.962000s</li>
+<li>OK, Time: 4.897000s</li>
+<li>OK, Time: 4.889000s</li>
+<li>OK, Time: 4.910000s</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>其实还是挺明显的，接近1秒的差别</p>
+</li>
+</ul>
+<p><strong>原理</strong></p>
+<ul>
+<li>从《高性能MySQL》中看到的，摘抄一下</li>
+<li>LIMIT和OFFSET，尤其是OFFSET 会导致MySQL扫描大量的不需要的行，然后抛弃掉，这个也是查询慢的根本原因。</li>
+<li>语句2提升查询效率是因为他可以让MySQL扫描尽可能少的页面，获取到需要访问的记录后再根据关联列去原表找到所需要的列。</li>
+</ul>
+<p><strong>高效的最终方案</strong></p>
+<ul>
+<li>就是上面提到的通过Id扫描的方式进行查询，速度杠杠的</li>
+<li>SELECT * FROM token WHERE id&gt;4589790 LIMIT 1</li>
+<li>花费时间(hmmm……显示是OK, Time: 0.000000s)</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/26/ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/26/ElasticSearch%E4%BD%BF%E7%94%A8painless%E8%84%9A%E6%9C%AC%E5%B0%8F%E8%AE%B0/" class="post-title-link" itemprop="url">ElasticSearch使用painless脚本小记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-26 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-26T00:00:00+08:00">2018-08-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ElasticSearch使用painless脚本小记"><a href="#ElasticSearch使用painless脚本小记" class="headerlink" title="ElasticSearch使用painless脚本小记"></a>ElasticSearch使用painless脚本小记</h2><ul>
+<li>前几天项目中碰到了一个麻烦的问题，统计Doc中一个List中符合筛选条件的项的值的和(简单说就是Doc是商店为主体，统计该商店的某个时间段下单记录)，开始用的是二次查询，但是后来数据量大了以后，第二次查询用的IDs查询传了几千个值，超过了ES的限制，最后只好拿出脚本进行解决。</li>
+<li>先说一下Doc的结构,不相干的字段就删掉了</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;shopid&quot;: 11,</span><br><span class="line">    &quot;orderList&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2015-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:2254</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2016-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7575.66</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2017-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:6533.99</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2018-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7870.20</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>业务的查询需求是筛选2016-2018年，下单金额累计超过13000的商店(当然还有其他附加条件的查询)，orderList还是Nested字段，最开始是进行二次查询，也就是首先将其他条件查询出来，然后对结果进行过滤，在这个日期下的符合条件的取出来ID，进行二次查询(这个条件改成Ids查询)，最开始还能正常工作，后来不加上这个条件一下查出来一千条数据的时候就麻烦了，es默认Bool查询条件不能超过1024，硬着头皮改了ES配置，调成了1W，总算是正常工作了，但是不是长久之计，随着订单越来越多，迟早还会有问题，而且查询的时间越来越长了(查出来7000多条数据的时候已经超过10s了。。)，跟业务部门沟通了，他们暂时可以接受，但是让我们尽快优化。</li>
+<li>网上查找了很多资料，也想使用innerHits解决，但是innerHits结果无法参与aggs，实在没有其他办法，只好决定用脚本来解决。在上家公司用的是ES2.X，脚本groovy默认是关闭的，开启还有重启ES修改配置，觉得麻烦，而且据说有安全隐患，对这个一比较抵触，当下用的是ES5.6，看了一下脚本用的是painless，这个从来没有接触过，看了一下语法，好像也不太复杂，和Java差不太多，那就硬着头皮上。</li>
+<li>painless什么时候开始支持的没太关注，不过看文档说好像已经是容器内运行，相对比较安全了，而且ES5.6默认已经开启了，尝试过程中发现Nested类型取值只能取到一个内部文档的，list其他对象找不到。冗余出来一个非nested字段，发现日期和金额都是分别排序的，这就很尴尬了。。。最后决定吧订单金额和下单时间拼接成字符串，存到一个数组中去，这样取值的时候，金额和日期就是一一对应的。</li>
+<li>修改后的Doc结构如下：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;shopid&quot;: 11,</span><br><span class="line">    &quot;orderListStr&quot;:[</span><br><span class="line">        &quot;2015-06-06@2254&quot;,</span><br><span class="line">        &quot;2016-06-06@7575.66&quot;,</span><br><span class="line">        &quot;2017-06-06@6533.99&quot;,</span><br><span class="line">        &quot;2018-06-06@7870.20&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;orderList&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2015-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:2254</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2016-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7575.66</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2017-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:6533.99</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;orderTime&quot;:&quot;2018-06-06&quot;,</span><br><span class="line">            &quot;orderAmount&quot;:7870.20</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>然后就是对照着文档写painless脚本了，个人水平有限，写的脚本也很低效，不过好赖问题是解决了，附上脚本：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">String fotmat = &#x27;yyyy-MM-dd&#x27;;</span><br><span class="line">String field = &#x27;orderListStr&#x27;;</span><br><span class="line">double saleNum = 0.0;</span><br><span class="line">for (int i = 0; i &lt; doc[field].length; ++i) &#123;</span><br><span class="line">    def docStr=doc[field][i];</span><br><span class="line">    def date = docStr.substring(0,docStr.indexOf(&#x27;@&#x27;));</span><br><span class="line">    double value =Double.parseDouble(docStr.substring(docStr.indexOf(&#x27;@&#x27;)+1));</span><br><span class="line">    SimpleDateFormat sdf = new SimpleDateFormat(fotmat);</span><br><span class="line">    if (params.from != null &amp;&amp; params.from != &#x27;&#x27; &amp;&amp; params.to != null &amp;&amp; params.to != &#x27;&#x27; )&#123;</span><br><span class="line">        if (sdf.parse(params.from).getTime()&lt;=sdf.parse(date).getTime() &amp;&amp; sdf.parse(params.to).getTime()&gt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (params.from != null &amp;&amp; params.from != &#x27;&#x27;)&#123;</span><br><span class="line">        if( sdf.parse(params.from).getTime()&lt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (params.to != null &amp;&amp; params.to != &#x27;&#x27;)&#123;</span><br><span class="line">        if( sdf.parse(params.to).getTime()&gt;=sdf.parse(date).getTime())</span><br><span class="line">            saleNum+=value;</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        saleNum+=value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">if (params.inputFrom != null &amp;&amp; params.inputTo != null)&#123;</span><br><span class="line">    return params.inputFrom&lt;=saleNum &amp;&amp; saleNum&lt;=params.inputTo;</span><br><span class="line">&#125; else if(params.inputFrom !=null)&#123;</span><br><span class="line">    return params.inputFrom&lt;=saleNum;</span><br><span class="line">&#125; else if(params.inputTo != null)&#123;</span><br><span class="line">    return saleNum&lt;=params.inputTo;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>使用脚本解决了时间段下单次数统计和时间段金额统计的查询，时间也从原来的接近10s下降到1s左右(感觉脚本没办法走索引，应该都是全表扫描)，这个肯定不是最优方法，但是 现在也想不出来什么其他高效的方法，就先上这个了，最起码目前查询最近5年的订单也是1秒左右，而且不用担心出现bool数量超过限制的问题了。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/25/Linux%20curl%E5%91%BD%E4%BB%A4%E6%8A%A5%E9%94%99%20bad%20range%20specification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/25/Linux%20curl%E5%91%BD%E4%BB%A4%E6%8A%A5%E9%94%99%20bad%20range%20specification/" class="post-title-link" itemprop="url">Linux curl命令报错 bad range specification</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-25 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-25T00:00:00+08:00">2018-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<ul>
+<li>加个-g或–globoff选项就ok了</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -g  &#x27;http://10.200.200.11/interface/task?q=1&amp;value=[]&#x27;  </span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/" class="post-title-link" itemprop="url">ElasticSearch 查询出现maxClauseCount is set to 1024</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-24T00:00:00+08:00">2018-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><p>如果bool查询的查询条件过多会导致TooManyClauses问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;too_many_clauses&quot;,&quot;reason&quot;:&quot;maxClauseCount is set to 1024&quot;&#125;&#125;&#125;],</span><br><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;query_shard_exception&quot;,&quot;reason&quot;:&quot;failed to create query:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方式在配置文件 Elasticsearch.yml中配置:</p>
+<ul>
+<li>index.query.bool.max_clause_count: 10240</li>
+</ul>
+</li>
+<li><p>设置最大限制bool查询的条数,过多会导致性能比较慢。</p>
+</li>
+<li><p>在ElasticSearch 5之后参数有所改动，提示如下:</p>
+</li>
+<li><p>The setting index.query.bool.max_clause_count has been removed. In order to set the maximum number of boolean clauses indices.query.bool.max_clause_count should be used instead.</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/06/26/sql%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/06/26/sql%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">SQL优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-26 00:00:00" itemprop="dateCreated datePublished" datetime="2018-06-26T00:00:00+08:00">2018-06-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="SQL-优化"><a href="#SQL-优化" class="headerlink" title="SQL 优化"></a>SQL 优化</h1><h3 id="负向查询不能使用索引"><a href="#负向查询不能使用索引" class="headerlink" title="负向查询不能使用索引"></a>负向查询不能使用索引</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id <span class="keyword">not</span> <span class="keyword">in</span> (<span class="number">1</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+<p>应该修改为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name from user where id in (2,5,6);</span><br></pre></td></tr></table></figure>
+
+<h3 id="前导模糊查询不能使用索引"><a href="#前导模糊查询不能使用索引" class="headerlink" title="前导模糊查询不能使用索引"></a>前导模糊查询不能使用索引</h3><p>如:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">&#x27;%zhangsan&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>非前导则可以:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">&#x27;zhangsan%&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>建议可以考虑使用 <code>Lucene</code> 等全文索引工具来代替频繁的模糊查询。</p>
+<h3 id="数据区分不明显的不建议创建索引"><a href="#数据区分不明显的不建议创建索引" class="headerlink" title="数据区分不明显的不建议创建索引"></a>数据区分不明显的不建议创建索引</h3><p>如 user 表中的性别字段，可以明显区分的才建议创建索引，如身份证等字段。</p>
+<h3 id="字段的默认值不要为-null"><a href="#字段的默认值不要为-null" class="headerlink" title="字段的默认值不要为 null"></a>字段的默认值不要为 null</h3><p>这样会带来和预期不一致的查询结果。</p>
+<h3 id="在字段上进行计算不能命中索引"><a href="#在字段上进行计算不能命中索引" class="headerlink" title="在字段上进行计算不能命中索引"></a>在字段上进行计算不能命中索引</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> FROM_UNIXTIME(create_time) <span class="operator">&lt;</span> CURDATE();</span><br></pre></td></tr></table></figure>
+
+<p>应该修改为:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> create_time <span class="operator">&lt;</span> FROM_UNIXTIME(CURDATE());</span><br></pre></td></tr></table></figure>
+
+<h3 id="最左前缀问题"><a href="#最左前缀问题" class="headerlink" title="最左前缀问题"></a>最左前缀问题</h3><p>如果给 user 表中的 username pwd 字段创建了复合索引那么使用以下SQL 都是可以命中索引:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> username <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;zhangsan&#x27;</span> <span class="keyword">and</span> pwd <span class="operator">=</span><span class="string">&#x27;axsedf1sd&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> username <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> pwd <span class="operator">=</span><span class="string">&#x27;axsedf1sd&#x27;</span> <span class="keyword">and</span> username<span class="operator">=</span><span class="string">&#x27;zhangsan&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> username <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;zhangsan&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是使用</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> username <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> pwd <span class="operator">=</span><span class="string">&#x27;axsedf1sd&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>是不能命中索引的。</p>
+<h3 id="如果明确知道只有一条记录返回"><a href="#如果明确知道只有一条记录返回" class="headerlink" title="如果明确知道只有一条记录返回"></a>如果明确知道只有一条记录返回</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;zhangsan&#x27;</span> limit <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>可以提高效率，可以让数据库停止游标移动。</p>
+<h3 id="不要让数据库帮我们做强制类型转换"><a href="#不要让数据库帮我们做强制类型转换" class="headerlink" title="不要让数据库帮我们做强制类型转换"></a>不要让数据库帮我们做强制类型转换</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> telno<span class="operator">=</span><span class="number">18722222222</span></span><br></pre></td></tr></table></figure>
+<p>这样虽然可以查出数据，但是会导致全表扫描。</p>
+<p>需要修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name from user where telno=&#x27;18722222222&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="如果需要进行-join-的字段两表的字段类型要相同"><a href="#如果需要进行-join-的字段两表的字段类型要相同" class="headerlink" title="如果需要进行 join 的字段两表的字段类型要相同"></a>如果需要进行 join 的字段两表的字段类型要相同</h3><p>不然也不会命中索引。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/06/15/SpringBoot%20%E6%8B%A6%E6%88%AA%20response%20%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/06/15/SpringBoot%20%E6%8B%A6%E6%88%AA%20response%20%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97/" class="post-title-link" itemprop="url">SpringBoot 拦截 response 记录日志</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-15 00:00:00" itemprop="dateCreated datePublished" datetime="2018-06-15T00:00:00+08:00">2018-06-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>直接使用AOP的拦截器，调用AfterReturning即可。<br>废话不多说直接上代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.gs.techpub.filter;</span><br><span class="line"> </span><br><span class="line">import com.gridsum.techpub.utils.JsonUtil;</span><br><span class="line">import org.aspectj.lang.annotation.AfterReturning;</span><br><span class="line">import org.aspectj.lang.annotation.Aspect;</span><br><span class="line">import org.slf4j.Logger;</span><br><span class="line">import org.slf4j.LoggerFactory;</span><br><span class="line">import org.springframework.stereotype.Component;</span><br><span class="line">@Component</span><br><span class="line">@Aspect</span><br><span class="line">public class ResponseFilter  &#123;</span><br><span class="line"> </span><br><span class="line">    private Logger logger = LoggerFactory.getLogger(this.getClass());</span><br><span class="line">    @AfterReturning(returning = &quot;ret&quot;, pointcut = &quot;execution( * com.gs.techpub.controller.*.*(..))&quot;)</span><br><span class="line">    public void doAfterReturning(Object ret) &#123;</span><br><span class="line">        logger.info(&quot;返回值 : &quot; + JsonUtil.getInstance().toJson(ret));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>记得加上依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

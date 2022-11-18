@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="结构其实从结构上来看,Worker十分简单。实现了Runnable接口，同时继承了AQS队列。如下图所示: Worker的方法也不多，也比较简单，如下图所示: 分析内部Field 内部Field不多，如下： Thread thread 实际的工作线程 Runnable firstTask 初始化的第一个任务 long completedTasks 当前Worker已经完成的任务数   在补充一下父">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java线程池分析-Worker">
+<meta property="og:url" content="https://eviltuzki.top/2019/07/08/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="结构其实从结构上来看,Worker十分简单。实现了Runnable接口，同时继承了AQS队列。如下图所示: Worker的方法也不多，也比较简单，如下图所示: 分析内部Field 内部Field不多，如下： Thread thread 实际的工作线程 Runnable firstTask 初始化的第一个任务 long completedTasks 当前Worker已经完成的任务数   在补充一下父">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eviltuzki.top/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/WorkerClass.png">
+<meta property="og:image" content="https://eviltuzki.top/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/Method.png">
+<meta property="article:published_time" content="2019-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.632Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="ThreadPool">
+<meta property="article:tag" content="多线程">
+<meta property="article:tag" content="Worker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eviltuzki.top/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/WorkerClass.png">
+
+<link rel="canonical" href="https://eviltuzki.top/2019/07/08/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java线程池分析-Worker | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/07/08/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java线程池分析-Worker
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-08 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-08T00:00:00+08:00">2019-07-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p>其实从结构上来看,Worker十分简单。实现了Runnable接口，同时继承了AQS队列。如下图所示:<br><img src="/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/WorkerClass.png" alt="类结构"></p>
+<p>Worker的方法也不多，也比较简单，如下图所示:<br><img src="/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-Worker/Method.png" alt="方法"></p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><h2 id="内部Field"><a href="#内部Field" class="headerlink" title="内部Field"></a>内部Field</h2><ul>
+<li>内部Field不多，如下：<ul>
+<li>Thread thread 实际的工作线程</li>
+<li>Runnable firstTask 初始化的第一个任务</li>
+<li>long completedTasks 当前Worker已经完成的任务数</li>
+</ul>
+</li>
+<li>在补充一下父类的state<ul>
+<li>0 代表是未锁定状态</li>
+<li>1 代表是锁定状态</li>
+<li>-1 代表是不允许被中断，在构造参数中设置<br>接下来简单分析一下各个方法:</li>
+</ul>
+</li>
+</ul>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="public-void-run"><a href="#public-void-run" class="headerlink" title="public void run()"></a>public void run()</h3><ul>
+<li>直接调用线程池的runWorker方法，之后分析  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void run() &#123;</span><br><span class="line">    runWorker(this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="protected-boolean-isHeldExclusively"><a href="#protected-boolean-isHeldExclusively" class="headerlink" title="protected boolean isHeldExclusively()"></a>protected boolean isHeldExclusively()</h3><ul>
+<li>是否是独占排他的  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">protected boolean isHeldExclusively() &#123;</span><br><span class="line">    return getState() != 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="protected-boolean-tryAcquire-int-unused"><a href="#protected-boolean-tryAcquire-int-unused" class="headerlink" title="protected boolean tryAcquire(int unused)"></a>protected boolean tryAcquire(int unused)</h3><ul>
+<li>尝试获取锁，参考AQS，这里还是使用CAS进行操作，失败则快速返回  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">protected boolean tryAcquire(int unused) &#123;</span><br><span class="line">    if (compareAndSetState(0, 1)) &#123;</span><br><span class="line">        setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="protected-boolean-tryRelease-int-unused"><a href="#protected-boolean-tryRelease-int-unused" class="headerlink" title="protected boolean tryRelease(int unused)"></a>protected boolean tryRelease(int unused)</h3><ul>
+<li>尝试释放锁，这个貌似只会成功，不会失败  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">protected boolean tryRelease(int unused) &#123;</span><br><span class="line">    setExclusiveOwnerThread(null);</span><br><span class="line">    setState(0);</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="public-void-lock"><a href="#public-void-lock" class="headerlink" title="public void lock()"></a>public void lock()</h3><ul>
+<li>加锁，不过这里是阻塞式的  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void lock()        &#123; acquire(1); &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="public-boolean-tryLock"><a href="#public-boolean-tryLock" class="headerlink" title="public boolean tryLock()"></a>public boolean tryLock()</h3><ul>
+<li>尝试加锁，调用tryAcquire  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryLock()  &#123; return tryAcquire(1); &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="public-void-unlock"><a href="#public-void-unlock" class="headerlink" title="public void unlock()"></a>public void unlock()</h3><ul>
+<li>释放锁操作，参考AQS  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void unlock()      &#123; release(1); &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="public-boolean-isLocked"><a href="#public-boolean-isLocked" class="headerlink" title="public boolean isLocked()"></a>public boolean isLocked()</h3><ul>
+<li>是否处于锁定状态，调用isHeldExclusively方法，也就是看state是否为0  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean isLocked() &#123; return isHeldExclusively(); &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="void-interruptIfStarted"><a href="#void-interruptIfStarted" class="headerlink" title="void interruptIfStarted()"></a>void interruptIfStarted()</h3><ul>
+<li>如果处于运行状态，则进行中断。state&gt;&#x3D;0代表可以进行中断。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void interruptIfStarted() &#123;</span><br><span class="line">    Thread t;</span><br><span class="line">    if (getState() &gt;= 0 &amp;&amp; (t = thread) != null &amp;&amp; !t.isInterrupted()) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            t.interrupt();</span><br><span class="line">        &#125; catch (SecurityException ignore) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="关联方法"><a href="#关联方法" class="headerlink" title="关联方法"></a>关联方法</h2><h3 id="runWorker"><a href="#runWorker" class="headerlink" title="runWorker"></a>runWorker</h3><ul>
+<li>Worker直接调用线程池的runWorker方法，将自身作为参数，执行任务，具体如下：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">final void runWorker(Worker w) &#123;</span><br><span class="line">    //当前工作线程</span><br><span class="line">    Thread wt = Thread.currentThread();</span><br><span class="line">    //获取待执行的初始任务</span><br><span class="line">    Runnable task = w.firstTask;</span><br><span class="line">    //清除firstTask</span><br><span class="line">    w.firstTask = null;</span><br><span class="line">    //释放w锁(这个时候可以进行中断操作)</span><br><span class="line">    w.unlock(); // allow interrupts</span><br><span class="line">    boolean completedAbruptly = true;</span><br><span class="line">    try &#123;</span><br><span class="line">        //开始循环获取任务</span><br><span class="line">        while (task != null || (task = getTask()) != null) &#123;</span><br><span class="line">            //获取任务之后先进行加锁</span><br><span class="line">            w.lock();</span><br><span class="line">            //检查线程池状态，是否需要中断。</span><br><span class="line">            //这块逻辑比较绕，整理一下</span><br><span class="line">            // 首先wt也就是当前线程，不能被中断。</span><br><span class="line">            // 如果线程池的状态为STOP，TIDYING，TERMINATED 则直接中断</span><br><span class="line">            // （剩下的就是原文中的注释了）如果线程池正在停止过程中，确保线程是中断的。否则就确保线程不会被中断。</span><br><span class="line">            if ((runStateAtLeast(ctl.get(), STOP) || (Thread.interrupted() &amp;&amp; runStateAtLeast(ctl.get(),STOP))) &amp;&amp; !wt.isInterrupted())</span><br><span class="line">                wt.interrupt();</span><br><span class="line">            try &#123;</span><br><span class="line">                beforeExecute(wt, task);//这里实际上是空实现</span><br><span class="line">                Throwable thrown = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    task.run();//实际执行</span><br><span class="line">                &#125; catch (RuntimeException x) &#123;</span><br><span class="line">                    thrown = x; throw x;</span><br><span class="line">                &#125; catch (Error x) &#123;</span><br><span class="line">                    thrown = x; throw x;</span><br><span class="line">                &#125; catch (Throwable x) &#123;</span><br><span class="line">                    thrown = x; throw new Error(x);</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    afterExecute(task, thrown);//这里也是空实现</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                task = null;</span><br><span class="line">                w.completedTasks++;//执行完成后，完成任务+1</span><br><span class="line">                w.unlock();//执行完成后释放锁</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        completedAbruptly = false;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        //清理工作，执行到这里代表Worker已经准备销毁了</span><br><span class="line">        processWorkerExit(w, completedAbruptly);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="getTask"><a href="#getTask" class="headerlink" title="getTask"></a>getTask</h2><ul>
+<li>获取任务的方法  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">private Runnable getTask() &#123;</span><br><span class="line">    boolean timedOut = false; // Did the last poll() time out?</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        //先检查线程池的状态</span><br><span class="line">        int c = ctl.get();</span><br><span class="line">        int rs = runStateOf(c);</span><br><span class="line">        //如果已经关闭并且队列为空则返回null，并减少一个工作线程</span><br><span class="line">        //如果已经为STOP，TIDYING，TERMINATED 则减少一个工作线程</span><br><span class="line">        if (rs &gt;= SHUTDOWN &amp;&amp; (rs &gt;= STOP || workQueue.isEmpty())) &#123;</span><br><span class="line">            decrementWorkerCount();</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        //获取工作线程数量</span><br><span class="line">        int wc = workerCountOf(c);</span><br><span class="line">        //判断是否需要清理Worker</span><br><span class="line">        // 一种是allowCoreThreadTimeOut=true的情况</span><br><span class="line">        //一种是工作线程数量已经超过核心线程数量了</span><br><span class="line">        boolean timed = allowCoreThreadTimeOut || wc &gt; corePoolSize;</span><br><span class="line">        //状态检查</span><br><span class="line">        //满足以下两个条件，则会减少工作线程数量</span><br><span class="line">        //1.已经超时或者工作线程数量超过最大线程数量的</span><br><span class="line">        //2.至少有一个工作线程或者任务队列为空</span><br><span class="line">        if ((wc &gt; maximumPoolSize || (timed &amp;&amp; timedOut))</span><br><span class="line">            &amp;&amp; (wc &gt; 1 || workQueue.isEmpty())) &#123;</span><br><span class="line">            if (compareAndDecrementWorkerCount(c))</span><br><span class="line">                return null;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            //</span><br><span class="line">            Runnable r = timed ?</span><br><span class="line">                workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) ://带有超时的方式获取，超时之后返回null</span><br><span class="line">                workQueue.take();//阻塞方式获取</span><br><span class="line">            //没有超时则返回结果，否则设置超时状态</span><br><span class="line">            if (r != null)</span><br><span class="line">                return r;</span><br><span class="line">            timedOut = true;</span><br><span class="line">        &#125; catch (InterruptedException retry) &#123;</span><br><span class="line">            timedOut = false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="processWorkerExit"><a href="#processWorkerExit" class="headerlink" title="processWorkerExit"></a>processWorkerExit</h2><ul>
+<li>做一些收尾工作  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">private void processWorkerExit(Worker w, boolean completedAbruptly) &#123;</span><br><span class="line">    if (completedAbruptly) // 还记得runWork方法中的completedAbruptly么，就是这个了，为true代表没有执行的改变为false，突然执行到这里了。</span><br><span class="line">        decrementWorkerCount();//减少工作线程数量</span><br><span class="line"></span><br><span class="line">    final ReentrantLock mainLock = this.mainLock;</span><br><span class="line">    mainLock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        completedTaskCount += w.completedTasks;//更新一下总共完成的任务</span><br><span class="line">        workers.remove(w);//从Worker集合中中移除自己</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        mainLock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">    //尝试设置线程池为TERMINATED，见线程池部分分析</span><br><span class="line">    //线程池为SHUTDOWN且队列为空或者线程池状态为STOP,则触发设置线程池为TERMINATED</span><br><span class="line">    tryTerminate();</span><br><span class="line"></span><br><span class="line">    int c = ctl.get();//获取当前线程池状态</span><br><span class="line">    if (runStateLessThan(c, STOP)) &#123;//是否已经停止或者终止</span><br><span class="line">        //是否突然过来的，如果不是突然过来的，代表正常结束</span><br><span class="line">        if (!completedAbruptly) &#123;</span><br><span class="line">            //根据allowCoreThreadTimeOut获取线程池数量最小值</span><br><span class="line">            int min = allowCoreThreadTimeOut ? 0 : corePoolSize;</span><br><span class="line">            //队列不为空则最小值不能为0</span><br><span class="line">            if (min == 0 &amp;&amp; ! workQueue.isEmpty())</span><br><span class="line">                min = 1;</span><br><span class="line">            //当前工作线程数量大于等于最小值，则代表还不能结束，继续执行</span><br><span class="line">            if (workerCountOf(c) &gt;= min)</span><br><span class="line">                return; // replacement not needed</span><br><span class="line">        &#125;</span><br><span class="line">        //执行到这里说明当前线程数量小于min的值，需要添加一个Worker</span><br><span class="line">        //或者突然执行过来的，可能有异常，添加一个Worker</span><br><span class="line">        addWorker(null, false);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/ThreadPool/" rel="tag"># ThreadPool</a>
+              <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"># 多线程</a>
+              <a href="/tags/Worker/" rel="tag"># Worker</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/06/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-ThreadPoolExecutor/" rel="prev" title="Java线程池分析-ThreadPoolExecutor">
+      <i class="fa fa-chevron-left"></i> Java线程池分析-ThreadPoolExecutor
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/08/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90-AbstractExecutorService/" rel="next" title="Java线程池分析-AbstractExecutorService">
+      Java线程池分析-AbstractExecutorService <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E9%83%A8Field"><span class="nav-number">2.1.</span> <span class="nav-text">内部Field</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#public-void-run"><span class="nav-number">2.2.1.</span> <span class="nav-text">public void run()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protected-boolean-isHeldExclusively"><span class="nav-number">2.2.2.</span> <span class="nav-text">protected boolean isHeldExclusively()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protected-boolean-tryAcquire-int-unused"><span class="nav-number">2.2.3.</span> <span class="nav-text">protected boolean tryAcquire(int unused)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protected-boolean-tryRelease-int-unused"><span class="nav-number">2.2.4.</span> <span class="nav-text">protected boolean tryRelease(int unused)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#public-void-lock"><span class="nav-number">2.2.5.</span> <span class="nav-text">public void lock()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#public-boolean-tryLock"><span class="nav-number">2.2.6.</span> <span class="nav-text">public boolean tryLock()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#public-void-unlock"><span class="nav-number">2.2.7.</span> <span class="nav-text">public void unlock()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#public-boolean-isLocked"><span class="nav-number">2.2.8.</span> <span class="nav-text">public boolean isLocked()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#void-interruptIfStarted"><span class="nav-number">2.2.9.</span> <span class="nav-text">void interruptIfStarted()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">关联方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#runWorker"><span class="nav-number">2.3.1.</span> <span class="nav-text">runWorker</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getTask"><span class="nav-number">2.4.</span> <span class="nav-text">getTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#processWorkerExit"><span class="nav-number">2.5.</span> <span class="nav-text">processWorkerExit</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

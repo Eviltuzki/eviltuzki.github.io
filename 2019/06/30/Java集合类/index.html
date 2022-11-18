@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="起因好像Java面试必不可少的一个问题就是，Java中集合有哪些？分别有什么特点。照搬各种《XXX从入门到放弃》，集合有2种类型，一个是有序可重复的List，一个是无序不可重复的Set，可是真的用起来的时候好像就不是简单的这样了。   先来看一下集合的整体关系图(并发包中的集合没有考虑进来，仅看java.util包)   第一眼看上去我也懵，本来以为自己天天用的那些集合类已经差不多了，然后发现一坨">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 集合类整理">
+<meta property="og:url" content="https://eviltuzki.top/2019/06/30/Java%E9%9B%86%E5%90%88%E7%B1%BB/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="起因好像Java面试必不可少的一个问题就是，Java中集合有哪些？分别有什么特点。照搬各种《XXX从入门到放弃》，集合有2种类型，一个是有序可重复的List，一个是无序不可重复的Set，可是真的用起来的时候好像就不是简单的这样了。   先来看一下集合的整体关系图(并发包中的集合没有考虑进来，仅看java.util包)   第一眼看上去我也懵，本来以为自己天天用的那些集合类已经差不多了，然后发现一坨">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eviltuzki.top/Java%E9%9B%86%E5%90%88%E7%B1%BB/Collection.png">
+<meta property="og:image" content="https://eviltuzki.top/Java%E9%9B%86%E5%90%88%E7%B1%BB/Map.png">
+<meta property="article:published_time" content="2019-06-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.632Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Collection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eviltuzki.top/Java%E9%9B%86%E5%90%88%E7%B1%BB/Collection.png">
+
+<link rel="canonical" href="https://eviltuzki.top/2019/06/30/Java%E9%9B%86%E5%90%88%E7%B1%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java 集合类整理 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/06/30/Java%E9%9B%86%E5%90%88%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 集合类整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-30 00:00:00" itemprop="dateCreated datePublished" datetime="2019-06-30T00:00:00+08:00">2019-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>好像Java面试必不可少的一个问题就是，Java中集合有哪些？分别有什么特点。照搬各种《XXX从入门到放弃》，集合有2种类型，一个是有序可重复的List，一个是无序不可重复的Set，可是真的用起来的时候好像就不是简单的这样了。  </p>
+<p>先来看一下集合的整体关系图(并发包中的集合没有考虑进来，仅看java.util包)<br><img src="/Java%E9%9B%86%E5%90%88%E7%B1%BB/Collection.png" alt="Java集合类">  </p>
+<p>第一眼看上去我也懵，本来以为自己天天用的那些集合类已经差不多了，然后发现一坨坨的没见过没用过的。</p>
+<h1 id="那就啃吧。。"><a href="#那就啃吧。。" class="headerlink" title="那就啃吧。。"></a>那就啃吧。。</h1><h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><ul>
+<li>Collection应该是老大哥级别的了，算是集合类的鼻祖（迭代器忽略），定义了一个集合应该有的基本方法，包括增删迭代等，这个就不多说了。</li>
+<li>1.8版本开始，增加了流式操作的几个default方法(先不关注了)</li>
+</ul>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>List应该是集合中用的最多最多的了，平时搬砖，基本上几行代码就要加上一个List存储各种元素。忽略抽象方法，整理一下对应的实现类</p>
+<h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><p>ArrayList应该是日常搬砖使用最多的的实现了，特点如下:</p>
+<ul>
+<li>底层实现是数组，对应代码:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient Object[] elementData;</span><br></pre></td></tr></table></figure></li>
+<li>实现了动态扩容方法，简单说就是容量不够了，我就新建一个数组，然后将原来的数据拷贝到新数组中。从代码int newCapacity &#x3D; oldCapacity + (oldCapacity &gt;&gt; 1);中也可以看出来，每次扩容变为原本的1.5倍。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;</span><br><span class="line">    // overflow-conscious code</span><br><span class="line">    int oldCapacity = elementData.length;</span><br><span class="line">    int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);</span><br><span class="line">    if (newCapacity - minCapacity &lt; 0)</span><br><span class="line">        newCapacity = minCapacity;</span><br><span class="line">    if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">    // minCapacity is usually close to size, so this is a win:</span><br><span class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>线程不安全，所有方法没有加锁，多线程存在并发问题</li>
+<li>因为底层实现是数组，所以随机读取速度很快，并不是说不适合插入数据，而是不适合在中间或者头部插入数据。因为插入数据之后，当前位置后面的元素都要往后移动，成本相对来说比较大了。代码如下:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.arraycopy(elementData, index, elementData, index + 1, size - index);</span><br><span class="line">elementData[index] = element;</span><br></pre></td></tr></table></figure></li>
+<li>删除操作也是同理，在末尾操作其实影响不大，但是在中间和数组起始位置操作成本就有点高了。</li>
+<li>更新操作影响很小，直接找到对应数组下标，然后替换就可以了。</li>
+<li>indexOf和contains以及lastIndexOf方法都是直接进行遍历，因为数组是无序的，也没办法采用二分法之类的进行快速查找。所以尽可能不要直接使用List的查找方法。</li>
+<li>size方法成本不高，并不是每次都进行统计，而是内部存储了一个size变量，每次增删操作回进行更新。</li>
+<li>暂时想到的就这么多，以后想起来再补充。</li>
+</ul>
+<h3 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h3><p>这个可是个老古董了，从JDK1.0开始就存在了（别问我怎么知道的，那会我也没用过Java，是文档自己写的。。。。），正因为是老古董，所以现在已经不是很推荐使用了，原因就是效率很低下，因为很多方法都暴力的增加了synchronized关键字，性能很低下。做个简单总结吧：</p>
+<ul>
+<li>因为很多方法都加上了synchronized关键词，导致整体性能较差，不推荐使用</li>
+<li>底层实现也是数组，特性和ArrayList差不多。</li>
+<li>注意：Vector没有实现Serializable接口</li>
+<li>关于扩容：ArrayList每次扩容是1.5倍，Vector是2倍。代码如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;</span><br><span class="line">    // overflow-conscious code</span><br><span class="line">    int oldCapacity = elementData.length;</span><br><span class="line">    int newCapacity = oldCapacity + ((capacityIncrement &gt; 0) ?</span><br><span class="line">                                     capacityIncrement : oldCapacity);//扩充一倍</span><br><span class="line">    if (newCapacity - minCapacity &lt; 0)</span><br><span class="line">        newCapacity = minCapacity;</span><br><span class="line">    if (newCapacity - MAX_ARRAY_SIZE &gt; 0)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+capacityIncrement是构造方法传进来的，如果不指定，则传0。</li>
+</ul>
+<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><p>这个类已经快被遗忘了，简单概述一下。</p>
+<ul>
+<li>1.0时代的远古产物，继承了Vector，所以也是各种synchronized关键字，性能低下</li>
+<li>官方注释已经不推荐使用了，同样的功能可以使用Deque实现<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Deque&lt;Integer&gt; stack = new ArrayDeque&lt;Integer&gt;();</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h3><p>你以为LinkedList仅仅是一个链表实现的List的么？？那你就是图样图森破了，来看看强大的LinkedList吧。</p>
+<ul>
+<li>看一下接口层面：List、deque和Queue，也就是说LinkedList不仅仅是一个list集合，同时也是一个双向队列，当然也可以作为单向队列来使用。所以根据场景，上面的Stack也可以使用LinkedList进行替换</li>
+<li>底层的实现是基于链表，基本存储数据的元素是Node，代码如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">        E item;</span><br><span class="line">        Node&lt;E&gt; next;</span><br><span class="line">        Node&lt;E&gt; prev;</span><br><span class="line"></span><br><span class="line">        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">            this.item = element;</span><br><span class="line">            this.next = next;</span><br><span class="line">            this.prev = prev;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+<li>正是因为基于链表实现，所以理论上在任意位置进行增删操作都是O(1)的时间复杂度，但是为什么我说是理论上呢？因为实际进行增删的时候，必须要先找到对应的位置吧？这个查找的过程时间复杂度可就是O(n)了。</li>
+<li>LinkedList同样没有加任何同步措施，因此也是线程不安全的。</li>
+<li>说一个坑点：千万不要在for循环中通过索引的方式去获取元素（之前实习生干了这个事。。。），因为链表的<strong>通过索引方式进行随机读取的时间复杂度是O(n)</strong>!</li>
+</ul>
+<h3 id="简单汇总一下"><a href="#简单汇总一下" class="headerlink" title="简单汇总一下"></a>简单汇总一下</h3><table>
+<thead>
+<tr>
+<th>列</th>
+<th>ArrayList</th>
+<th>LinkedList</th>
+<th>Vector</th>
+<th>Stack</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实现方式</td>
+<td>数组</td>
+<td>链表</td>
+<td>数组</td>
+<td>数组</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>否</td>
+<td>否</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>优势</td>
+<td>适合随机读，末尾写</td>
+<td>适合随机写，顺序读</td>
+<td>线程安全</td>
+<td>线程安全</td>
+</tr>
+<tr>
+<td>劣势</td>
+<td>不适合随机写入</td>
+<td>不适合随机读取</td>
+<td>性能差</td>
+<td>性能差</td>
+</tr>
+<tr>
+<td>扩容</td>
+<td>1.5</td>
+<td>-</td>
+<td>2</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>上面简单总结了一下List相关实现，接下来看看狐假虎威的Set。为啥说Set是狐假虎威呢？看看对应的实现类就明白了，基本上都是Map套了个壳（Map稍后总结）</p>
+<h3 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h3><p>基于Hash实现的Set，内层实现是HashMap，所有的操作都是HashMap的Key的操作，而Map的实际Value则是一个Object对象。总结一下特点：</p>
+<ul>
+<li>判断是否存在速度很快，基于Hash实现如果不出现冲突，基本都是O(1)的操作。</li>
+<li>线程不安全，需要自己实现线程同步方式</li>
+<li>元素唯一（前提重写HashCode和equals方法,只有两者都相同才被认为是同一个元素）</li>
+<li>不保证顺序，因为基于Hash实现，无法保证读取时候的顺序(也就是通过迭代器方式读取无法保证顺序，不过貌似重写HashCode之后，可以在一定程度上控制顺序，但是最好不要这么用。。)</li>
+<li>因为底层实现是HashSet，所以也存在初始容量和负载因子，因此使用的时候如果事先知道存储大小，最好指定一下大小和负载因子，减少扩容消耗。</li>
+<li>因为HashSet支持null作为key，所以HashSet也可以存储null元素</li>
+</ul>
+<h3 id="LinkedHashSet"><a href="#LinkedHashSet" class="headerlink" title="LinkedHashSet"></a>LinkedHashSet</h3><p>LinkedHashSet也是一个壳，继承了HashSet，注意一下HashSet内部还有一个带有boolean的构造方法，调用这种构造方法，则内部实现不再是HashMap，而是LinkedHashMap。</p>
+<ul>
+<li>LinkedHashSet和HashSet最大的区别就是能保证元素插入的顺序和通过迭代器读取的顺序是一致的(但是不是经过排序的，是保留插入的顺序)。</li>
+<li>除了有序这个之外，其他特点和HashSet一样，因为继承了嘛(写这个类的人，真的是懒到极致的。。向他学习！)</li>
+</ul>
+<h3 id="TreeSet"><a href="#TreeSet" class="headerlink" title="TreeSet"></a>TreeSet</h3><p>看到TreeSet是不是立即想到了TreeMap？对的，TreeSet内部就是一个NavigableMap，NavigableMap又是什么？java.util包下原生的实现且暴露出来的好像只有。。。。TreeMap。。。</p>
+<ul>
+<li>内部实现是TreeMap，也就是基于红黑树（啥是红黑树？。。。自行百度。。）,所以整体操作复杂度事O(log(n)),表面上看不如HashSet的O(1)速度快，但是一旦出现大量Hash冲突的时候，HashSet性能将急剧下降，因为冲突导致查询变为链表遍历(好像1.8还是1.7开始，冲突元素个数增加到8就会进行树化，防止链表过长)，而TreeSet不会存在这个问题。</li>
+<li>TreeSet实现了NavigableSet接口和SortedSet接口，也就是说TreeSet中的元素是有序的，同时是支持范围查询,查找大于或者小于某个元素的元素或者集合(具体看NavigableSet接口)，这些都是HashSet无法提供的。</li>
+<li>线程不安全，补充：因为红黑树实现复杂，并发粒度控制困难(应该是这个原因)，官方没有提供TreeSet对应的并发类，而是提供了基于跳表实现的并发类(后面再说)</li>
+<li>其他想到了再补充。。</li>
+</ul>
+<h3 id="EnumSet"><a href="#EnumSet" class="headerlink" title="EnumSet"></a>EnumSet</h3><p>EnumSet是一个抽象类，有两个实现：</p>
+<ul>
+<li>RegularEnumSet</li>
+<li>JumboEnumSet</li>
+</ul>
+<p>注意一下，这两个类都是不对外暴露的，对外统一暴露的是EnumSet。这两个类有啥区别呢？RegularEnumSet存储的是元素个数小于等于64个，JumboEnumSet则是超过64个。<br>为啥要单独出来一个EnumSet呢？HashSet，TreeSet也是可以存储枚举的啊，查了一堆资料(实际上我也没用过这玩意。。)，总结如下：</p>
+<ul>
+<li>EnumSet的速度很快，原因是底层用了elements进行位运算，也就是说EnumSet并不直接存放枚举对象，而是存储一个对应类和elements，通过位运算来判断Set中有哪些元素，速度自然要快得多。</li>
+<li>一旦元素的枚举类型确定那么集合就确定了（因为要通过枚举类型进行位判断，如果更换了枚举类型，会导致结果出错，所以不允许修改）</li>
+<li>EnumSet只能存放一种枚举类型的元素(原因同上)</li>
+</ul>
+<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>一个先入先出的数据结构，util包下实现好像只有下面3个，这个主要在juc包下实现类较多(各种阻塞队列)</p>
+<h3 id="LinkedList-1"><a href="#LinkedList-1" class="headerlink" title="LinkedList"></a>LinkedList</h3><p>前面已经说过，不再多说了。</p>
+<h3 id="ArrayDeque"><a href="#ArrayDeque" class="headerlink" title="ArrayDeque"></a>ArrayDeque</h3><p>和LinkedList相比，最大不同就是底层实现是依赖于一个数组,简单汇总一下其特点:</p>
+<ul>
+<li>实现依赖于一个循环数组</li>
+<li>扩容: 扩容直接将容量翻倍，然后执行数组拷贝</li>
+<li>容量：要求必须是2的幂次方(方便进行位移运算)</li>
+<li>优势：和LinkedList相比，无需用Node对数据进行包裹，而且数组通过下标访问速度很快</li>
+<li>应用场景:额。。。其实我也没怎么用过，感觉常用栈和队列都可以用这个实现(好吧，以前我都是用LinkedList实现栈的操作。。。)</li>
+</ul>
+<h3 id="PriorityQueue"><a href="#PriorityQueue" class="headerlink" title="PriorityQueue"></a>PriorityQueue</h3><p>这个感觉平时用的也很少，是一个带有优先级的队列(并发包中的优先队列貌似使用场景更多一些。。)，这个研究不多，直接当个搬运工吧(参考:<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mfrank/p/9614520.html">https://www.cnblogs.com/mfrank/p/9614520.html</a>)</p>
+<ul>
+<li>内部是根据小顶堆的结构进行存储的</li>
+<li>构造方法需要传入一个比较器，用于判断优先级</li>
+<li>内部实际上也是使用一个数组进行数据存储，同时有一个heapify()方法，用于将数组进行堆化(具体过程就不描述了。。。)</li>
+<li>应用场景，基本上就是堆的应用场景，比如寻找topN之类的</li>
+</ul>
+<h1 id="顺便肯一下另外一组容器"><a href="#顺便肯一下另外一组容器" class="headerlink" title="顺便肯一下另外一组容器"></a>顺便肯一下另外一组容器</h1><h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map我的理解就是存储键值对的容器，基本上每一种开发语言都有这种容器，比如Python,C#的字典，golang的map，应该说Map是和数组一个级别的重要容器了。最常用的应该是基于Hash实现的HashMap，当然还有基于红黑树的TreeMap。先看一下Map相关的类图：<br><img src="/Java%E9%9B%86%E5%90%88%E7%B1%BB/Map.png" alt="Java集合类"><br>简单总结一下：</p>
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><p>最常用的Map，没有之一(至少我工作这两年看到的Map，九成以上都是HashMap)，应该也是面试必问容器，后面估计要专门整理一篇HashMap的总结了(网上各种总结已经一大把了。。)，简单总结一下特点：</p>
+<ul>
+<li>基于hash的方法，能够快速通过key找到对应的value</li>
+<li>内部存储数据是基于数组，Node&lt;K,V&gt;[] table;</li>
+<li>线程不安全(几乎面试都会问到，然后就自然转到了juc的并发包了)</li>
+<li>Key建议使用字符串，当然用自定义对象也可以，但是要重写hashcode和equals方法，否则不保证正确性了。</li>
+<li>hash冲突的解决是通过链表方式，链表长度超过8以后，转为红黑树，当长度减少到6一下，再次转换为链表。(原因是怕链表长度过长，导致查询速度过慢，而冲突变少之后使用链表和树速度差别小，但是复杂度来看，链表要简单。。好吧，也是强行解释)</li>
+<li>迭代遍历不保证顺序</li>
+<li>允许null作为key和value</li>
+</ul>
+<h3 id="Hashtable"><a href="#Hashtable" class="headerlink" title="Hashtable"></a>Hashtable</h3><p>远古产物，并且类命名还不对，正确命名应该是HashTable，估计是当时开发人员粗心，写成了Hashtable，然后为了兼容性，那就错着把。。。功能上和HashMap基本一样，简单总结一下:</p>
+<ul>
+<li>线程安全，但是性能低下，全部基于synchronized关键词实现。</li>
+<li>不允许null作为key和value</li>
+</ul>
+<h3 id="LinkedHashMap"><a href="#LinkedHashMap" class="headerlink" title="LinkedHashMap"></a>LinkedHashMap</h3><ul>
+<li>与HashMap相比，保留的key的插入顺序性，遍历的时候和插入的顺序一致</li>
+<li>原理是内部维护了一条双向链表，记录插入的顺序</li>
+<li>额外增加了空间和时间上的开销</li>
+<li>应用场景<ul>
+<li>保留插入顺序的遍历场景</li>
+<li>LRU缓存的实现(可以看一下MyBatis的缓存实现，其中就有基于LinkedHashMap的LRU缓存)</li>
+</ul>
+</li>
+</ul>
+<h3 id="TreeMap"><a href="#TreeMap" class="headerlink" title="TreeMap"></a>TreeMap</h3><p>这个因为红黑树实现，有点复杂(面试在单独复习红黑树吧。。)，所以就不管内部具体实现了，总结一下特点</p>
+<ul>
+<li>线程不安全，即使是在并发包中也没有TreeMap的并发类</li>
+<li>实现了SortedMap接口，说明Key是有序的</li>
+<li>遍历的时候根据Key的自然顺序进行，或者指定Comparator比较器</li>
+<li>实现了NavigableMap接口，也就是说支持区间范围或者比大小操作(基于Key的)</li>
+<li>整体操作复杂度均为O(log(n))</li>
+</ul>
+<h3 id="EnumMap"><a href="#EnumMap" class="headerlink" title="EnumMap"></a>EnumMap</h3><p>针对枚举类作为Key的情形进行优化的Map，内部通过数组存储，查找的时候直接通过枚举的ordinal作为index快速查询。</p>
+<ul>
+<li>只能支持单一类型枚举</li>
+</ul>
+<h3 id="IdentityHashMap"><a href="#IdentityHashMap" class="headerlink" title="IdentityHashMap"></a>IdentityHashMap</h3><p>陌生么？陌生。。。陌生就对了，因为日常开发中，压根就不会用到这玩意。。这玩意干嘛用的，它实际上是严格版本的HashMap，有多严格？引用必须相等！  </p>
+<p>HashMap中判断key相等的依据是key.equals(otherKey),而IdentityHashMap判断key相等的依据是key&#x3D;&#x3D;otherKey，这种严格的限制，恕我无知。。我实在是找不到应用场景。。关键这个类还是大神Doug Lea写的。。。大神的思维。。不懂。。不懂。。</p>
+<h3 id="WeakHashMap"><a href="#WeakHashMap" class="headerlink" title="WeakHashMap"></a>WeakHashMap</h3><p>这个容器使用之前最好先了解一下Java中的引用(强软弱虚)，WeakHashMap是一种弱key实现的容器，使用场景主要还是缓存吧(反正我没用过。。。)，说一下特点</p>
+<ul>
+<li>当key被GC回收后，对应Map中的KeyValue対也会被回收，附代码示例:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">    WeakHashMap&lt;String, Object&gt; map = new WeakHashMap&lt;&gt;();</span><br><span class="line">    String k1 = new String(&quot;k1&quot;); //注意一定要使用new String(&quot;xxx&quot;)，形式</span><br><span class="line">    String k2 = new String(&quot;k2&quot;);</span><br><span class="line">    String k3 = new String(&quot;k3&quot;);</span><br><span class="line">    map.put(k1,new Object());</span><br><span class="line">    map.put(k2,new Object());</span><br><span class="line">    map.put(k3,new Object());</span><br><span class="line">    System.out.println(map);</span><br><span class="line">    System.gc();</span><br><span class="line">    Thread.sleep(500);</span><br><span class="line">    System.out.println(map);</span><br><span class="line">    k1 = null;</span><br><span class="line">    k2 = null;</span><br><span class="line">    k3 = null;</span><br><span class="line">    System.out.println(&quot;Key=null -&gt; &quot; +map);</span><br><span class="line">    System.gc();</span><br><span class="line">    Thread.sleep(500);</span><br><span class="line">    System.out.println(&quot;After GC -&gt; &quot; +map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h3><p>以前我还真不知道Properties竟然也是Map的实现类，内部主要是各种读取配置文件相关逻辑，存储方面由于继承了Hashtable，所以也是线程安全的，关于这个就不分析啥了。。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>糊里糊涂整理了一下java.util包下面的集合相关类(容器类也行。。)，发现了几个平时开发中没用过的容器，但是其实是都可以用的。。。比如ArrayDeque，比如Enum相关Set和Map(恕我无知，之前真的都是通过HashSet和HashMap实现的。。。)。等后续有时间了，整理一下并发包下面的容器（好像已经烂大街了。。。）</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Collection/" rel="tag"># Collection</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/23/CompletableFuture%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/" rel="prev" title="CompletableFuture 学习汇总">
+      <i class="fa fa-chevron-left"></i> CompletableFuture 学习汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/02/Cow%E6%80%BB%E7%BB%93/" rel="next" title="CopyOnWriteArrayList && CopyOnWriteArraySet 总结">
+      CopyOnWriteArrayList && CopyOnWriteArraySet 总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B5%B7%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%82%A3%E5%B0%B1%E5%95%83%E5%90%A7%E3%80%82%E3%80%82"><span class="nav-number">2.</span> <span class="nav-text">那就啃吧。。</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection"><span class="nav-number">2.1.</span> <span class="nav-text">Collection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">2.2.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList"><span class="nav-number">2.2.1.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vector"><span class="nav-number">2.2.2.</span> <span class="nav-text">Vector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stack"><span class="nav-number">2.2.3.</span> <span class="nav-text">Stack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList"><span class="nav-number">2.2.4.</span> <span class="nav-text">LinkedList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%B1%87%E6%80%BB%E4%B8%80%E4%B8%8B"><span class="nav-number">2.2.5.</span> <span class="nav-text">简单汇总一下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set"><span class="nav-number">2.3.</span> <span class="nav-text">Set</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashSet"><span class="nav-number">2.3.1.</span> <span class="nav-text">HashSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedHashSet"><span class="nav-number">2.3.2.</span> <span class="nav-text">LinkedHashSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeSet"><span class="nav-number">2.3.3.</span> <span class="nav-text">TreeSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnumSet"><span class="nav-number">2.3.4.</span> <span class="nav-text">EnumSet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Queue"><span class="nav-number">2.4.</span> <span class="nav-text">Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">LinkedList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayDeque"><span class="nav-number">2.4.2.</span> <span class="nav-text">ArrayDeque</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PriorityQueue"><span class="nav-number">2.4.3.</span> <span class="nav-text">PriorityQueue</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%BA%E4%BE%BF%E8%82%AF%E4%B8%80%E4%B8%8B%E5%8F%A6%E5%A4%96%E4%B8%80%E7%BB%84%E5%AE%B9%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">顺便肯一下另外一组容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">3.1.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap"><span class="nav-number">3.1.1.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hashtable"><span class="nav-number">3.1.2.</span> <span class="nav-text">Hashtable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedHashMap"><span class="nav-number">3.1.3.</span> <span class="nav-text">LinkedHashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeMap"><span class="nav-number">3.1.4.</span> <span class="nav-text">TreeMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnumMap"><span class="nav-number">3.1.5.</span> <span class="nav-text">EnumMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IdentityHashMap"><span class="nav-number">3.1.6.</span> <span class="nav-text">IdentityHashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WeakHashMap"><span class="nav-number">3.1.7.</span> <span class="nav-text">WeakHashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Properties"><span class="nav-number">3.1.8.</span> <span class="nav-text">Properties</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Redis 学习汇总 近期看书看博客看视频，相对较为系统的学习了一下Redis，不过版本还是比较老，主要还是3.X系列的。虽然目前最新的已经是4.X，不过老版本的基本都还兼容。  Redis 编译安装 Redis安装有很多种方式，Centos可以快捷的使用yum安装，Ubuntu也可以找到apt源进行安装，我这为了尝鲜，用的的是编译安装，其实蛮简单的，我这里直接在mac下进行编译安装，步骤如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习汇总">
+<meta property="og:url" content="https://eviltuzki.top/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="Redis 学习汇总 近期看书看博客看视频，相对较为系统的学习了一下Redis，不过版本还是比较老，主要还是3.X系列的。虽然目前最新的已经是4.X，不过老版本的基本都还兼容。  Redis 编译安装 Redis安装有很多种方式，Centos可以快捷的使用yum安装，Ubuntu也可以找到apt源进行安装，我这为了尝鲜，用的的是编译安装，其实蛮简单的，我这里直接在mac下进行编译安装，步骤如下：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-18T01:16:51.640Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Redis学习汇总 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/10/05/Redis%20%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis学习汇总
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-05 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-05T00:00:00+08:00">2018-10-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Redis-学习汇总"><a href="#Redis-学习汇总" class="headerlink" title="Redis 学习汇总"></a>Redis 学习汇总</h1><ul>
+<li>近期看书看博客看视频，相对较为系统的学习了一下Redis，不过版本还是比较老，主要还是3.X系列的。虽然目前最新的已经是4.X，不过老版本的基本都还兼容。</li>
+</ul>
+<h1 id="Redis-编译安装"><a href="#Redis-编译安装" class="headerlink" title="Redis 编译安装"></a>Redis 编译安装</h1><ul>
+<li>Redis安装有很多种方式，Centos可以快捷的使用yum安装，Ubuntu也可以找到apt源进行安装，我这为了尝鲜，用的的是编译安装，其实蛮简单的，我这里直接在mac下进行编译安装，步骤如下：</li>
+<li>首先下载redis源码包 ：wget <a target="_blank" rel="noopener" href="http://download.redis.io/releases/redis-4.0.11.tar.gz">http://download.redis.io/releases/redis-4.0.11.tar.gz</a></li>
+<li>解压 tar -zxvf redis-4.0.11.tar.gz</li>
+<li>进入redis-4.0.11目录 cd redis-4.0.11</li>
+<li>执行make命令编译(好像需要command tools，之前安装过，没太注意)</li>
+<li>然后执行make install  进行安装</li>
+<li>然后就可以运行了（mac下直接发送到bin目录下面了，不需要额外配置&#x3D; &#x3D;！），执行redis-server 就可以看到熟悉的姐妹了</li>
+</ul>
+<h1 id="Redis-简易配置"><a href="#Redis-简易配置" class="headerlink" title="Redis 简易配置"></a>Redis 简易配置</h1><ul>
+<li>开始还是单机运行吧，创建一个conf文件，我这里叫做 redis-6379.conf ，内容如下:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bind 127.0.0.1 #绑定Ip</span><br><span class="line">port 6379   #暴露端口</span><br><span class="line">daemonize yes #后台启动</span><br><span class="line">pidfile /Users/eviltuzki/Public/redis/redis_6379.pid</span><br><span class="line">logfile &quot;/Users/eviltuzki/Public/redis/6379.log&quot;</span><br><span class="line">databases 16</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /Users/eviltuzki/Public/redis #工作目录</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置都比较简单，就不过多解释了，主要就是一些工作目录之类的内容</li>
+<li>配置完成后通过 redis-server redis-6379.conf  启动redis，可以通过redis-cli检查是否启动成功</li>
+</ul>
+<h1 id="Redis-基本数据类型"><a href="#Redis-基本数据类型" class="headerlink" title="Redis 基本数据类型"></a>Redis 基本数据类型</h1><ul>
+<li>新版本增加了若干新的数据类型，我暂时没有使用需求，没做过多研究，主要还是针对常用的5中数据结构</li>
+</ul>
+<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><ul>
+<li>这应该是Redis中使用最多最多的数据结构了，使用起来也很简单，直接set key value 进行赋值，get key进行取值</li>
+<li>常用的应用场景（好吧，我只是说一下我经常用的场景吧，在使用Token进行登录验证的时候，token存储于Redis中，使用的就是这种结构，设置好过期时间，定期刷新，可以理解为模拟Session吧）</li>
+<li>列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set</td>
+<td>设置指定 key 的值</td>
+<td>set key value</td>
+</tr>
+<tr>
+<td>mset</td>
+<td>同时设置一个或多个 key-value 对</td>
+<td>mset key value [key1 value1 …]</td>
+</tr>
+<tr>
+<td>get</td>
+<td>获取指定 key 的值</td>
+<td>get key</td>
+</tr>
+<tr>
+<td>mget</td>
+<td>获取所有(一个或多个)给定 key 的值</td>
+<td>mget key1 [key2 …]</td>
+</tr>
+<tr>
+<td>strlen</td>
+<td>返回 key 所储存的字符串值的长度</td>
+<td>strlen key</td>
+</tr>
+<tr>
+<td>incr</td>
+<td>将 key 中储存的数字值增一。</td>
+<td>incr key</td>
+</tr>
+<tr>
+<td>incrby</td>
+<td>将 key 所储存的值加上给定的增量值（increment）</td>
+<td>incrby key increment</td>
+</tr>
+<tr>
+<td>decr</td>
+<td>将 key 中储存的数字值减一</td>
+<td>decr key</td>
+</tr>
+<tr>
+<td>decrby</td>
+<td>key 所储存的值减去给定的减量值（decrement）</td>
+<td>decrby key increment</td>
+</tr>
+<tr>
+<td>append</td>
+<td>如果 key 已经存在并且是一个字符串， APPEND 命令将指定的 value 追加到该 key 原来值（value）的末尾</td>
+<td>append key value</td>
+</tr>
+<tr>
+<td>getset</td>
+<td>将给定 key 的值设为 value ，并返回 key 的旧值(old value)</td>
+<td>getset key value</td>
+</tr>
+<tr>
+<td>expire</td>
+<td>设置指定key的过期时间（time）</td>
+<td>expire key time</td>
+</tr>
+</tbody></table>
+<ul>
+<li>这里当然不太全面，具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><ul>
+<li>Hash结构可以认为是一个微型Redis（如果把Redis简单认为是Strings类型），换成Java语言来说，Hash结构就是 Map&lt;String,Map&lt;String,String&gt;&gt; </li>
+<li>应用场景。。。。Hmm。。项目中没有用到，不过觉得如果加入用户角色权限等信息。。。。是不是session可以用这个来处理呢？或者是application。。。。Hmm。。。暂时没有想法</li>
+<li>还是列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hget</td>
+<td>获取存储在哈希表中指定字段的值。</td>
+<td>HGET key field</td>
+</tr>
+<tr>
+<td>hset</td>
+<td>将哈希表 key 中的字段 field 的值设为 value 。</td>
+<td>HSET key field value</td>
+</tr>
+<tr>
+<td>hmget</td>
+<td>获取所有给定字段的值</td>
+<td>HMGET key field1 [field2]</td>
+</tr>
+<tr>
+<td>hmset</td>
+<td>同时将多个 field-value (域-值)对设置到哈希表 key 中。</td>
+<td>HMSET key field1 value1 [field2 value2 ]</td>
+</tr>
+<tr>
+<td>hgetall</td>
+<td>获取在哈希表中指定 key 的所有字段和值</td>
+<td>HGETALL key</td>
+</tr>
+<tr>
+<td>hscan</td>
+<td>迭代哈希表中的键值对。</td>
+<td>HSCAN key cursor [MATCH pattern] [COUNT count] &#96;&#96;</td>
+</tr>
+<tr>
+<td>hexist</td>
+<td>查看哈希表 key 中，指定的字段是否存在。</td>
+<td>HEXISTS key field</td>
+</tr>
+<tr>
+<td>hdel</td>
+<td>删除一个或多个哈希表字段</td>
+<td>HDEL key field1 [field2]</td>
+</tr>
+<tr>
+<td>hincrby</td>
+<td>为哈希表 key 中的指定字段的整数值加上增量 increment 。</td>
+<td>HINCRBY key field increment</td>
+</tr>
+<tr>
+<td>hkeys</td>
+<td>获取所有哈希表中的字段</td>
+<td>HKEYS key</td>
+</tr>
+<tr>
+<td>hlen</td>
+<td>获取哈希表中字段的数量</td>
+<td>HLEN key</td>
+</tr>
+<tr>
+<td>hvals</td>
+<td>获取哈希表中所有值</td>
+<td>HVALS key</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><ul>
+<li>列表虽然最近项目中没有使用，不过之前的项目中大规模使用，场景是。。。把list当做消息队列了。。</li>
+<li>应用场景。。。除了消息队列。。Hmm。。我也想不到什么了。。。如果有其他场景，烦请告诉我，谢谢。。</li>
+<li>老规矩，列举一些常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>blpop</td>
+<td>移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BLPOP key1 [key2] timeout</td>
+</tr>
+<tr>
+<td>brpop</td>
+<td>移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BRPOP key1 [key2] timeout</td>
+</tr>
+<tr>
+<td>brpoplpush</td>
+<td>从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它； 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。</td>
+<td>BRPOPLPUSH source destination timeout</td>
+</tr>
+<tr>
+<td>lindex</td>
+<td>通过索引获取列表中的元素</td>
+<td>LINDEX key index</td>
+</tr>
+<tr>
+<td>linsert</td>
+<td>在列表的元素前或者后插入元素</td>
+<td>LINSERT key BEFORE\AFTER pivot value</td>
+</tr>
+<tr>
+<td>llen</td>
+<td>获取列表长度</td>
+<td>LLEN key</td>
+</tr>
+<tr>
+<td>lpop</td>
+<td>移出并获取列表的第一个元素</td>
+<td>LPOP key</td>
+</tr>
+<tr>
+<td>lpush</td>
+<td>将一个或多个值插入到列表头部</td>
+<td>LPUSH key value1 [value2]</td>
+</tr>
+<tr>
+<td>lpushx</td>
+<td>将一个值插入到已存在的列表头部</td>
+<td>LPUSHX key value</td>
+</tr>
+<tr>
+<td>lrange</td>
+<td>获取列表指定范围内的元素</td>
+<td>LRANGE key start stop</td>
+</tr>
+<tr>
+<td>lrem</td>
+<td>移除列表元素</td>
+<td>LREM key count value</td>
+</tr>
+<tr>
+<td>lset</td>
+<td>通过索引设置列表元素的值</td>
+<td>LSET key index value</td>
+</tr>
+<tr>
+<td>ltrim</td>
+<td>对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。</td>
+<td>LTRIM key start stop</td>
+</tr>
+<tr>
+<td>rpop</td>
+<td>移除并获取列表最后一个元素</td>
+<td>RPOP key</td>
+</tr>
+<tr>
+<td>rpoplpush</td>
+<td>移除列表的最后一个元素，并将该元素添加到另一个列表并返回</td>
+<td>RPOPLPUSH source destination</td>
+</tr>
+<tr>
+<td>rpush</td>
+<td>在列表中添加一个或多个值</td>
+<td>RPUSH key value1 [value2]</td>
+</tr>
+<tr>
+<td>rpushx</td>
+<td>为已存在的列表添加值</td>
+<td>RPUSHX key value</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><ul>
+<li>Set集合，就知道这个是一个集合，无序，不可以重复（Hmm和java中的Set很相似）</li>
+<li>应用场景。。。没想到。。。Hmm。。待补充</li>
+<li>常用API</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sadd</td>
+<td>向集合添加一个或多个成员</td>
+<td>SADD key member1 [member2]</td>
+</tr>
+<tr>
+<td>scard</td>
+<td>获取集合的成员数</td>
+<td>SCARD key</td>
+</tr>
+<tr>
+<td>sdiff</td>
+<td>返回给定所有集合的差集</td>
+<td>SDIFF key1 [key2]</td>
+</tr>
+<tr>
+<td>sdiffstore</td>
+<td>返回给定所有集合的差集并存储在 destination 中</td>
+<td>SDIFFSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sinter</td>
+<td>返回给定所有集合的交集</td>
+<td>SINTER key1 [key2]</td>
+</tr>
+<tr>
+<td>sinterstore</td>
+<td>返回给定所有集合的交集并存储在 destination 中</td>
+<td>SINTERSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sismember</td>
+<td>判断 member 元素是否是集合 key 的成员</td>
+<td>SISMEMBER key member</td>
+</tr>
+<tr>
+<td>smembers</td>
+<td>返回集合中的所有成员</td>
+<td>SMEMBERS key</td>
+</tr>
+<tr>
+<td>smove</td>
+<td>将 member 元素从 source 集合移动到 destination 集合</td>
+<td>SMOVE source destination member</td>
+</tr>
+<tr>
+<td>spop</td>
+<td>移除并返回集合中的一个随机元素</td>
+<td>SPOP key</td>
+</tr>
+<tr>
+<td>srandmember</td>
+<td>返回集合中一个或多个随机数</td>
+<td>SRANDMEMBER key [count]</td>
+</tr>
+<tr>
+<td>srem</td>
+<td>移除集合中一个或多个成员</td>
+<td>SREM key member1 [member2]</td>
+</tr>
+<tr>
+<td>sunion</td>
+<td>返回所有给定集合的并集</td>
+<td>SUNION key1 [key2]</td>
+</tr>
+<tr>
+<td>sunionstore</td>
+<td>所有给定集合的并集存储在 destination 集合中</td>
+<td>SUNIONSTORE destination key1 [key2]</td>
+</tr>
+<tr>
+<td>sscan</td>
+<td>迭代集合中的元素</td>
+<td>SSCAN key cursor [MATCH pattern] [COUNT count]</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h2 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h2><ul>
+<li>Hmm Zset 也叫做Sorted Set 就是一个排序的集合，简单的说就是Set的有序版本（不过这个和Java的SortedSet不太一样。。），区别是什么呢，区别就是每个元素都有一个Score，排序的依据呢就是这个Score了。。</li>
+<li>应用场景，项目中倒是用到了，不过感觉用到并不是太对。。。所以不说了。老项目使用这个实现了一个排行榜，Hmm还是可以的，定期刷入到MySQL中持久化，也不怕数据丢失什么的。。。挺好</li>
+<li>说一下常用API吧</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>解释</th>
+<th>使用示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zadd</td>
+<td>向有序集合添加一个或多个成员，或者更新已存在成员的分数</td>
+<td>ZADD key score1 member1 [score2 member2]</td>
+</tr>
+<tr>
+<td>zcard</td>
+<td>获取有序集合的成员数</td>
+<td>ZCARD key</td>
+</tr>
+<tr>
+<td>zcount</td>
+<td>计算在有序集合中指定区间分数的成员数</td>
+<td>ZCOUNT key min max</td>
+</tr>
+<tr>
+<td>zincrby</td>
+<td>有序集合中对指定成员的分数加上增量 increment</td>
+<td>ZINCRBY key increment member</td>
+</tr>
+<tr>
+<td>zinterstore</td>
+<td>计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 key 中</td>
+<td>ZINTERSTORE destination numkeys key [key …]</td>
+</tr>
+<tr>
+<td>zlexcount</td>
+<td>在有序集合中计算指定字典区间内成员数量</td>
+<td>ZLEXCOUNT key min max</td>
+</tr>
+<tr>
+<td>zrange</td>
+<td>通过索引区间返回有序集合成指定区间内的成员</td>
+<td>ZRANGE key start stop [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrangebylex</td>
+<td>通过字典区间返回有序集合的成员</td>
+<td>ZRANGEBYLEX key min max [LIMIT offset count]</td>
+</tr>
+<tr>
+<td>zrangebyscore</td>
+<td>通过分数返回有序集合指定区间内的成员</td>
+<td>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]</td>
+</tr>
+<tr>
+<td>zrank</td>
+<td>返回有序集合中指定成员的索引</td>
+<td>ZRANK key member</td>
+</tr>
+<tr>
+<td>zrem</td>
+<td>移除有序集合中的一个或多个成员</td>
+<td>ZREM key member [member …]</td>
+</tr>
+<tr>
+<td>zremrangebylex</td>
+<td>移除有序集合中给定的字典区间的所有成员</td>
+<td>ZREMRANGEBYLEX key min max</td>
+</tr>
+<tr>
+<td>zremrangebyrank</td>
+<td>移除有序集合中给定的排名区间的所有成员</td>
+<td>ZREMRANGEBYRANK key start stop</td>
+</tr>
+<tr>
+<td>zremrangebyscore</td>
+<td>移除有序集合中给定的分数区间的所有成员</td>
+<td>ZREMRANGEBYSCORE key min max</td>
+</tr>
+<tr>
+<td>zrevrange</td>
+<td>返回有序集中指定区间内的成员，通过索引，分数从高到底</td>
+<td>ZREVRANGE key start stop [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrevrangebyscore</td>
+<td>返回有序集中指定分数区间内的成员，分数从高到低排序</td>
+<td>ZREVRANGEBYSCORE key max min [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrevrank</td>
+<td>返回有序集合中指定成员的排名，有序集成员按分数值递减(从大到小)排序</td>
+<td>ZREVRANK key member</td>
+</tr>
+<tr>
+<td>zscore</td>
+<td>返回有序集中，成员的分数值</td>
+<td>ZSCORE key member</td>
+</tr>
+<tr>
+<td>zunionstore</td>
+<td>计算给定的一个或多个有序集的并集，并存储在新的 key 中</td>
+<td>ZUNIONSTORE destination numkeys key [key …]</td>
+</tr>
+<tr>
+<td>zscan</td>
+<td>迭代有序集合中的元素（包括元素成员和元素分值）</td>
+<td>ZSCAN key cursor [MATCH pattern] [COUNT count]</td>
+</tr>
+</tbody></table>
+<ul>
+<li>具体参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/commands">https://redis.io/commands</a></li>
+</ul>
+<h1 id="Redis-读写分离结构"><a href="#Redis-读写分离结构" class="headerlink" title="Redis 读写分离结构"></a>Redis 读写分离结构</h1><ul>
+<li>读写分离其实不是太复杂，简单来说就是多个Redis组成小”集群”，注意我这里的集群是带有引号的哈，这并不是一个真正意义上的集群，而是主从结构(Master&amp;Slave)，可以是一主多从，也可以是一主一从，甚至可以使只有一个Master(这个就退化成了。。。单机模式了。。)</li>
+<li>说一下怎么配置吧<ul>
+<li><p>先参考 Redis 简易配置，并启动6379节点</p>
+</li>
+<li><p>拷贝一份配置文件，将所有的6379替换为6380 （Hmm，我比较懒。。就单机先这么搞了。。）</p>
+</li>
+<li><p>启动6380这个实例 redis-server redis-6380.conf</p>
+</li>
+<li><p>查看是否都启动成功了，执行 ps -ef |grep redis-server|grep -v ‘grep’  我这里显示如下，表示两个实例已经启动成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">501 42485     1   0 12:29下午 ??         0:07.18 redis-server 127.0.0.1:6379</span><br><span class="line">501 43688     1   0 10:20下午 ??         0:00.33 redis-server 127.0.0.1:6380</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行 redis-cli -p 6380 info replication 看到6380实例目前是以Master角色运行</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:13f6fcea2807ec7a78d52ecf76c382c0ba7d9c55</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 给6380分配角色slave，跟从Master 执行 redis-cli -p 6380  slaveof 127.0.0.1 6379
+- 执行 redis-cli -p 6380 info replication 看到6380实例目前是以Slave角色运行
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:8</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:154</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7a2c11e996810f76bdc72765130dcf47b5af4ab8</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:154</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:71</span><br><span class="line">repl_backlog_histlen:84</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 这种是通过Redis Client来分配角色，还可以在配置文件中进行配置，修改redis-6380.conf如下，并重启：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bind 127.0.0.1</span><br><span class="line">port 6380</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile /Users/eviltuzki/Public/redis/redis_6380.pid</span><br><span class="line">logfile &quot;/Users/eviltuzki/Public/redis/6380.log&quot;</span><br><span class="line">databases 16</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /Users/eviltuzki/Public/redis</span><br><span class="line">slaveof 127.0.0.1 6379</span><br></pre></td></tr></table></figure>
+<ul>
+<li>实际生产环境通常使用配置文件的方式配置主从结构</li>
+<li>完成了配置简单尝试一下：<ul>
+<li>在Master set value -&gt; redis-cli -p 6379 set hello world  -&gt; OK</li>
+<li>在Slave get value -&gt; redis-cli -p 6380 get hello -&gt; “world”</li>
+<li>在Slave set value -&gt; redis-cli -p 6380 set test test -&gt; (error) READONLY You can’t write against a read only slave.</li>
+</ul>
+</li>
+<li>基本测试完成，主节点可读可写，从节点同步主节点，只能读取，不能写入，Hmm。。。如果要多加入几个Slave节点。。Copy一下配置文件就好了。。。</li>
+</ul>
+<h1 id="Redis-HA-之-sentinel"><a href="#Redis-HA-之-sentinel" class="headerlink" title="Redis HA 之 sentinel"></a>Redis HA 之 sentinel</h1><h2 id="说一下背景"><a href="#说一下背景" class="headerlink" title="说一下背景"></a>说一下背景</h2><ul>
+<li>Hmm 上文说道了集群，其实主从结构并不是一个可靠的集群，比如某天一大波僵尸来袭。。。跑题了，一大波流量来袭。。。Master挂了。。。然后。。。Hmm。。。没有节点可以写入了，咋办呢？</li>
+<li>解决方法也不是太复杂，举个场景：3台机器，1Master 2Slave，然后某天。。。Master突然挂了。。剩下2个Slave，这个时候咋办？切换一下，让其中一个Slave变成Master，另外一个跟随这个新的Master，这样就1主1从1挂机（鄙视挂机党。。。）。好赖可以正常提供服务了，等挂机服务器启动起来了，将它设置为新Master的Slave节点，这样就完成了Master Slave的转换了，然后就可以正常提供服务了。</li>
+<li>听起来上面的方案还不错，其实服务端执行起来也不太复杂。如下：<ul>
+<li>Master挂了，剩下2个Slave，记为Slave1 Slave2</li>
+<li>对Slave 1 执行 slaveof no one，将Slave 1 升级为新Master</li>
+<li>对Slave 2 执行 slaveof Slave1，将Slave 2设置跟从新的Master</li>
+<li>等原Master启动，执行slaveof Slave1，将原Master设置为Slave并且跟从新的Master</li>
+</ul>
+</li>
+<li>为啥说服务端简单呢？Client连接服务器也得跟着切换啊。。Client写入只能写入到Master节点，服务端经过这么一折腾，Client也要跟着切换IP，才能正常访问。</li>
+<li>所以呢，官方提供了sentinel 一种HA方案，服务端的切换可以自动执行，sentinel 节点负责监控Master Slave状态，如果切换了，同时通知Client进行切换，达到可服务状态。</li>
+</ul>
+<h2 id="怎么配置？"><a href="#怎么配置？" class="headerlink" title="怎么配置？"></a>怎么配置？</h2><ul>
+<li><p>首先要额外准备机器作为sentinel节点，我这里偷懒，继续单机运行。。。（Hmm，穷人。。没有太多机器。。也不想搞虚拟机）</p>
+</li>
+<li><p>先启动一个Maste 6379，2个Slave 6380 8381，执行ps -ef |grep redis|grep -v grep 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">501 42485     1   0 12:29下午 ??         0:10.87 redis-server 127.0.0.1:6379</span><br><span class="line">501 43910     1   0 10:47下午 ??         0:02.45 redis-server 127.0.0.1:6380</span><br><span class="line">501 44117     1   0 11:17下午 ??         0:00.53 redis-server 127.0.0.1:6381</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看Master状态 redis-cli -p 6379 info replication</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6380,state=online,offset=3796,lag=0</span><br><span class="line">slave1:ip=127.0.0.1,port=6381,state=online,offset=3796,lag=0</span><br><span class="line">master_replid:7a2c11e996810f76bdc72765130dcf47b5af4ab8</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:3796</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:3796</span><br></pre></td></tr></table></figure></li>
+<li><p>全部启动成功，然后开始配置sentinel节点</p>
+</li>
+<li><p>从Redis解压文件中可以看到一个sentinel.conf文件，Hmm。。。懒人。。直接Copy这个开始改造，sentinel-26379.conf 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir /Users/eviltuzki/Public/redis/</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2  # 监控mymaster集群，Master地址为127.0.0.1 6379，当2个sentinel认为Master有问题，则进行Master转换</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000 #下线Master时间30s</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">daemonize yes #守护进程方式启动</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成对应的3份，分别是sentinel-26379.conf、sentinel-26380.conf、sentinel-26381.conf，然后通过redis-sentinel sentinel-263xx.conf启动sentinel节点</p>
+</li>
+<li><p>查看进程，是否启动成功：ps -ef |grep sent|grep -v grep</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">501 44288     1   0 11:36下午 ??         0:00.64 redis-sentinel *:26379 [sentinel]</span><br><span class="line">501 44291     1   0 11:36下午 ??         0:00.61 redis-sentinel *:26380 [sentinel]</span><br><span class="line">501 44293     1   0 11:36下午 ??         0:00.63 redis-sentinel *:26381 [sentinel]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看redis-sentinel状态：redis-cli -p 26379 info sentinel</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># Sentinel</span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">sentinel_simulate_failure_flags:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:6379,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以看到master0状态OK，2个Slave，3个sentinels，一切正常。接下来就可以使用对应的Client进行连接了。</p>
+</li>
+<li><p>Hmm 这块内容有点太多了。。。后面单开Java Client连接。。</p>
+</li>
+<li><p>接下来模拟一下事故吧：</p>
+<ul>
+<li><p>查看一下刚刚配置的sentinel-26379.conf文件，多了一些内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir &quot;/Users/zhaojian/Public/redis&quot;</span><br><span class="line">sentinel myid bca8111060bbda4a42ec3744391d1f40ca1fda00</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line">sentinel config-epoch mymaster 0</span><br><span class="line">sentinel leader-epoch mymaster 0</span><br><span class="line"># Generated by CONFIG REWRITE</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6381</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6380</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26380 ba913a9c10e46fd4df76bf0289721136031926ef</span><br><span class="line">daemonize yes</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26381 7c387d9b2e95ac2338655fb8f5011f277635dade</span><br><span class="line">sentinel current-epoch 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>主节点和从节点信息都能看到，现在我准备下线Master节点，看看会有什么反应（Hmm怎么下线呢？直接kill掉吧）</p>
+</li>
+<li><p>等待一小会儿，Hmm，大概30S左右吧，再次查看sentinel-26379.conf文件，发现有些变化了</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">dir &quot;/Users/zhaojian/Public/redis&quot;</span><br><span class="line">sentinel myid bca8111060bbda4a42ec3744391d1f40ca1fda00</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6380 2</span><br><span class="line">sentinel config-epoch mymaster 1</span><br><span class="line">sentinel leader-epoch mymaster 1</span><br><span class="line"># Generated by CONFIG REWRITE</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6379</span><br><span class="line">sentinel known-slave mymaster 127.0.0.1 6381</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26380 ba913a9c10e46fd4df76bf0289721136031926ef</span><br><span class="line">daemonize yes</span><br><span class="line">sentinel known-sentinel mymaster 127.0.0.1 26381 7c387d9b2e95ac2338655fb8f5011f277635dade</span><br><span class="line">sentinel current-epoch 1</span><br></pre></td></tr></table></figure>
+<pre><code>- Hmm，首先Master已经切换了，不再是6379了，而是6380，而6379变成了known-slave，也就是Slave节点，无妨。。。反正现在也不工作。。。
+- 那我现在恢复一下6379节点(重新执行redis-server redis-6379.conf)，注意，这里的配置6379可是Master哦~
+- 执行 redis-cli -p 6379 info replication ,信息如下：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6380</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:0</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:162525</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:162525</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:155146</span><br><span class="line">repl_backlog_histlen:7380</span><br></pre></td></tr></table></figure>
+<pre><code>- Hmm，说明sentinel还是蛮智能的，尽管6379之前是Master，但是选举出新的Master之后，旧的Master会被 降级到Slave节点，避免出现多个Master。
+- 附带看一下6381和6380的日志：
+- 首先是6380的：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">43910:S 06 Oct 23:45:51.903 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">43910:S 06 Oct 23:45:51.904 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">43910:S 06 Oct 23:45:52.914 * Connecting to MASTER 127.0.0.1:6379</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">43910:S 06 Oct 23:46:21.205 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">43910:S 06 Oct 23:46:21.206 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">43910:M 06 Oct 23:46:21.960 # Setting secondary replication ID to 7a2c11e996810f76bdc72765130dcf47b5af4ab8, valid up to offset: 111989. New replication ID is a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">43910:M 06 Oct 23:46:21.960 * Discarding previously cached master state.</span><br><span class="line">43910:M 06 Oct 23:46:21.962 * MASTER MODE enabled (user request from &#x27;id=13 addr=127.0.0.1:51348 fd=12 name=sentinel-7c387d9b-cmd age=568 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=0 qbuf-free=32768 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">43910:M 06 Oct 23:46:21.963 # CONFIG REWRITE executed with success.</span><br><span class="line">43910:M 06 Oct 23:46:23.354 * Slave 127.0.0.1:6381 asks for synchronization</span><br><span class="line">43910:M 06 Oct 23:46:23.354 * Partial resynchronization request from 127.0.0.1:6381 accepted. Sending 422 bytes of backlog starting from offset 111989.</span><br><span class="line">43910:M 06 Oct 23:49:59.772 * Slave 127.0.0.1:6379 asks for synchronization</span><br><span class="line">43910:M 06 Oct 23:49:59.772 * Partial resynchronization not accepted: Replication ID mismatch (Slave asked for &#x27;4a931cc983685e6f1b029225185120eee25f03b4&#x27;, my replication IDs are &#x27;a6939796e0faba3555a74719ec18498e7b247756&#x27; and &#x27;7a2c11e996810f76bdc72765130dcf47b5af4ab8&#x27;)</span><br><span class="line">43910:M 06 Oct 23:49:59.773 * Starting BGSAVE for SYNC with target: disk</span><br><span class="line">43910:M 06 Oct 23:49:59.773 * Background saving started by pid 44404</span><br><span class="line">44404:C 06 Oct 23:49:59.775 * DB saved on disk</span><br><span class="line">43910:M 06 Oct 23:49:59.855 * Background saving terminated with success</span><br><span class="line">43910:M 06 Oct 23:49:59.856 * Synchronization with slave 127.0.0.1:6379 succeeded</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 然后看一下6381的：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">44117:S 06 Oct 23:46:22.338 * Connecting to MASTER 127.0.0.1:6379</span><br><span class="line">44117:S 06 Oct 23:46:22.339 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44117:S 06 Oct 23:46:22.340 # Error condition on socket for SYNC: Connection refused</span><br><span class="line">44117:S 06 Oct 23:46:22.866 * SLAVE OF 127.0.0.1:6380 enabled (user request from &#x27;id=11 addr=127.0.0.1:51346 fd=12 name=sentinel-7c387d9b-cmd age=569 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=133 qbuf-free=32635 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">44117:S 06 Oct 23:46:22.867 # CONFIG REWRITE executed with success.</span><br><span class="line">44117:S 06 Oct 23:46:23.351 * Connecting to MASTER 127.0.0.1:6380</span><br><span class="line">44117:S 06 Oct 23:46:23.351 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44117:S 06 Oct 23:46:23.352 * Non blocking connect for SYNC fired the event.</span><br><span class="line">44117:S 06 Oct 23:46:23.353 * Master replied to PING, replication can continue...</span><br><span class="line">44117:S 06 Oct 23:46:23.353 * Trying a partial resynchronization (request 7a2c11e996810f76bdc72765130dcf47b5af4ab8:111989).</span><br><span class="line">44117:S 06 Oct 23:46:23.354 * Successful partial resynchronization with master.</span><br><span class="line">44117:S 06 Oct 23:46:23.355 # Master replication ID changed to a6939796e0faba3555a74719ec18498e7b247756</span><br><span class="line">44117:S 06 Oct 23:46:23.355 * MASTER &lt;-&gt; SLAVE sync: Master accepted a Partial Resynchronization.</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 额，刚想起来6379重启后的日志也看一下：
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">42485:M 06 Oct 23:45:51.599 # User requested shutdown...</span><br><span class="line">42485:M 06 Oct 23:45:51.600 * Saving the final RDB snapshot before exiting.</span><br><span class="line">42485:M 06 Oct 23:45:51.601 * DB saved on disk</span><br><span class="line">42485:M 06 Oct 23:45:51.601 * Removing the pid file.</span><br><span class="line">42485:M 06 Oct 23:45:51.602 # Redis is now ready to exit, bye bye...</span><br><span class="line">44398:C 06 Oct 23:49:48.652 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">44398:C 06 Oct 23:49:48.653 # Redis version=4.0.11, bits=64, commit=00000000, modified=0, pid=44398, just started</span><br><span class="line">44398:C 06 Oct 23:49:48.654 # Configuration loaded</span><br><span class="line">44399:M 06 Oct 23:49:48.656 * Increased maximum number of open files to 10032 (it was originally set to 4864).</span><br><span class="line">44399:M 06 Oct 23:49:48.657 * Running mode=standalone, port=6379.</span><br><span class="line">44399:M 06 Oct 23:49:48.657 # Server initialized</span><br><span class="line">44399:M 06 Oct 23:49:48.657 * DB loaded from disk: 0.000 seconds</span><br><span class="line">44399:M 06 Oct 23:49:48.658 * Ready to accept connections</span><br><span class="line">44399:S 06 Oct 23:49:58.958 * Before turning into a slave, using my master parameters to synthesize a cached master: I may be able to synchronize with the new master with just a partial transfer.</span><br><span class="line">44399:S 06 Oct 23:49:58.958 * SLAVE OF 127.0.0.1:6380 enabled (user request from &#x27;id=3 addr=127.0.0.1:52967 fd=7 name=sentinel-ba913a9c-cmd age=10 idle=0 flags=x db=0 sub=0 psub=0 multi=3 qbuf=0 qbuf-free=32768 obl=36 oll=0 omem=0 events=r cmd=exec&#x27;)</span><br><span class="line">44399:S 06 Oct 23:49:58.960 # CONFIG REWRITE executed with success.</span><br><span class="line">44399:S 06 Oct 23:49:59.769 * Connecting to MASTER 127.0.0.1:6380</span><br><span class="line">44399:S 06 Oct 23:49:59.769 * MASTER &lt;-&gt; SLAVE sync started</span><br><span class="line">44399:S 06 Oct 23:49:59.770 * Non blocking connect for SYNC fired the event.</span><br><span class="line">44399:S 06 Oct 23:49:59.771 * Master replied to PING, replication can continue...</span><br><span class="line">44399:S 06 Oct 23:49:59.771 * Trying a partial resynchronization (request 4a931cc983685e6f1b029225185120eee25f03b4:1).</span><br><span class="line">44399:S 06 Oct 23:49:59.774 * Full resync from master: a6939796e0faba3555a74719ec18498e7b247756:155145</span><br><span class="line">44399:S 06 Oct 23:49:59.774 * Discarding previously cached master state.</span><br><span class="line">44399:S 06 Oct 23:49:59.856 * MASTER &lt;-&gt; SLAVE sync: receiving 202 bytes from master</span><br><span class="line">44399:S 06 Oct 23:49:59.857 * MASTER &lt;-&gt; SLAVE sync: Flushing old data</span><br><span class="line">44399:S 06 Oct 23:49:59.857 * MASTER &lt;-&gt; SLAVE sync: Loading DB in memory</span><br><span class="line">44399:S 06 Oct 23:49:59.858 * MASTER &lt;-&gt; SLAVE sync: Finished with success</span><br></pre></td></tr></table></figure>
+
+<pre><code>- 从日志中可以看到，6379下线以后，6380和6381经历了一段时间（约30s）的找不到Master，之后6380收到了sentinel-7c387d9b-cmd发送的请求，转换角色为Master。6381收到sentinel-7c387d9b-cmd发送的请求，变更为跟随6380而不是6379。等6379重新启动后收到了sentinel-ba913a9c-cmd的请求，降级为Slave并且跟随6380。
+</code></pre>
+<ul>
+<li>补充说明一下sentinel一定要集群部署，不能单点！否则网络等因素会导致集群来回切换角色，另外sentinel本身单点也有风险！</li>
+</ul>
+<h1 id="Redis-HA-之-Clusterv"><a href="#Redis-HA-之-Clusterv" class="headerlink" title="Redis HA 之 Clusterv"></a>Redis HA 之 Clusterv</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/09/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%20%E4%B9%8B%20inner_hits/" rel="prev" title="ElasticSearch 查询优化 之 inner_hits">
+      <i class="fa fa-chevron-left"></i> ElasticSearch 查询优化 之 inner_hits
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/09/Swagger%E4%BD%BF%E7%94%A8%E7%AE%80%E4%BB%8B/" rel="next" title="Swagger使用简介">
+      Swagger使用简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB"><span class="nav-number">1.</span> <span class="nav-text">Redis 学习汇总</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">Redis 编译安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E7%AE%80%E6%98%93%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">Redis 简易配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">Redis 基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Strings"><span class="nav-number">4.1.</span> <span class="nav-text">Strings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hash"><span class="nav-number">4.2.</span> <span class="nav-text">Hash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">4.3.</span> <span class="nav-text">List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set"><span class="nav-number">4.4.</span> <span class="nav-text">Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zset"><span class="nav-number">4.5.</span> <span class="nav-text">Zset</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">Redis 读写分离结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-HA-%E4%B9%8B-sentinel"><span class="nav-number">6.</span> <span class="nav-text">Redis HA 之 sentinel</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E4%B8%80%E4%B8%8B%E8%83%8C%E6%99%AF"><span class="nav-number">6.1.</span> <span class="nav-text">说一下背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E9%85%8D%E7%BD%AE%EF%BC%9F"><span class="nav-number">6.2.</span> <span class="nav-text">怎么配置？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-HA-%E4%B9%8B-Clusterv"><span class="nav-number">7.</span> <span class="nav-text">Redis HA 之 Clusterv</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
