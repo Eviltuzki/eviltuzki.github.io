@@ -190,6 +190,152 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/06/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">I/O 多路复用之select、poll、epoll详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-13 00:00:00" itemprop="dateCreated datePublished" datetime="2019-06-13T00:00:00+08:00">2019-06-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IO/" itemprop="url" rel="index"><span itemprop="name">IO</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p>select，poll，epoll都是IO多路复用的机制。I&#x2F;O多路复用就是通过一种机制，一个进程可以监视多个描述符，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作。但select，poll，epoll本质上都是同步I&#x2F;O，因为他们都需要在读写事件就绪后自己负责进行读写，也就是说这个读写过程是阻塞的，而异步I&#x2F;O则无需自己负责进行读写，异步I&#x2F;O的实现会负责把数据从内核拷贝到用户空间。</p>
+<hr>
+<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><ul>
+<li>基本原理：<ul>
+<li>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。</li>
+<li>调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。</li>
+<li>当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。</li>
+</ul>
+</li>
+<li>select目前几乎在所有的平台上支持，其良好跨平台支持也是它的一个优点。</li>
+<li>select最大的缺陷就是单个进程所打开的FD是有一定限制的，它由FD_SETSIZE设置，默认值是1024。<ul>
+<li>一般来说这个数目和系统内存关系很大，具体数目可以cat &#x2F;proc&#x2F;sys&#x2F;fs&#x2F;file-max察看。32位机默认是1024个。64位机默认是2048.</li>
+</ul>
+</li>
+<li>对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低。<ul>
+<li>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度，不管哪个Socket是活跃的，都遍历一遍。这会浪费很多CPU时间。如果能给套接字注册某个回调函数，当他们活跃时，自动完成相关操作，那就避免了轮询，这正是epoll与kqueue做的。</li>
+</ul>
+</li>
+<li>需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</li>
+<li>简述：1024</li>
+</ul>
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><ul>
+<li>基本原理：<ul>
+<li>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态。</li>
+<li>如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。</li>
+<li>这个过程经历了多次无谓的遍历。</li>
+</ul>
+</li>
+<li>pollfd结构包含了要监视的event和发生的event，不再使用select“参数-值”传递的方式。</li>
+<li>同时，pollfd并没有最大数量限制（但是数量过大后性能也是会下降）。</li>
+<li>和select函数一样，poll返回后，需要轮询pollfd来获取就绪的描述符。</li>
+<li>poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</li>
+<li>从上面看，select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。</li>
+<li>事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</li>
+<li>简述：鸡肋</li>
+</ul>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><ul>
+<li>epoll是在2.6内核中提出的，是之前的select和poll的增强版本。</li>
+<li>相对于select和poll来说，epoll更加灵活，没有描述符限制。</li>
+<li>epoll使用一个文件描述符管理多个描述符，将用户关系的文件描述符的事件存放到内核的一个事件表中，这样在用户空间和内核空间的copy只需一次。</li>
+<li>没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。</li>
+<li>效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。<ul>
+<li>只有活跃可用的FD才会调用callback函数；即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</li>
+</ul>
+</li>
+<li>内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</li>
+<li>简述：杀手锏</li>
+</ul>
+<h4 id="epoll工作模式"><a href="#epoll工作模式" class="headerlink" title="epoll工作模式"></a>epoll工作模式</h4><ul>
+<li>epoll对文件描述符的操作有两种模式：LT（level trigger）和ET（edge trigger）。LT模式是默认模式，LT模式与ET模式的区别如下：<ul>
+<li>LT模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</li>
+<li>ET模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。</li>
+</ul>
+</li>
+</ul>
+<h5 id="LT模式"><a href="#LT模式" class="headerlink" title="LT模式"></a>LT模式</h5><ul>
+<li>LT(level triggered)是缺省的工作方式，并且同时支持block和no-block socket.在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的。</li>
+</ul>
+<h5 id="ET模式"><a href="#ET模式" class="headerlink" title="ET模式"></a>ET模式</h5><ul>
+<li>ET(edge-triggered)是高速工作方式，只支持no-block socket。在这种模式下，当描述符从未就绪变为就绪时，内核通过epoll告诉你。然后它会假设你知道文件描述符已经就绪，并且不会再为那个文件描述符发送更多的就绪通知，直到你做了某些操作导致那个文件描述符不再为就绪状态了(比如，你在发送，接收或者接收请求，或者发送接收的数据少于一定量时导致了一个EWOULDBLOCK 错误）。但是请注意，如果一直不对这个fd作IO操作(从而导致它再次变成未就绪)，内核不会发送更多的通知(only once)</li>
+<li>ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读&#x2F;阻塞写操作把处理多个文件描述符的任务饿死。</li>
+</ul>
+<h4 id="epoll总结"><a href="#epoll总结" class="headerlink" title="epoll总结"></a>epoll总结</h4><ul>
+<li>在 select&#x2F;poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而<em>epoll事先通过epoll_ctl()来注册一 个文件描述符，一旦基于某个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知。</em>(此处去掉了遍历文件描述符，而是通过监听回调的的机制。这正是epoll的魅力所在。)</li>
+<li>epoll的优点主要是一下几个方面：<ul>
+<li>监视的描述符数量不受限制，它所支持的FD上限是最大可以打开文件的数目，这个数字一般远大于2048,举个例子,在1GB内存的机器上大约是10万左 右，具体数目可以cat &#x2F;proc&#x2F;sys&#x2F;fs&#x2F;file-max察看,一般来说这个数目和系统内存关系很大。select的最大缺点就是进程打开的fd是有数量限制的。这对 于连接数量比较大的服务器来说根本不能满足。虽然也可以选择多进程的解决方案( Apache就是这样实现的)，不过虽然linux上面创建进程的代价比较小，但仍旧是不可忽视的，加上进程间数据同步远比不上线程间同步的高效，所以也不是一种完美的方案。</li>
+<li>IO的效率不会随着监视fd的数量的增长而下降。epoll不同于select和poll轮询的方式，而是通过每个fd定义的回调函数来实现的。只有就绪的fd才会执行回调函数。</li>
+<li>如果没有大量的idle -connection或者dead-connection，epoll的效率并不会比select&#x2F;poll高很多，但是当遇到大量的idle- connection，就会发现epoll的效率大大高于select&#x2F;poll。</li>
+</ul>
+</li>
+</ul>
+<h2 id="select、poll、epoll区别"><a href="#select、poll、epoll区别" class="headerlink" title="select、poll、epoll区别"></a>select、poll、epoll区别</h2><p>1、支持一个进程所能打开的最大连接数<br><img src="/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E8%AF%A6%E8%A7%A3/1.png" alt="最大连接数"><br>2、FD剧增后带来的IO效率问题<br><img src="/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E8%AF%A6%E8%A7%A3/2.png" alt="IO效率问题"><br>3、消息传递方式<br><img src="/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E8%AF%A6%E8%A7%A3/3.png" alt="消息传递方式"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2019/06/12/%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1408,111 +1554,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/11/19/Linux%20ssh%20%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Eviltuzki">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eviltuzki">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/19/Linux%20ssh%20%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Linux ssh 远程执行命令环境切换问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-19 00:00:00" itemprop="dateCreated datePublished" datetime="2018-11-19T00:00:00+08:00">2018-11-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-18 09:16:51" itemprop="dateModified" datetime="2022-11-18T09:16:51+08:00">2022-11-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<ul>
-<li>今天将公司之前的shell脚本处理一下，放到Jenkins中执行，方便大家部署，结果出现了一个奇怪的问题，通过ssh 远程执行命令的时候发现找不到java命令。</li>
-<li>直接用ssh切换到那台机器是没有问题的，java命令存在。远程执行 ssh -t user@host ‘java -version’ 提示java命令找不到。</li>
-<li>查了一堆资料，定位了问题： <ul>
-<li>使用这种方式执行命令，不会执行&#x2F;etc&#x2F;profile文件，而我的java_home，java path都是在&#x2F;etc&#x2F;profile文件中配置的</li>
-</ul>
-</li>
-<li>解决也不太复杂：<ul>
-<li>方法1：ssh -t user@host ‘source &#x2F;etc&#x2F;profile &amp;&amp; java -version’ 久违的jdk1.8终于出来了(嗯。。我就用这个解决的)</li>
-<li>方法2: 修改 ~&#x2F;.bashrc 加入java_home，java path (这个没敢动。。因为机器是公用的。。。)</li>
-</ul>
-</li>
-<li>补充知识点：</li>
-</ul>
-<ol>
-<li><p>通过SSH登录后再执行命令和脚本<br>这种方式会使用Bash的interactive + login shell模式，这里面有两个概念需要解释：interactive和login。</p>
-<ul>
-<li>login故名思义，即登陆，login shell是指用户以非图形化界面或者以ssh登陆到机器上时获得的第一个shell，简单些说就是需要输入用户名和密码的shell。因此通常不管以何种方式登陆机器后用户获得的第一个shell就是login shell。</li>
-<li>interactive意为交互式，这也很好理解，interactive shell会有一个输入提示符，并且它的标准输入、输出和错误输出都会显示在控制台上。所以一般来说只要是需要用户交互的，即一个命令一个命令的输入的shell都是interactive shell。而如果无需用户交互，它便是non-interactive shell。通常来说如bash script.sh此类执行脚本的命令就会启动一个non-interactive shell，它不需要与用户进行交互，执行完后它便会退出创建的Shell。</li>
-<li>在interactive + login shell模式中，Shell首先会加载&#x2F;etc&#x2F;profile文件，然后再尝试依次去加载下列三个配置文件之一，一旦找到其中一个便不再接着寻找：</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.bash_profile</span><br><span class="line">~/.bash_login</span><br><span class="line">~/.profile</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过SSH直接执行远程命令和脚本<br>这种方式会使用Bash的non-interactive + non-login shell模式，它会创建一个shell，执行完脚本之后便退出，不再需要与用户交互。</p>
-<ul>
-<li>no-login shell，顾名思义就是不是在登录Linux系统时启动的（比如你在命令行提示符上输入bash启动）。它不会去执行&#x2F;etc&#x2F;profile文件，而会去用户的HOME目录检查.bashrc并加载。</li>
-<li>系统执行Shell脚本的时候，就是属于这种non-interactive shell。Bash通过BASH_ENV环境变量来记录要加载的文件，默认情况下这个环境变量并没有设置。如果有指定文件，那么Shell会先去加载这个文件里面的内容，然后再开始执行Shell脚本。</li>
-</ul>
-</li>
-</ol>
-<p>引用: <a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhenyuyaodidiao/p/9287497.html">https://www.cnblogs.com/zhenyuyaodidiao/p/9287497.html</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1582,20 +1623,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-count">68</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
