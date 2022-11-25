@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Rust小试牛刀Rust的书已经看完2本了，看程序基本上能看懂一些了（生命周期这块还是迷迷糊糊），但是觉得多少还是要自己写一下程序，实际应用一下才能学会。正好今天找了一个练手的小项目，初步尝试一下 背景N年之前给媳妇写过一个小程序，处理Excel数据的，大致就是从A.xlsx读取数据，分组合并并计算，然后追加写入到B.xlsx，但是其中有个字典关系的映射，以前是维护在代码中的，每次修改字典都要重新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust小试牛刀">
+<meta property="og:url" content="https://eviltuzki.top/2022/11/25/Rust%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="Rust小试牛刀Rust的书已经看完2本了，看程序基本上能看懂一些了（生命周期这块还是迷迷糊糊），但是觉得多少还是要自己写一下程序，实际应用一下才能学会。正好今天找了一个练手的小项目，初步尝试一下 背景N年之前给媳妇写过一个小程序，处理Excel数据的，大致就是从A.xlsx读取数据，分组合并并计算，然后追加写入到B.xlsx，但是其中有个字典关系的映射，以前是维护在代码中的，每次修改字典都要重新">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-25T03:35:24.035Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2022/11/25/Rust%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Rust小试牛刀 | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2022/11/25/Rust%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rust小试牛刀
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-25 00:00:00" itemprop="dateCreated datePublished" datetime="2022-11-25T00:00:00+08:00">2022-11-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Rust/" itemprop="url" rel="index"><span itemprop="name">Rust</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Rust小试牛刀"><a href="#Rust小试牛刀" class="headerlink" title="Rust小试牛刀"></a>Rust小试牛刀</h1><p>Rust的书已经看完2本了，看程序基本上能看懂一些了（生命周期这块还是迷迷糊糊），但是觉得多少还是要自己写一下程序，实际应用一下才能学会。正好今天找了一个练手的小项目，初步尝试一下</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>N年之前给媳妇写过一个小程序，处理Excel数据的，大致就是从A.xlsx读取数据，分组合并并计算，然后追加写入到B.xlsx，但是其中有个字典关系的映射，以前是维护在代码中的，每次修改字典都要重新编译。<br>加上当时程序是.Net写的，WinForm程序，依赖Windows和VisualStudio这个组合，最近今年工作基本就没用过Windows，电脑也换成了M1的Mac，给她处理这个程序要安装个arm版Windows不说，还要安装VisualStudio，本就不富裕的硬盘，又被拖走了几十个G。<br>想着既然学了Rust，加上为了处理这个程序，索性就用Rust重写一份吧。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>Rust的安装就不多说什么了，按照官网的脚本执行一下就搞定了</li>
+<li>编辑器我用的是VisualCode，配合rust-analyzer插件，debug就是直接用CodeLLDB。</li>
+<li>因为要解析xlsx文件，在<code>https://lib.rs/search?q=xlsx</code>查了一圈，最后决定用<code>umya-spreadsheet=&quot;0.8.3&quot;</code></li>
+<li>因为有个需要配置的字典，考虑json和toml，最后决定用toml，因为对我媳妇而已，这个更直接一些，最终选择<code>toml=&quot;0.5.0&quot;</code></li>
+</ol>
+<h2 id="开工"><a href="#开工" class="headerlink" title="开工"></a>开工</h2><p>cargo new一个项目，添加好依赖，开整，只是逻辑的话，其实很简单，按照.Net的逻辑直接迁移过来就行了，不过有一说一，写的过程中还是挺多麻烦的，光看书以为自己掌握的东西，coding的时候却干着急想不起来怎么写，最后还是依赖搜索引擎解决。<br>另外还有一点就是关于mod，直到程序写完了，也没太get这个玩意和目录的关系怎么搞。所以最终的项目还是基于一个main.rs实现的。<br>逻辑啥的，就不具体写这里了，记录一下自己开发过程中记得住记不住的东西吧。</p>
+<h3 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h3><p>读取数据之后肯定不能直接用个元祖或者Map传来传去，怎么也得有个结构体来组装数据，为了隔离开，我这里还是用mod来进行一下简单的区分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pub mod model &#123;</span><br><span class="line">    #[derive(Debug, Clone)]</span><br><span class="line">    pub struct ProductModel &#123;</span><br><span class="line">        pub field1: String,</span><br><span class="line">        pub field2: String,</span><br><span class="line">        pub field3: i32,</span><br><span class="line">        pub type_: String,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>别看就上面几个字段，就这个<code>type_</code>还折腾我一会，因为type是关键字，如果确实要用type做这个字段名称，就要用<code>r#type</code>, 还有就是从mod到struce到field，都要pub，否则访问不了（开始在不同目录，后来放到一个文件了，也没调整了，这块后面再补习一下吧）。</p>
+<h3 id="xlsx处理lib-umya-spreadsheet"><a href="#xlsx处理lib-umya-spreadsheet" class="headerlink" title="xlsx处理lib-umya_spreadsheet"></a>xlsx处理lib-umya_spreadsheet</h3><p>rust处理Excel的lib本来就不是很多，还有很多是只支持读取不支持写入或者只支持写入不支持读取的，好不容易找到了这么一个既支持读又支持写入的，搜了一圈，除了官方文档，几乎没有任何资料。我处理xlsx的时候基本上是按照行进行处理，一行封装成一个model，所以需要知道当前xlsx的当前sheet有多少行数据，然后for循环遍历，组合数据。然而就找一共有多少行这个api就一个一个尝试，官方文档并没有说这块内容，网上也没有这个使用教程，饶了一大圈，最终找到了这个api <code>sheet.get_highest_row()</code> , 不管怎么说，兜了一大圈，这个总算是解决了。<br>然后就是下一个问题，写入api需要传一个book对象，因为第二个xlsx实际上是我要追加数据，不是新建一个excel，凭着感觉走，是先用read的api创建mut对象，修改之后吧read的book放到write中，执行回写，验证了一下，hmmm没猜错，这样基本上这个lib的使用问题得到了解决。</p>
+<h3 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h3><p>for循环应该是一门语言中最基本的部分了，依靠代码提示，这个没出太大问题，vec和map的循环，都顺利进行，但是拿到一个sheet有多少行之后，我要遍历的时候发现不会了，然后又是搜索引擎走一圈，找到了这个最简单的语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for i in 1..sheet.get_highest_row()+1 &#123;</span><br><span class="line">	....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>唉，就如实说，光看书是真的不行，还是得coding才能掌握的说。</p>
+<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>本来以为集合是个简单的东西，没想到这上面也废了不少劲。简单总结一下：</p>
+<ul>
+<li>Vec 的添加元素用push</li>
+<li>HashSet的添加元素用insert</li>
+<li>HashMap的添加键值对也用insert</li>
+<li>HashMap的遍历调用iter然后for循环，得到的是一个元素，key是.0，value是.1</li>
+<li>迭代得到的元素是引用，如果要放入其他集合，我选择的是clone一份，直接解引用，经常出现所有权问题，暂时也没想到更好的办法。</li>
+</ul>
+<h3 id="字符串-String和-amp-str"><a href="#字符串-String和-amp-str" class="headerlink" title="字符串 (String和&amp;str)"></a>字符串 (String和&amp;str)</h3><p>说真的，字符串这玩意还挺绕的，String和&amp;str，就这两个来来回回的转换，我这也是偷懒了，自己接收也好，使用也罢，基本都用String了，得到了&amp;str基本都转换成String，然后在传递了，最起码没有所有权问题了，偷个懒，后面在慢慢找更好的适配方法。</p>
+<h3 id="字符串-字符串拼接"><a href="#字符串-字符串拼接" class="headerlink" title="字符串 (字符串拼接)"></a>字符串 (字符串拼接)</h3><p>我是怎么也没有想到，一个字符串拼接竟然愁住了我。<br>我从HashSet<String>的iter遍历得到的item，类型是&amp;String，我就想直接后面拼接个字符串，然后判断在另外一个集合中是否存在，然后这个追加愁住了我。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let name =element+&quot;流&quot;;</span><br><span class="line">报错：</span><br><span class="line">cannot add `&amp;str` to `&amp;std::string::String`</span><br><span class="line">string concatenation requires an owned `String` on the leftrustcClick for full compiler diagnostic</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> let name = element.add(&quot;流&quot;);</span><br><span class="line"> 报错：</span><br><span class="line"> cannot move out of `* element ` which is behind a shared reference</span><br><span class="line">move occurs because `* element ` has type `std::string::String`, which does not implement the `Copy` traitrustcClick for full compiler diagnostic</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">let name =*element.add(&quot;流&quot;);</span><br><span class="line">报错：</span><br><span class="line">the size for values of type `str` cannot be known at compilation time</span><br><span class="line">the trait `Sized` is not implemented for `str`</span><br><span class="line">all local variables must have a statically known size</span><br><span class="line">unsized locals are gated as an unstable feature</span><br></pre></td></tr></table></figure>
+<p>我自己尝试出来正确方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let name = String::from(element).add(&quot;流&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>再来看另外一个, 对于元组的引用，也是通过clone来解决的。。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> let mut map: HashMap&lt;String, Vec&lt;Model&gt;&gt; = HashMap::new();</span><br><span class="line"> ...</span><br><span class="line"> for entry in map.iter() &#123;</span><br><span class="line">        let sheet_name = entry.0.clone().add(&quot;流&quot;);</span><br><span class="line">        let sheet = book.get_sheet_by_name_mut(&amp;sheet_name).unwrap();</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h3><p>这个程序因为有个配置文件，运行过程中需要使用，开始想着声明一个全局变量就行了，准备放到dict这个mod里面，存储当然就用HashMap，然后就出现了问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pub mod dict &#123;</span><br><span class="line">	static mut map:HashMap&lt;String,String&gt; = HashMap::new();</span><br><span class="line">&#125;</span><br><span class="line">报错：</span><br><span class="line">cannot call non-const fn `HashMap::&lt;std::string::String, std::string::String&gt;::new` in statics</span><br><span class="line">calls in statics are limited to constant functions, tuple structs and tuple variantsrustcClick for full compiler diagnostic</span><br></pre></td></tr></table></figure>
+<p>既然需要HashMap必须是const，我就试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const mut map:HashMap&lt;String,String&gt; = HashMap::new();</span><br><span class="line">报错：</span><br><span class="line">const globals cannot be mutable    </span><br></pre></td></tr></table></figure>
+<p>不可变？那我怎么insert配置文件啊？先试试看非mut的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">const map:HashMap&lt;String,String&gt; = HashMap::new();</span><br><span class="line">报错：</span><br><span class="line">cannot call non-const fn `HashMap::&lt;std::string::String, std::string::String&gt;::new` in constants</span><br><span class="line">calls in constants are limited to constant functions, tuple structs and tuple variantsrustcClick for full compiler diagnostic</span><br></pre></td></tr></table></figure>
+
+<p>给我整不会了，看来HashMap不能全局使用了，从网上又查了一圈，hmm找到方法了，用lazy_static，具体原理还没看，但是尝试了一下，确实解决了我的问题。最终代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">pub mod dict &#123;</span><br><span class="line">    use std::&#123;collections::HashMap, fs::File, io::Read, sync::Mutex&#125;;</span><br><span class="line"></span><br><span class="line">    pub fn get_product_name(product_name: String) -&gt; String &#123;</span><br><span class="line">        if let Some(value) = CONFIG_MAP.lock().unwrap().get(&amp;product_name) &#123;</span><br><span class="line">            return value.to_owned();</span><br><span class="line">        &#125;</span><br><span class="line">        return product_name;</span><br><span class="line">    &#125;</span><br><span class="line">    lazy_static! &#123;</span><br><span class="line">        static ref CONFIG_MAP: Mutex&lt;HashMap&lt;String, String&gt;&gt; = &#123;</span><br><span class="line">            let mut file = File::open(&quot;./data/cfg.toml&quot;).unwrap();</span><br><span class="line">            let mut data = String::new();</span><br><span class="line">            file.read_to_string(&amp;mut data).unwrap();</span><br><span class="line">            let obj: HashMap&lt;String, HashMap&lt;String, String&gt;&gt; = toml::from_str(&amp;data).unwrap();</span><br><span class="line">            let dict_map = obj.get(&quot;product_dict&quot;).unwrap();</span><br><span class="line">            Mutex::new(dict_map.clone())</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据类型转换"><a href="#数据类型转换" class="headerlink" title="数据类型转换"></a>数据类型转换</h3><ul>
+<li>f64-&gt; i32 (引申一下，应该数字类型转换都可以这么搞)<ul>
+<li><code> let a = num as i32</code></li>
+</ul>
+</li>
+<li>String -&gt; i32 (引申一下，字符串到数字类型)<ul>
+<li><code>let a = String::from(&quot;13&quot;).parse::&lt;i32&gt;().unwrap();</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这个程序算是第一次正式用rust实现一个完整的功能的程序，说简单吧，也用到不少东西，说复杂吧，实际上就是数据格式转换+xlsx基本操作，后面还会继续用rust实现一些小的功能之类的，主要还是方便一下自己吧，这次代码量也就150+行，不过嘞，写了快一天。<br>编程这东西，还是不能停留在看，要实际coding才能掌握，后面如果要写一些系统底层的东西，相比现在可要复杂太多了，自己给自己加加油打打气吧~</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Rust/" rel="tag"># Rust</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/19/Arm64%20%E9%BA%92%E9%BA%9FV10%E5%AE%89%E8%A3%85Kata/" rel="prev" title="Arm64麒麟V10安装Kata">
+      <i class="fa fa-chevron-left"></i> Arm64麒麟V10安装Kata
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Rust%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80"><span class="nav-number">1.</span> <span class="nav-text">Rust小试牛刀</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%B7%A5"><span class="nav-number">1.3.</span> <span class="nav-text">开工</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.3.1.</span> <span class="nav-text">结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xlsx%E5%A4%84%E7%90%86lib-umya-spreadsheet"><span class="nav-number">1.3.2.</span> <span class="nav-text">xlsx处理lib-umya_spreadsheet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">for循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88"><span class="nav-number">1.3.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2-String%E5%92%8C-amp-str"><span class="nav-number">1.3.5.</span> <span class="nav-text">字符串 (String和&amp;str)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%BC%E6%8E%A5"><span class="nav-number">1.3.6.</span> <span class="nav-text">字符串 (字符串拼接)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.7.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.3.8.</span> <span class="nav-text">数据类型转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
