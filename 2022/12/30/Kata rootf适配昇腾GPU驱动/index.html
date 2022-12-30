@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"eviltuzki.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Kata rootfs 适配昇腾GPU驱动（Arm平台）虚拟机选择 系统：驱动适配比较好的系统是CentOS 7.6和8.2，本次制作使用CentOS 8.2.2004 arm 镜像 虚拟机：驱动依赖硬件设备，所以选择在宿主机通过qemu启动虚拟机，在虚拟机内部适配驱动 其他：开启kvm加速，实测arm架构下开启kvm，需要宿主机是L0(不能是虚拟机)，且bios使用edk2 宿主机：宿主机系统为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kata rootfs 适配昇腾GPU驱动（Arm平台）">
+<meta property="og:url" content="https://eviltuzki.top/2022/12/30/Kata%20rootf%E9%80%82%E9%85%8D%E6%98%87%E8%85%BEGPU%E9%A9%B1%E5%8A%A8/index.html">
+<meta property="og:site_name" content="Eviltuzki">
+<meta property="og:description" content="Kata rootfs 适配昇腾GPU驱动（Arm平台）虚拟机选择 系统：驱动适配比较好的系统是CentOS 7.6和8.2，本次制作使用CentOS 8.2.2004 arm 镜像 虚拟机：驱动依赖硬件设备，所以选择在宿主机通过qemu启动虚拟机，在虚拟机内部适配驱动 其他：开启kvm加速，实测arm架构下开启kvm，需要宿主机是L0(不能是虚拟机)，且bios使用edk2 宿主机：宿主机系统为">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-30T07:23:40.556Z">
+<meta property="article:author" content="Eviltuzki">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Kata">
+<meta property="article:tag" content="Arm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://eviltuzki.top/2022/12/30/Kata%20rootf%E9%80%82%E9%85%8D%E6%98%87%E8%85%BEGPU%E9%A9%B1%E5%8A%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Kata rootfs 适配昇腾GPU驱动（Arm平台） | Eviltuzki</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Eviltuzki</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一线码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2022/12/30/Kata%20rootf%E9%80%82%E9%85%8D%E6%98%87%E8%85%BEGPU%E9%A9%B1%E5%8A%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kata rootfs 适配昇腾GPU驱动（Arm平台）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-12-30 00:00:00" itemprop="dateCreated datePublished" datetime="2022-12-30T00:00:00+08:00">2022-12-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Kata-rootfs-适配昇腾GPU驱动（Arm平台）"><a href="#Kata-rootfs-适配昇腾GPU驱动（Arm平台）" class="headerlink" title="Kata rootfs 适配昇腾GPU驱动（Arm平台）"></a>Kata rootfs 适配昇腾GPU驱动（Arm平台）</h2><h1 id="虚拟机"><a href="#虚拟机" class="headerlink" title="虚拟机"></a>虚拟机</h1><h2 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h2><ul>
+<li>系统：驱动适配比较好的系统是CentOS 7.6和8.2，本次制作使用CentOS 8.2.2004 arm 镜像</li>
+<li>虚拟机：驱动依赖硬件设备，所以选择在宿主机通过qemu启动虚拟机，在虚拟机内部适配驱动</li>
+<li>其他：开启kvm加速，实测arm架构下开启kvm，需要宿主机是L0(不能是虚拟机)，且bios使用edk2</li>
+<li>宿主机：宿主机系统为银河麒麟v10 arm版</li>
+</ul>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ul>
+<li>下载CentOS 8.2.2004 arm 镜像<ul>
+<li>下载地址：<a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/centos-vault/8.2.2004/isos/aarch64/CentOS-8.2.2004-aarch64-dvd1.iso">https://mirrors.tuna.tsinghua.edu.cn/centos-vault/8.2.2004/isos/aarch64/CentOS-8.2.2004-aarch64-dvd1.iso</a></li>
+</ul>
+</li>
+<li>下载bios引导文件，edk2-aarch64的安装包，执行安装<ul>
+<li>下载地址：<a target="_blank" rel="noopener" href="https://www.kraxel.org/repos/jenkins/edk2/">https://www.kraxel.org/repos/jenkins/edk2/</a></li>
+<li>安装后bios文件位于 &#x2F;usr&#x2F;share&#x2F;edk2.git&#x2F;aarch64&#x2F;QEMU_EFI.fd</li>
+</ul>
+</li>
+<li>安装最新的qemu（建议编译安装，可以选择自己依赖的组件，直接从yum源安装的可能缺少组件）<ul>
+<li>补充说明：qemu启动虚拟机后，可以通过-net user直接共享宿主机的网络，并可以开启ssh通道，该功能依赖slirp，编译配置的时候需要启用slirp</li>
+</ul>
+</li>
+</ul>
+<h2 id="制作虚拟机（宿主机）"><a href="#制作虚拟机（宿主机）" class="headerlink" title="制作虚拟机（宿主机）"></a>制作虚拟机（宿主机）</h2><ul>
+<li>制作qcow2文件（相当于是硬盘, 文件名hd.qcow2 , 大小100G）<ul>
+<li>qemu-img create -f  qcow2 hd.qcow2 100G</li>
+</ul>
+</li>
+<li>安装操作系统<ul>
+<li>qemu启动命令：qemu-system-aarch64  -m 24G -cpu host -smp 16  -M virt,accel&#x3D;kvm -bios QEMU_EFI.fd -nographic -drive if&#x3D;none,file&#x3D;hd.qcow2,id&#x3D;hd0 -device virtio-blk-device,drive&#x3D;hd0 -drive if&#x3D;none,file&#x3D;CentOS-8.2.2004-aarch64-dvd1.iso,id&#x3D;cdrom,media&#x3D;cdrom -device virtio-scsi-device -device scsi-cd,drive&#x3D;cdrom -net user,hostfwd&#x3D;tcp::2222-:22 -net nic -device vfio-pci,host&#x3D;0000:83:00.0</li>
+<li>qemu参数说明：<ul>
+<li>-m 24G 指定内存大小</li>
+<li>-cpu host 指定CPU类型和宿主机一致，注意host类型需要开启kvm加速</li>
+<li>-M virt,accel&#x3D;kvm machineType类型为virt(arm均使用virt)，加速器使用kvm</li>
+<li>-smp 16 cpu 16核</li>
+<li>-bios QEMU_EFI.fd 指定edk2的efi文件</li>
+<li>-nographic 因为不是在本地，所以直接通过控制台以基础文本的形式显示</li>
+<li>-drive if&#x3D;none,file&#x3D;hd.qcow2,id&#x3D;hd0 -device virtio-blk-device,drive&#x3D;hd0 指定硬盘设备及驱动</li>
+<li>-drive if&#x3D;none,file&#x3D;CentOS-8.2.2004-aarch64-dvd1.iso,id&#x3D;cdrom,media&#x3D;cdrom -device virtio-scsi-device -device scsi-cd,drive&#x3D;cdrom 指定操作系统安装文件，以cdrom方式加载</li>
+<li>-net user,hostfwd&#x3D;tcp::2222-:22 -net nic 开启与宿主机的共享网络，同时将虚拟机的22端口映射到宿主机的2222端口</li>
+<li>-device vfio-pci,host&#x3D;0000:83:00.0 将宿主机的设备vfio直通到虚拟机</li>
+</ul>
+</li>
+<li>如果在宿主机无法正常安装，可以考虑本地启动qemu安装，然后将qcow2文件拷贝至服务器</li>
+<li>安装完成后重启系统即可，以后启动qemu cdrom参数不再需要。</li>
+</ul>
+</li>
+<li>注意事项：<ul>
+<li>虚拟机启动后，需要开启sshd，否则无法ssh连接到虚拟机</li>
+<li>QEMU_EFI.fd一定用edk2的，不要使用<code>https://releases.linaro.org/components/kernel/uefi-linaro/latest/release/qemu64/QEMU_EFI.fd</code> 这个版本，这个无法开启kvm加速</li>
+<li>全虚拟化的虚拟机慢的要死，开机就要15分钟，一定要开启kvm加速，后面驱动适配在全虚拟化下也会失败（全虚拟化运行太慢，导致驱动执行失败）</li>
+<li>vfio宿主机一定要开启，否则虚拟机无法获取设备</li>
+<li>设备号可以通过lspci看到</li>
+</ul>
+</li>
+</ul>
+<h1 id="内核制作"><a href="#内核制作" class="headerlink" title="内核制作"></a>内核制作</h1><h2 id="修改内核magversion"><a href="#修改内核magversion" class="headerlink" title="修改内核magversion"></a>修改内核magversion</h2><ul>
+<li>进入内核源码目录，修改 include&#x2F;linux&#x2F;vermagic.h<ul>
+<li>修改<code>#define MODULE_VERMAGIC_MODULE_UNLOAD &quot;&quot;</code></li>
+<li>为：<code>#define MODULE_VERMAGIC_MODULE_UNLOAD &quot;mod_unload&quot;</code></li>
+<li>修改<code>#define MODULE_VERMAGIC_MODVERSIONS &quot;&quot;</code></li>
+<li>为：<code>#define MODULE_VERMAGIC_MODVERSIONS &quot;modversions&quot;</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="编译内核获取bzImage（宿主机或虚拟机都可）"><a href="#编译内核获取bzImage（宿主机或虚拟机都可）" class="headerlink" title="编译内核获取bzImage（宿主机或虚拟机都可）"></a>编译内核获取bzImage（宿主机或虚拟机都可）</h2><ul>
+<li>直接执行make就行，注意配置和之前保持一致</li>
+<li>编译完成后，将arch&#x2F;aarch64&#x2F;boot&#x2F;bzImage拷贝出来，作为kata启动的kernel</li>
+</ul>
+<h2 id="制作内核rpm安装包（宿主机或虚拟机都可）"><a href="#制作内核rpm安装包（宿主机或虚拟机都可）" class="headerlink" title="制作内核rpm安装包（宿主机或虚拟机都可）"></a>制作内核rpm安装包（宿主机或虚拟机都可）</h2><ul>
+<li>保持配置不变，执行make rpm-pkg</li>
+<li>然后将kernel，kernel-devel，kernel-headers三个rpm拷贝出来</li>
+</ul>
+<h2 id="虚拟机安装新内核（虚拟机）"><a href="#虚拟机安装新内核（虚拟机）" class="headerlink" title="虚拟机安装新内核（虚拟机）"></a>虚拟机安装新内核（虚拟机）</h2><ul>
+<li>将编译的rpm安装包拷贝至虚拟机（开启ssh后scp -P 2222 xxx xxx@localhost:~即可）</li>
+<li>进入虚拟机后，执行rpm -ivh kernel-xxxxx.rpm 安装内核，然后重启虚拟机，用编译版本的内核启动虚拟机，准备后续rootfs制作</li>
+</ul>
+<h1 id="rootfs制作"><a href="#rootfs制作" class="headerlink" title="rootfs制作"></a>rootfs制作</h1><h2 id="制作rootfs（宿主机或虚拟机都可）"><a href="#制作rootfs（宿主机或虚拟机都可）" class="headerlink" title="制作rootfs（宿主机或虚拟机都可）"></a>制作rootfs（宿主机或虚拟机都可）</h2><ul>
+<li>进入kata源码kata-containers&#x2F;tools&#x2F;osbuilder&#x2F;目录下，执行make镜像命令</li>
+<li><code>make DISTRO=centos OS_VERSION=8.2.2004 SECCOMP=no DEBUG=true USE_DOCKER=true AGENT_INIT=yes EXTRA_PKGS=&#39;net-tools pciutils udev e2fsprogs tar gcc&#39; rootfs</code></li>
+<li>net-tools pciutils udev e2fsprogs tar gcc 这几样工具是驱动安装过程中需要的，需要提前打包至rootfs</li>
+</ul>
+<h2 id="拷贝rootfs至虚拟机"><a href="#拷贝rootfs至虚拟机" class="headerlink" title="拷贝rootfs至虚拟机"></a>拷贝rootfs至虚拟机</h2><ul>
+<li>上一步操作完成后，当前目录下会出来centos_rootfs文件夹，将该目录打包，拷贝至虚拟机</li>
+<li>tar czvf centos_rootfs.tgz centos_rootfs</li>
+<li>scp -P 2222 centos_rootfs.tgz  root@localhost:~</li>
+</ul>
+<h1 id="驱动适配"><a href="#驱动适配" class="headerlink" title="驱动适配"></a>驱动适配</h1><h2 id="补充缺失文件-虚拟机，其实这一步再打包之前操作也可以"><a href="#补充缺失文件-虚拟机，其实这一步再打包之前操作也可以" class="headerlink" title="补充缺失文件(虚拟机，其实这一步再打包之前操作也可以)"></a>补充缺失文件(虚拟机，其实这一步再打包之前操作也可以)</h2><ul>
+<li>解压rootfs</li>
+<li>&#x2F;usr&#x2F;share&#x2F;zoneinfo文件夹拷贝至 rootfs对应的目录下(centos默认rootfs缺失时区信息，无法安装驱动)</li>
+<li>拷贝驱动文件，kernel-devel，kernel-headers到rootfs的某目录下(我拷贝到home目录下)，用于后续chroot安装</li>
+<li>创建hook脚本<ul>
+<li>mkdir -p &#x2F;usr&#x2F;share&#x2F;oci&#x2F;hooks&#x2F;prestart</li>
+<li>cd &#x2F;usr&#x2F;share&#x2F;oci&#x2F;hooks&#x2F;prestart</li>
+<li>创建mount_tmpfs.sh脚本，解决&#x2F;tmp,&#x2F;var&#x2F;log 只读问题，内容如下：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">mount -t tmpfs -o size=8192m tmpfs /tmp</span><br><span class="line">mount -t tmpfs -o size=8192m tmpfs /var/log	</span><br></pre></td></tr></table></figure>
+
+<h2 id="挂载目录-虚拟机"><a href="#挂载目录-虚拟机" class="headerlink" title="挂载目录(虚拟机)"></a>挂载目录(虚拟机)</h2><ul>
+<li><code>export ROOTFS_DIR=/root/centos_rootfs</code></li>
+<li><code>mount -t sysfs -o ro none $&#123;ROOTFS_DIR&#125;/sys</code></li>
+<li><code>mount -t proc -o ro none $&#123;ROOTFS_DIR&#125;/proc</code></li>
+<li><code>mount -o bind,ro /dev $&#123;ROOTFS_DIR&#125;/dev</code></li>
+<li><code>mount -t devpts none $&#123;ROOTFS_DIR&#125;/dev/pts</code></li>
+<li><code>mount -t tmpfs none $&#123;ROOTFS_DIR&#125;/tmp</code></li>
+</ul>
+<h2 id="chroot并安装驱动-虚拟机"><a href="#chroot并安装驱动-虚拟机" class="headerlink" title="chroot并安装驱动(虚拟机)"></a>chroot并安装驱动(虚拟机)</h2><ul>
+<li>chroot $ROOTFS_DIR</li>
+<li>进入home目录（驱动和kernel目录）</li>
+<li>安装kernel-devel和kernel-headers （rpm -ivh kernel*.rpm）</li>
+<li>创建华为用户组HwHiAiUser 和 用户<ul>
+<li><code>groupadd HwHiAiUser</code></li>
+<li><code>useradd -g HwHiAiUser -d /home/HwHiAiUser -m HwHiAiUser -s /bin/bash</code></li>
+</ul>
+</li>
+<li>安装驱动 .&#x2F;A300-3000-npu-driver_21.0.3.3_linux-aarch64.run –full </li>
+<li>驱动安装成功后，执行 &#x2F;usr&#x2F;local&#x2F;sbin&#x2F;npu-smi info 如果能正常回显，则继续安装驱动，不能正常回显，则重启虚拟机，先exit退出chroot</li>
+<li>解除挂载 <code>umount $&#123;ROOTFS_DIR&#125;/sys $&#123;ROOTFS_DIR&#125;/proc $&#123;ROOTFS_DIR&#125;/dev/pts $&#123;ROOTFS_DIR&#125;/tmp $&#123;ROOTFS_DIR&#125;/dev</code></li>
+<li>然后reboot重启虚拟机，重启后重新挂载目录，然后执行 &#x2F;usr&#x2F;local&#x2F;sbin&#x2F;npu-smi info 看是否能正常回显</li>
+<li>正常回显后，安装固件 .&#x2F;A300-3000-npu-firmware_1.81.22.2.220.run –full</li>
+<li>然后删除内核源码(&#x2F;usr&#x2F;src&#x2F;kernels下，内核版本的源码删除)，删除kernel-devel，kernel-headers，驱动等文件（减少rootfs镜像大小）</li>
+<li>exit退出chroot</li>
+<li>解除挂载<code> umount $&#123;ROOTFS_DIR&#125;/sys $&#123;ROOTFS_DIR&#125;/proc $&#123;ROOTFS_DIR&#125;/dev/pts $&#123;ROOTFS_DIR&#125;/tmp $&#123;ROOTFS_DIR&#125;/dev</code></li>
+<li>将rootfs打包（如果rootfs在虚拟机中制作，则忽略该步骤），并拷贝到宿主机上</li>
+</ul>
+<h2 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h2><ul>
+<li>解压虚拟机中的rootfs文件</li>
+<li>切换到kata的image-builder目录(kata-containers&#x2F;tools&#x2F;osbuilder&#x2F;image-builder)</li>
+<li>制作镜像.&#x2F;image_builder.sh rootfsDir</li>
+<li>得到kata-containers.img</li>
+</ul>
+<h1 id="其他适配"><a href="#其他适配" class="headerlink" title="其他适配"></a>其他适配</h1><h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><ul>
+<li>kata的config需要进行以下几个修改<ol>
+<li><code>guest_hook_path = &quot;/usr/share/oci/hooks&quot;</code></li>
+<li><code>kernel_modules=[&quot;drv_devdrv_host&quot;,&quot;drv_davinci_intf_host&quot;,&quot;drv_tsdrv_platform_host&quot;,&quot;drv_pcie_vnic_host&quot;,&quot;drv_pcie_hdc_host&quot;,&quot;drv_devmm_host&quot;]</code></li>
+<li><code>hotplug_vfio_on_root_bus = true</code></li>
+<li><code>pcie_root_port = 2</code></li>
+</ol>
+</li>
+<li>说明：<ol>
+<li><code>guest_hook_path</code> 执行hook，路径不需要更改，驱动需要挂载tmpfs，通过hook执行</li>
+<li><code>kernel_modules</code> 驱动的modules默认不会加载，需要手动加载，配置到这里，vm启动会自动加载</li>
+<li><code>hotplug_vfio_on_root_bus</code> 开启root bus，arm平台需要通过pcie_root_port进行设备热插拔</li>
+<li><code>pcie_root_port</code> 单个虚拟机最多可以挂载GPU设备数</li>
+</ol>
+</li>
+</ul>
+<h2 id="Kata源码"><a href="#Kata源码" class="headerlink" title="Kata源码"></a>Kata源码</h2><ul>
+<li>主要修改如下：<ul>
+<li>virt模式支持pcieRootPort设备，通过配置进行加载</li>
+<li>qmp添加设备指定bus为pcieRootPort设备，arm下只有pcieRootPort支持热插拔</li>
+</ul>
+</li>
+</ul>
+<h1 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h1><ol>
+<li><p>启动后，kata-runtime exec 进入vm后，&#x2F;dev&#x2F;loop设备只有1个</p>
+<ul>
+<li>修改内核配置<ul>
+<li><code>CONFIG_BLK_DEV_LOOP=y</code></li>
+<li><code>CONFIG_BLK_DEV_LOOP_MIN_COUNT=4</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>qemu 使用 -cpu host -M virt,accel&#x3D;kvm 启动虚拟机黑屏</p>
+<ul>
+<li>bios的efi启动文件不正确，使用edk2的efi文件即可</li>
+</ul>
+</li>
+<li><p>安装驱动npu-smi info执行后提示 <code>dcmi module initialize failed. ret is -8005</code></p>
+<ul>
+<li>提示-8005的原因有很多，下面列出来几个适配中遇到过的<ul>
+<li>显卡设备被其他驱动占用，去&#x2F;sys&#x2F;bus&#x2F;pci&#x2F;drivers&#x2F;devdrv_device_driver目录下重新bind设备即可。</li>
+<li>内核模块加载不全，lsmod对比kernel_modules中的配置，是否已经加载全。</li>
+<li>同时提示<code>sh: /tmp/pci_get_info_234.tmp: Read-only file system</code>检查Hook脚本是否执行，可以df看下挂载情况。</li>
+<li>其他原因，可以通过dmesg查看kernel日志，具体排查</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>chroot后，安装驱动，提示缺少xxxx组件</p>
+<ul>
+<li>EXTRA_PKGS后面追加缺少的命令的安装包即可，无依赖的，可直接拷贝到rootfs对应目录下</li>
+</ul>
+</li>
+<li><p>kernel-devel和kernel-headers是否可以不安装？</p>
+<ul>
+<li>需要安装，驱动安装过程中，有部分模块依赖内核，需要通过内核源码进行重编译，安装完成后，删除对应src目录即可。</li>
+<li>通过dkms安装会快点，但是依赖过多，不建议</li>
+</ul>
+</li>
+<li><p>内核日志提示：<code>drv_seclib_host: version magic &#39;5.4.160-1.el7.aarch64 SMP mod_unload modversions aarch64&#39; should be &#39;5.4.160-1.el7.aarch64 SMP aarch64&#39;</code></p>
+<ul>
+<li>内核的version magic和编译的驱动的version magic不一致，参考内核部分修改version magic，重新编译即可</li>
+</ul>
+</li>
+<li><p>qemu启动时加上-net user提示<code> -net user: Parameter &#39;type&#39; expects a net backend type (maybe it is not compiled into this binary)</code></p>
+<ul>
+<li>编译qemu缺少slirp，重新config qemu，加上slirp后重新make qemu即可</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Kata/" rel="tag"># Kata</a>
+              <a href="/tags/Arm/" rel="tag"># Arm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/25/Rust%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80/" rel="prev" title="Rust小试牛刀">
+      <i class="fa fa-chevron-left"></i> Rust小试牛刀
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kata-rootfs-%E9%80%82%E9%85%8D%E6%98%87%E8%85%BEGPU%E9%A9%B1%E5%8A%A8%EF%BC%88Arm%E5%B9%B3%E5%8F%B0%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Kata rootfs 适配昇腾GPU驱动（Arm平台）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number"></span> <span class="nav-text">虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%88%E5%AE%BF%E4%B8%BB%E6%9C%BA%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">制作虚拟机（宿主机）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%88%B6%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">内核制作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%86%85%E6%A0%B8magversion"><span class="nav-number">1.</span> <span class="nav-text">修改内核magversion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%86%85%E6%A0%B8%E8%8E%B7%E5%8F%96bzImage%EF%BC%88%E5%AE%BF%E4%B8%BB%E6%9C%BA%E6%88%96%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%BD%E5%8F%AF%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">编译内核获取bzImage（宿主机或虚拟机都可）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E5%86%85%E6%A0%B8rpm%E5%AE%89%E8%A3%85%E5%8C%85%EF%BC%88%E5%AE%BF%E4%B8%BB%E6%9C%BA%E6%88%96%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%BD%E5%8F%AF%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">制作内核rpm安装包（宿主机或虚拟机都可）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85%E6%96%B0%E5%86%85%E6%A0%B8%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">虚拟机安装新内核（虚拟机）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#rootfs%E5%88%B6%E4%BD%9C"><span class="nav-number"></span> <span class="nav-text">rootfs制作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9Crootfs%EF%BC%88%E5%AE%BF%E4%B8%BB%E6%9C%BA%E6%88%96%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%83%BD%E5%8F%AF%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">制作rootfs（宿主机或虚拟机都可）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9Drootfs%E8%87%B3%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">拷贝rootfs至虚拟机</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E9%80%82%E9%85%8D"><span class="nav-number"></span> <span class="nav-text">驱动适配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E7%BC%BA%E5%A4%B1%E6%96%87%E4%BB%B6-%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%8C%E5%85%B6%E5%AE%9E%E8%BF%99%E4%B8%80%E6%AD%A5%E5%86%8D%E6%89%93%E5%8C%85%E4%B9%8B%E5%89%8D%E6%93%8D%E4%BD%9C%E4%B9%9F%E5%8F%AF%E4%BB%A5"><span class="nav-number">1.</span> <span class="nav-text">补充缺失文件(虚拟机，其实这一步再打包之前操作也可以)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95-%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">挂载目录(虚拟机)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chroot%E5%B9%B6%E5%AE%89%E8%A3%85%E9%A9%B1%E5%8A%A8-%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">3.</span> <span class="nav-text">chroot并安装驱动(虚拟机)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="nav-number">4.</span> <span class="nav-text">制作镜像</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%80%82%E9%85%8D"><span class="nav-number"></span> <span class="nav-text">其他适配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kata%E6%BA%90%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">Kata源码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q-amp-A"><span class="nav-number"></span> <span class="nav-text">Q&amp;A</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Eviltuzki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">71</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/eviltuzki" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;eviltuzki" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eviltuzki</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

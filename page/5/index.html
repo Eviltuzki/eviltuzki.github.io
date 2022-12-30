@@ -190,6 +190,88 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/" class="post-title-link" itemprop="url">ElasticSearch 查询出现maxClauseCount is set to 1024</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-24T00:00:00+08:00">2018-08-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><p>如果bool查询的查询条件过多会导致TooManyClauses问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;too_many_clauses&quot;,&quot;reason&quot;:&quot;maxClauseCount is set to 1024&quot;&#125;&#125;&#125;],</span><br><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;query_shard_exception&quot;,&quot;reason&quot;:&quot;failed to create query:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方式在配置文件 Elasticsearch.yml中配置:</p>
+<ul>
+<li>index.query.bool.max_clause_count: 10240</li>
+</ul>
+</li>
+<li><p>设置最大限制bool查询的条数,过多会导致性能比较慢。</p>
+</li>
+<li><p>在ElasticSearch 5之后参数有所改动，提示如下:</p>
+</li>
+<li><p>The setting index.query.bool.max_clause_count has been removed. In order to set the maximum number of boolean clauses indices.query.bool.max_clause_count should be used instead.</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/06/26/sql%E4%BC%98%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -895,82 +977,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/01/07/hadoop%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E5%87%BA%E7%8E%B0-Retrying-connect-to-server-%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Eviltuzki">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eviltuzki">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/01/07/hadoop%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E5%87%BA%E7%8E%B0-Retrying-connect-to-server-%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">hadoop环境运行程序出现 Retrying connect to server 问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-07 00:00:00" itemprop="dateCreated datePublished" datetime="2018-01-07T00:00:00+08:00">2018-01-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>程序运行时出现如下问题：</p>
-<p><img src="/hadoop%E7%8E%AF%E5%A2%83%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E5%87%BA%E7%8E%B0-Retrying-connect-to-server-%E9%97%AE%E9%A2%98/problem.png" alt="程序运行报错图"></p>
-<p>从网上查资料，有说重启format的。。有说&#x2F;etc&#x2F;hosts出问题的。。。</p>
-<p>反正都试了一遍。。还是有这个问题</p>
-<p>后来看日志，发现问题是访问服务器9001端口访问不到。。开始怀疑自己配置文件有问题。既然是9001，那就肯定是mapred的问题，</p>
-<p>看了配置文件内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    　　&lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapred.job.tracker&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;http://192.168.254.128:9001&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
-<p>也没发现有什么问题，ip换成host中的master也不行，看官方配置文档，发现没有http，删掉http之后，重启dataNode没了0.0</p>
-<p>日志说有冲突什么的。。。估计就是format问题。。清理了tmp和hdfs，重新format，然后再启动，成功！</p>
-<p>附上一份正确的配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">　      &lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapred.job.tracker&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;192.168.254.128:9001&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1040,7 +1046,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1053,7 +1059,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -190,6 +190,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/12/13/%E4%B8%80%E6%AC%A1Es%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Eviltuzki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eviltuzki">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/13/%E4%B8%80%E6%AC%A1Es%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">一次Es排序优化记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-13 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-13T00:00:00+08:00">2018-12-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>背景</strong></p>
+<ul>
+<li>13号有一个大上线，其中一个功能就是排序功能，说复杂也不复杂，说难吧也不难，但是麻烦的就是加上Sort之后速度奇慢无比。</li>
+<li>排序实现也不太复杂，基本都是基于function score + sort 实现，对应不同的商品品类，有不同的排序规则(Hmm，目前还没有上个性化排序。。)，实现方式就是定位品类之后，用function score进行提升部分商品的score，在这之后用sort进行【score + field1 +field2】的排序，看着也不复杂对吧。</li>
+<li>ES机器配置不太高(qiong…..)4C 8G * 3，索引中在售商品也不太多几，万的样子，分布到200多个城市站，总共合起来大概千万出头的数据(有部分非在售商品)。</li>
+</ul>
+<p><strong>问题</strong></p>
+<ul>
+<li>每次定位到品类之后，使用了品类排序【score + field1 +field2】，速度奇慢无比，平时几十毫秒的查询能变成5-6秒甚至更多，有点让人无法忍受</li>
+</ul>
+<p><strong>尝试过程</strong></p>
+<ul>
+<li>最开始打算用缓存解决问题，但是更新频率实在有点高的不行。。这个有点扛不住。</li>
+<li>后来打算按照城市站分索引，这样一个索引数据量就很小了，排序应该就不是什么大问题了，但是查询有点麻烦。</li>
+<li>先reindex一个小的索引，试了试排序速度，果然恢复到了几十毫秒的数量级了。<br>突然想到了也许多加一些分片也可以解决这个问题，毕竟我们是有城市站routing的啊。</li>
+<li>不过城市站反正是查询的必须条件已经加上了routing，吧shard从默认的5个先加到了50个，试了一下果然速度提升到100ms左右，再往上加shard的时候发现了另外一个问题，大批量的出现ESReject问题，可能是一次bulk或者index数据的量略大，ES又需要进行routing的原因吧，最终上线的时候，保守一点使用了40 Shard，目前速度尚在可接受范围(线上最起码是8c 16G的。。)，如果想在提升速度，估计要加机器了(还是那句话。。。qiong。。。)</li>
+</ul>
+<p><strong>加速原理</strong></p>
+<ul>
+<li>没看源码，纯属自己猜测：<ul>
+<li>感觉shard和分索引应该差不多，Es Query需要找到对应的shard，拽出来符合条件的数据进行排序，然后输出出去。拽出来数据应该是在shard内部进行过排序，如果shard内部文档过多，速度应该会比较慢。</li>
+<li>我们这边业务场景是城市站必须有，而且文档按照城市站分开后相对来说很平均了(当然还是有部分shard很小。。)，将shard数量提高以后，shard内部排序的文档数量少了很多，速度自然就上去了。</li>
+<li>shard过多，在ES进行bulk插入数据时候，routing到对应分片，这步骤应该会花较多时间，如果机器配置不太给力的话（囧。。比如说我们），shard数量还是不要太多，否则机器负载会很高很高(前两天看到负载破20了 - -！还好只是瞬时)</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/11/25/MySQL%20Rank/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1611,88 +1703,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://eviltuzki.top/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Eviltuzki">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eviltuzki">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/24/ElasticSearch%20%E6%9F%A5%E8%AF%A2%E5%87%BA%E7%8E%B0maxClauseCount%20is%20set%20to%201024/" class="post-title-link" itemprop="url">ElasticSearch 查询出现maxClauseCount is set to 1024</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-24 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-24T00:00:00+08:00">2018-08-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li><p>如果bool查询的查询条件过多会导致TooManyClauses问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;too_many_clauses&quot;,&quot;reason&quot;:&quot;maxClauseCount is set to 1024&quot;&#125;&#125;&#125;],</span><br><span class="line">&quot;caused_by&quot;:&#123;&quot;type&quot;:&quot;query_shard_exception&quot;,&quot;reason&quot;:&quot;failed to create query:</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>解决方式在配置文件 Elasticsearch.yml中配置:</p>
-<ul>
-<li>index.query.bool.max_clause_count: 10240</li>
-</ul>
-</li>
-<li><p>设置最大限制bool查询的条数,过多会导致性能比较慢。</p>
-</li>
-<li><p>在ElasticSearch 5之后参数有所改动，提示如下:</p>
-</li>
-<li><p>The setting index.query.bool.max_clause_count has been removed. In order to set the maximum number of boolean clauses indices.query.bool.max_clause_count should be used instead.</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1762,7 +1772,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1775,7 +1785,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
